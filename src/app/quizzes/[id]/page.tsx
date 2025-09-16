@@ -40,7 +40,7 @@ export default function QuizDetailPage() {
     const loadQuiz = async () => {
       try {
         const quizzes = await lmsApi.getQuizzes()
-        const quizIndex = quizId - 1
+        const quizIndex = quizId
         
         if (quizIndex < 0 || quizIndex >= quizzes.length) {
           toast({
@@ -58,7 +58,7 @@ export default function QuizDetailPage() {
         // Check if user has already taken this quiz
         const submissions = await lmsApi.getQuizSubmissions()
         const hasTaken = submissions.some(s => s.quiz_id === quizId)
-        setHasTakenQuiz(hasTaken)
+        setHasTakenQuiz(false)
         
         // Initialize answers array
         setAnswers(new Array(foundQuiz.questions.length).fill(-1))

@@ -104,8 +104,10 @@ async getQuizzes(): Promise<Quiz[]> {
 
   const quizzes: Quiz[] = data.map((item: any) => {
     const quizData = item.quiz_data
+    const quizId = item.id
 
     return {
+      id: quizId,
       week: quizData.week ?? 0,
       title: quizData.title ?? item.title?.rendered ?? "Untitled Quiz",
       time_limit_minutes: quizData.time_limit_minutes ?? 0,
@@ -159,31 +161,56 @@ async getQuizzes(): Promise<Quiz[]> {
   }
 
   async submitQuiz(quizId: number, answers: number[]): Promise<{ score: number; status: string }> {
-    // Mock quiz submission - in real app, this would call the API
-    const correctAnswers = [0, 0, 0] // Mock correct answers
+  try {
+    // Ambil quiz dari API
+    const res = await fetch(`https://roynaldkalele.com/wp-json/wp/v2/quiz/${quizId}`)
+    const quizData = await res.json()
+
+    // Pastikan quiz_data dan questions ada
+    const quiz = quizData.quiz_data
+    if (!quiz || !Array.isArray(quiz.questions) || quiz.questions.length === 0) {
+      throw new Error("Quiz data invalid")
+    }
+
+    const questions = quiz.questions
     let score = 0
-    
+
     answers.forEach((answer, index) => {
-      if (answer === correctAnswers[index]) {
-        score += 100 / answers.length
+      const correctAnswer = questions[index]?.correct_answer
+
+      if (correctAnswer === undefined) return // skip jika jawaban benar ga ada
+
+      if (Array.isArray(correctAnswer)) {
+        if (correctAnswer.includes(answer)) {
+          score += 100 / questions.length
+        }
+      } else {
+        if (answer === correctAnswer) {
+          score += 100 / questions.length
+        }
       }
     })
 
     const roundedScore = Math.round(score)
-    const status = roundedScore >= 70 ? 'Lulus' : 'Tidak Lulus'
+    const status = roundedScore >= 70 ? "Lulus" : "Tidak Lulus"
 
-    // Save submission to localStorage for demo purposes
-    const submissions = JSON.parse(localStorage.getItem('quiz_submissions') || '[]')
+    // Simpan di localStorage
+    const submissions = JSON.parse(localStorage.getItem("quiz_submissions") || "[]")
     submissions.push({
       quiz_id: quizId,
       answers,
       score: roundedScore,
       submitted_at: new Date().toISOString()
     })
-    localStorage.setItem('quiz_submissions', JSON.stringify(submissions))
+    localStorage.setItem("quiz_submissions", JSON.stringify(submissions))
 
     return { score: roundedScore, status }
+  } catch (err) {
+    console.error(err)
+    throw new Error("Failed to submit quiz")
   }
+}
+
 
   async getQuizSubmissions(): Promise<QuizSubmission[]> {
     return JSON.parse(localStorage.getItem('quiz_submissions') || '[]')
