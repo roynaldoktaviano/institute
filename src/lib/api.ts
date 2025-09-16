@@ -94,85 +94,35 @@ export class LMSApi {
 }
 
 
-  async getQuizzes(): Promise<Quiz[]> {
-    // Mock data based on the JSON structure
-    return [
-      {
-        week: 1,
-        title: "Quiz Mingguan Drone Basic",
-        time_limit_minutes: 20,
-        questions: [
-          {
-            id: 1,
-            question: "Apa fungsi utama GPS pada drone?",
-            options: [
-              "Menentukan posisi drone",
-              "Meningkatkan kualitas kamera",
-              "Mengurangi getaran propeller",
-              "Menambah daya baterai"
-            ],
-            answer_type: "multiple_choice"
-          },
-          {
-            id: 2,
-            question: "Kapan waktu terbaik untuk menerbangkan drone?",
-            options: [
-              "Saat cuaca cerah dan angin tenang",
-              "Saat hujan rintik-rintik",
-              "Saat angin kencang",
-              "Saat malam hari tanpa lampu"
-            ],
-            answer_type: "multiple_choice"
-          }
-        ],
-        scoring: {
-          show_correct_answer: false
-        }
-      },
-      {
-        week: 2,
-        title: "Quiz Teknik Fotografi Drone",
-        time_limit_minutes: 25,
-        questions: [
-          {
-            id: 1,
-            question: "Apa yang dimaksud dengan rule of thirds dalam fotografi?",
-            options: [
-              "Membagi frame menjadi 9 bagian sama besar",
-              "Menggunakan tiga warna utama",
-              "Mengambil tiga foto berturut-turut",
-              "Mengatur exposure tiga kali"
-            ],
-            answer_type: "multiple_choice"
-          }
-        ],
-        scoring: {
-          show_correct_answer: false
-        }
-      },
-      {
-        week: 3,
-        title: "Quiz Regulasi Drone",
-        time_limit_minutes: 15,
-        questions: [
-          {
-            id: 1,
-            question: "Berapa ketinggian maksimal drone boleh terbang di area pemukiman?",
-            options: [
-              "150 meter",
-              "500 meter",
-              "1000 meter",
-              "Tidak ada batasan"
-            ],
-            answer_type: "multiple_choice"
-          }
-        ],
-        scoring: {
-          show_correct_answer: false
-        }
-      }
-    ]
+async getQuizzes(): Promise<Quiz[]> {
+  const res = await fetch("https://roynaldkalele.com/wp-json/wp/v2/quiz", { cache: "no-store" })
+  if (!res.ok) {
+    throw new Error(`Failed to fetch quizzes: ${res.status}`)
   }
+
+  const data = await res.json()
+
+  const quizzes: Quiz[] = data.map((item: any) => {
+    const quizData = item.quiz_data
+
+    return {
+      week: quizData.week ?? 0,
+      title: quizData.title ?? item.title?.rendered ?? "Untitled Quiz",
+      time_limit_minutes: quizData.time_limit_minutes ?? 0,
+      questions: (quizData.questions || []).map((q: any, idx: number) => ({
+        id: idx + 1, // karena dari API selalu `id: 0`
+        question: q.question,
+        options: q.options || [],
+        answer_type: q.answer_type ?? "multiple_choice",
+      })),
+      scoring: {
+        show_correct_answer: quizData.scoring?.show_correct_answer ?? false,
+      },
+    }
+  })
+
+  return quizzes
+}
 
   async getProductKnowledge(): Promise<ProductKnowledge[]> {
     // Mock data based on the JSON structure
