@@ -314,9 +314,9 @@ export default function DashboardPage() {
               <Card key={index} className="hover:shadow-md transition-shadow">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm">{quiz.title}</CardTitle>
-                  <CardDescription className="text-xs">
+                  {/* <CardDescription className="text-xs">
                     Week {quiz.week}
-                  </CardDescription>
+                  </CardDescription> */}
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center text-xs text-gray-500 mb-2">
@@ -352,7 +352,7 @@ export default function DashboardPage() {
             {recentProducts.map((product) => (
               <Card
                 key={product.id}
-                className="hover:shadow-md transition-shadow"
+                className="hover:shadow-md transition-shadow pt-0 pb-6"
               >
                 <div className="aspect-square bg-gray-200 rounded-t-lg">
                   <img
@@ -361,8 +361,8 @@ export default function DashboardPage() {
                     className="w-full h-full object-cover rounded-t-lg"
                   />
                 </div>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm">
+                <CardHeader className="pb-0">
+                  <CardTitle className="text-sm pb-0">
                     {product.product_name}
                   </CardTitle>
                 </CardHeader>
@@ -382,7 +382,7 @@ export default function DashboardPage() {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        PDF
+                        Download
                       </a>
                     </Button>
                   </div>

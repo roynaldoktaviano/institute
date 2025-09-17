@@ -127,38 +127,24 @@ async getQuizzes(): Promise<Quiz[]> {
 }
 
   async getProductKnowledge(): Promise<ProductKnowledge[]> {
-    // Mock data based on the JSON structure
-    return [
-      {
-        id: 1,
-        product_name: "DJI Mavic 3",
-        summary: "Drone lipat profesional dengan kamera Hasselblad.",
-        image: "https://roynaldkalele.com/wp-content/uploads/mavic3.jpg",
-        pdf_download: "https://roynaldkalele.com/wp-content/uploads/mavic3-specs.pdf"
-      },
-      {
-        id: 2,
-        product_name: "DJI Mini 3 Pro",
-        summary: "Drone ringan di bawah 249 gram dengan kamera profesional.",
-        image: "https://roynaldkalele.com/wp-content/uploads/mini3pro.jpg",
-        pdf_download: "https://roynaldkalele.com/wp-content/uploads/mini3pro-specs.pdf"
-      },
-      {
-        id: 3,
-        product_name: "DJI Air 2S",
-        summary: "Drone all-in-one dengan sensor 1-inch dan 5.4K video.",
-        image: "https://roynaldkalele.com/wp-content/uploads/air2s.jpg",
-        pdf_download: "https://roynaldkalele.com/wp-content/uploads/air2s-specs.pdf"
-      },
-      {
-        id: 4,
-        product_name: "DJI Phantom 4 Pro",
-        summary: "Drone profesional dengan kamera 20MP dan obstacle sensing.",
-        image: "https://roynaldkalele.com/wp-content/uploads/phantom4pro.jpg",
-        pdf_download: "https://roynaldkalele.com/wp-content/uploads/phantom4pro-specs.pdf"
-      }
-    ]
+  try {
+    const res = await fetch('https://roynaldkalele.com/wp-json/wp/v2/product-knowledge?_embed');
+    const data = await res.json();
+
+    return data.map((item: any) => ({
+
+      
+      id: item.id,
+      product_name: item.title.rendered,
+      summary: item.acf?.tagline || '',
+      image: item._embedded['wp:featuredmedia'][0].source_url || '',
+      pdf_download: item.acf?.ebook_link || ''
+    }));
+  } catch (error) {
+    console.error('Failed to fetch product knowledge:', error);
+    return [];
   }
+}
 
 async  submitQuiz(
   quizId: number,
