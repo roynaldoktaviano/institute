@@ -245,7 +245,7 @@ export default function DashboardPage() {
               Recent Trainings
             </h3>
             <Link href="/trainings">
-              <Button variant="outline">See All</Button>
+              <Button variant="outline" className="cursor-pointer">See All</Button>
             </Link>
           </div>
 
@@ -253,7 +253,7 @@ export default function DashboardPage() {
             {recentTrainings.map((training) => (
               <Card
                 key={training.id}
-                className="hover:shadow-md transition-shadow pt-0 pb-6"
+                className="hover:shadow-md transition-shadow pt-0 pb-6 gap-[8px]"
               >
                 <div className="aspect-video bg-gray-200 rounded-t-lg">
                   <img
@@ -262,7 +262,7 @@ export default function DashboardPage() {
                     className="w-full h-full object-cover rounded-t-lg"
                   />
                 </div>
-                <CardHeader className="pb-2 flex justify-between">
+                <CardHeader className="pb-2 flex justify-between mt-3">
                   <div>
                     <CardTitle className="text-sm">{training.title}</CardTitle>
                     <CardDescription className="text-xs">
@@ -288,7 +288,7 @@ export default function DashboardPage() {
                     {training.short_description}
                   </p>
                   <Link href={`/trainings/${training.id}`}>
-                    <Button size="sm" className="w-full mt-5">
+                    <Button size="sm" className="w-full mt-5 cursor-pointer">
                       View Details
                     </Button>
                   </Link>
@@ -305,13 +305,13 @@ export default function DashboardPage() {
               Weekly Quizzes
             </h3>
             <Link href="/quizzes">
-              <Button variant="outline">See All</Button>
+              <Button variant="outline" className="cursor-pointer">See All</Button>
             </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {recentQuizzes.map((quiz, index) => (
-              <Card key={index} className="hover:shadow-md transition-shadow">
+              <Card key={index} className="hover:shadow-md transition-shadow gap-[10px]">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm">{quiz.title}</CardTitle>
                   {/* <CardDescription className="text-xs">
@@ -327,7 +327,7 @@ export default function DashboardPage() {
                     {quiz.questions.length} questions
                   </div>
                   <Link href={`/quizzes/${quiz.id}`}>
-                    <Button size="sm" className="w-full">
+                    <Button size="sm" className="w-full cursor-pointer">
                       Start Quiz
                     </Button>
                   </Link>
@@ -344,7 +344,7 @@ export default function DashboardPage() {
               Product Knowledge
             </h3>
             <Link href="/products">
-              <Button variant="outline">See All</Button>
+              <Button variant="outline" className="cursor-pointer">See All</Button>
             </Link>
           </div>
 
@@ -352,7 +352,7 @@ export default function DashboardPage() {
             {recentProducts.map((product) => (
               <Card
                 key={product.id}
-                className="hover:shadow-md transition-shadow pt-0 pb-6"
+                className="hover:shadow-md transition-shadow pt-0 pb-6 gap-[8px]"
               >
                 <div className="aspect-square bg-gray-200 rounded-t-lg">
                   <img
@@ -361,7 +361,7 @@ export default function DashboardPage() {
                     className="w-full h-full object-cover rounded-t-lg"
                   />
                 </div>
-                <CardHeader className="pb-0">
+                <CardHeader className="pb-0 mt-3">
                   <CardTitle className="text-sm pb-0">
                     {product.product_name}
                   </CardTitle>
@@ -370,9 +370,9 @@ export default function DashboardPage() {
                   <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
                     {product.summary}
                   </p>
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-2 mt-3">
                     <Link href={`/products/${product.id}`}>
-                      <Button size="sm" className="flex-1">
+                      <Button size="sm" className="flex-1 cursor-pointer">
                         Read More
                       </Button>
                     </Link>
