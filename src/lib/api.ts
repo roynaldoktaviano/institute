@@ -160,25 +160,28 @@ async getQuizzes(): Promise<Quiz[]> {
     ]
   }
 
-  async submitQuiz(quizId: number, answers: number[]): Promise<{ score: number; status: string }> {
+async  submitQuiz(
+  quizId: number,
+  answers: number[]
+): Promise<{ score: number; status: string }> {
   try {
-    // Ambil quiz dari API
+    // Ambil quiz dari API utama
     const res = await fetch(`https://roynaldkalele.com/wp-json/wp/v2/quiz/${quizId}`)
     const quizData = await res.json()
 
-    // Pastikan quiz_data dan questions ada
+    // Validasi quiz_data
     const quiz = quizData.quiz_data
     if (!quiz || !Array.isArray(quiz.questions) || quiz.questions.length === 0) {
       throw new Error("Quiz data invalid")
     }
 
+    // Hitung skor
     const questions = quiz.questions
     let score = 0
 
     answers.forEach((answer, index) => {
       const correctAnswer = questions[index]?.correct_answer
-
-      if (correctAnswer === undefined) return // skip jika jawaban benar ga ada
+      if (correctAnswer === undefined) return
 
       if (Array.isArray(correctAnswer)) {
         if (correctAnswer.includes(answer)) {
@@ -193,23 +196,42 @@ async getQuizzes(): Promise<Quiz[]> {
 
     const roundedScore = Math.round(score)
     const status = roundedScore >= 70 ? "Lulus" : "Tidak Lulus"
+    const token = localStorage.getItem('lms_token')
 
-    // Simpan di localStorage
-    const submissions = JSON.parse(localStorage.getItem("quiz_submissions") || "[]")
-    submissions.push({
-      quiz_id: quizId,
-      answers,
-      score: roundedScore,
-      submitted_at: new Date().toISOString()
+    // 🔥 Simpan ke WordPress via REST API custom
+    const wpRes = await fetch(`https://roynaldkalele.com/wp-json/lms/v1/submit-quiz`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` 
+      },
+      credentials: "include", // kalau rely on WP login cookie
+      body: JSON.stringify({
+        quiz_id: quizId,
+        answers,
+        score: roundedScore,
+        status,
+      }),
     })
-    localStorage.setItem("quiz_submissions", JSON.stringify(submissions))
 
-    return { score: roundedScore, status }
+    // Debugging detail
+    console.log("WP response status:", wpRes.status)
+    const responseText = await wpRes.text()
+    console.log("WP raw response:", responseText)
+
+    // if (!wpRes.ok) {
+    //   throw new Error(`Failed to save quiz submission. Status: ${wpRes.status}, Body: ${responseText}`)
+    // }
+
+    const result = JSON.parse(responseText)
+    return { score: roundedScore, status: result.status ?? status }
   } catch (err) {
-    console.error(err)
+    console.error("SubmitQuiz error:", err)
     throw new Error("Failed to submit quiz")
   }
 }
+
+
 
 
   async getQuizSubmissions(): Promise<QuizSubmission[]> {

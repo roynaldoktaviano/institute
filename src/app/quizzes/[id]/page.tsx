@@ -32,50 +32,52 @@ export default function QuizDetailPage() {
   const quizId = parseInt(params.id as string)
 
   useEffect(() => {
-    if (!user) {
-      router.push('/login')
-      return
-    }
+  if (!user) {
+    router.push('/login')
+    return
+  }
 
-    const loadQuiz = async () => {
-      try {
-        const quizzes = await lmsApi.getQuizzes()
-        const quizIndex = quizId
-        
-        if (quizIndex < 0 || quizIndex >= quizzes.length) {
-          toast({
-            title: "Quiz not found",
-            description: "The requested quiz could not be found.",
-            variant: "destructive",
-          })
-          router.push('/quizzes')
-          return
-        }
-        
-        const foundQuiz = quizzes[quizIndex]
-        setQuiz(foundQuiz)
-        
-        // Check if user has already taken this quiz
-        const submissions = await lmsApi.getQuizSubmissions()
-        const hasTaken = submissions.some(s => s.quiz_id === quizId)
-        setHasTakenQuiz(false)
-        
-        // Initialize answers array
-        setAnswers(new Array(foundQuiz.questions.length).fill(-1))
-        setTimeRemaining(foundQuiz.time_limit_minutes * 60)
-      } catch (error) {
+  const loadQuiz = async () => {
+    try {
+      const quizzes = await lmsApi.getQuizzes()
+
+      // Cari quiz berdasarkan ID
+      const foundQuiz = quizzes.find(q => q.id === quizId)
+
+      if (!foundQuiz) {
         toast({
-          title: "Error loading quiz",
-          description: "Please try again later.",
+          title: "Quiz not found",
+          description: "The requested quiz could not be found.",
           variant: "destructive",
         })
-      } finally {
-        setIsLoading(false)
+        router.push('/quizzes')
+        return
       }
-    }
 
-    loadQuiz()
-  }, [user, router, toast, quizId])
+      setQuiz(foundQuiz)
+
+      // Check if user has already taken this quiz
+      const submissions = await lmsApi.getQuizSubmissions()
+      const hasTaken = submissions.some(s => s.quiz_id === quizId)
+      setHasTakenQuiz(hasTaken)
+
+      // Initialize answers array
+      setAnswers(new Array(foundQuiz.questions.length).fill(-1))
+      setTimeRemaining(foundQuiz.time_limit_minutes * 60)
+    } catch (error) {
+      toast({
+        title: "Error loading quiz",
+        description: "Please try again later.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  loadQuiz()
+}, [user, router, toast, quizId])
+
 
   useEffect(() => {
     let timer: NodeJS.Timeout
