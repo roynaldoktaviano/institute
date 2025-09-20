@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Calendar, MapPin, ArrowLeft } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
+import { parse, format } from "date-fns";
 
 export default function TrainingsPage() {
   const { user } = useAuth()
@@ -57,6 +58,12 @@ export default function TrainingsPage() {
     )
   }
 
+  function formatTrainingDate(dateStr: string) {
+    // API: "28/09/2025 4:00 pm"
+    const parsed = parse(dateStr, "dd/MM/yyyy h:mm a", new Date());
+    return format(parsed, "dd MMMM yyyy - hh.mm aaaa");
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
@@ -88,7 +95,7 @@ export default function TrainingsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {trainings.map((training) => (
-            <Card key={training.id} className="hover:shadow-lg transition-shadow">
+            <Card key={training.id} className="hover:shadow-lg transition-shadow pt-0 pb-6">
               <div className="aspect-video bg-gray-200 rounded-t-lg overflow-hidden">
                 <img 
                   src={training.image} 
@@ -98,7 +105,10 @@ export default function TrainingsPage() {
               </div>
               <CardHeader>
                 <div className="flex justify-between items-start">
-                  <CardTitle className="text-lg">{training.title}</CardTitle>
+                  <CardTitle
+                    className="text-sm"
+                    dangerouslySetInnerHTML={{ __html: training.title }}
+                  />
                   <Badge variant={training.type === 'online' ? 'default' : 'secondary'}>
                     {training.type}
                   </Badge>
@@ -109,11 +119,7 @@ export default function TrainingsPage() {
                 <div className="space-y-3">
                   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                     <Calendar className="h-4 w-4 mr-2" />
-                    {new Date(training.date).toLocaleDateString('en-US', { 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
-                    })}
+                   {formatTrainingDate(training.date)}
                   </div>
                   
                   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
@@ -122,7 +128,7 @@ export default function TrainingsPage() {
                   </div>
                   
                   <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-3">
-                    {training.description}
+                    {training.short_description}
                   </p>
                   
                   <Link href={`/trainings/${training.id}`}>

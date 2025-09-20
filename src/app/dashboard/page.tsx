@@ -264,8 +264,11 @@ export default function DashboardPage() {
                 </div>
                 <CardHeader className="pb-2 flex justify-between mt-3">
                   <div>
-                    <CardTitle className="text-sm">{training.title}</CardTitle>
-                    <CardDescription className="text-xs">
+          <CardTitle
+  className="text-sm"
+  dangerouslySetInnerHTML={{ __html: training.title }}
+/>
+                    <CardDescription className="text-xs mt-2">
                       {training.topic}
                     </CardDescription>
                   </div>
@@ -313,7 +316,10 @@ export default function DashboardPage() {
             {recentQuizzes.map((quiz, index) => (
               <Card key={index} className="hover:shadow-md transition-shadow gap-[10px]">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm">{quiz.title}</CardTitle>
+                    <CardTitle
+  className="text-sm"
+  dangerouslySetInnerHTML={{ __html: quiz.title }}
+/>
                   {/* <CardDescription className="text-xs">
                     Week {quiz.week}
                   </CardDescription> */}

@@ -131,7 +131,7 @@ function formatTrainingDate(dateStr: string) {
                   Back to Trainings
                 </Button>
               </Link>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Training Details</h1>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Detail Pelatihan</h1>
             </div>
           </div>
         </div>
@@ -153,9 +153,10 @@ function formatTrainingDate(dateStr: string) {
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                      {training.title}
-                    </h1>
+                    <h1
+  className="text-3xl font-bold text-gray-900 dark:text-white mb-2"
+  dangerouslySetInnerHTML={{ __html: training.title }}
+/>
                     <p className="text-lg text-gray-600 dark:text-gray-400">
                       {training.topic}
                     </p>
@@ -166,12 +167,12 @@ function formatTrainingDate(dateStr: string) {
                 </div>
 
                 <div className="prose prose-sm dark:prose-invert max-w-none">
-                  <h3 className="text-lg font-semibold mb-3">About this training</h3>
+                  <h3 className="text-lg font-semibold mb-3">Tentang Pelatihan</h3>
                   <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                     {stripHtml(training.description)}
                   </p>
                   
-                  <h3 className="text-lg font-semibold mb-3 mt-6">What you'll learn</h3>
+                  {/* <h3 className="text-lg font-semibold mb-3 mt-6">What you'll learn</h3>
                   <ul className="space-y-2">
                     <li className="flex items-start">
                       <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
@@ -189,7 +190,7 @@ function formatTrainingDate(dateStr: string) {
                       <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                       <span>Industry standards and regulations</span>
                     </li>
-                  </ul>
+                  </ul> */}
                 </div>
               </div>
             </div>
@@ -199,12 +200,12 @@ function formatTrainingDate(dateStr: string) {
           <div className="lg:col-span-1">
             <Card className="sticky top-8">
               <CardHeader>
-                <CardTitle>Training Information</CardTitle>
+                <CardTitle>Informasi Pelatihan</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center text-sm">
                   <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-                  <span className="font-medium">Date:</span>
+                  <span className="font-medium">Tanggal:</span>
                   <span className="ml-2">
                     {formatTrainingDate(training.date)}
                   </span>
@@ -218,7 +219,7 @@ function formatTrainingDate(dateStr: string) {
                 
                 <div className="flex items-center text-sm">
                   <MapPin className="h-4 w-4 mr-2 text-gray-500" />
-                  <span className="font-medium">Location:</span>
+                  <span className="font-medium">Lokasi:</span>
                   <span className="ml-2">{training.location}</span>
                 </div>
 {/*                 

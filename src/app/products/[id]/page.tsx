@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator'
 import { Download, ArrowLeft, BookOpen, Share2, Heart, Camera, Battery, Wifi, HardDrive } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
+import DOMPurify from 'isomorphic-dompurify';
 
 export default function ProductDetailPage() {
   const { user } = useAuth()
@@ -71,6 +72,10 @@ export default function ProductDetailPage() {
   if (!user) {
     return null
   }
+
+  function stripHtml(html: string) {
+  return html.replace(/<[^>]*>?/gm, '');
+}
 
   if (isLoading) {
     return (
@@ -145,10 +150,7 @@ export default function ProductDetailPage() {
                   <h2 className="text-xl font-semibold mb-4">Product Overview</h2>
                   <div className="prose prose-sm dark:prose-invert max-w-none">
                     <p>
-                      The {product.product_name} represents the pinnacle of drone technology, combining cutting-edge innovation with user-friendly design. This professional-grade drone is engineered for photographers, videographers, and industrial applications who demand uncompromising quality and reliability.
-                    </p>
-                    <p>
-                      With advanced flight controls, superior camera systems, and intelligent features, this drone sets new standards in aerial imaging and data collection. Whether you're capturing cinematic footage or conducting professional surveys, this device delivers exceptional performance in every scenario.
+                      {stripHtml(product.description)}
                     </p>
                   </div>
                 </div>
@@ -219,47 +221,13 @@ export default function ProductDetailPage() {
                 <div className="mb-8">
                   <h2 className="text-xl font-semibold mb-4">Technical Specifications</h2>
                   <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <h3 className="font-medium mb-3">Camera System</h3>
-                        <ul className="space-y-2 text-sm">
-                          <li><strong>Sensor:</strong> 4/3" CMOS</li>
-                          <li><strong>Resolution:</strong> 20MP</li>
-                          <li><strong>Video:</strong> 5.4K at 30fps</li>
-                          <li><strong>Stabilization:</strong> 3-axis mechanical</li>
-                        </ul>
-                      </div>
-                      
-                      <div>
-                        <h3 className="font-medium mb-3">Flight Performance</h3>
-                        <ul className="space-y-2 text-sm">
-                          <li><strong>Max Flight Time:</strong> 46 minutes</li>
-                          <li><strong>Max Range:</strong> 30 km</li>
-                          <li><strong>Max Speed:</strong> 21 m/s</li>
-                          <li><strong>Wind Resistance:</strong> 12 m/s</li>
-                        </ul>
-                      </div>
-                      
-                      <div>
-                        <h3 className="font-medium mb-3">Physical Specifications</h3>
-                        <ul className="space-y-2 text-sm">
-                          <li><strong>Weight:</strong> 895g</li>
-                          <li><strong>Dimensions:</strong> 221×96.3×90.3 mm</li>
-                          <li><strong>Folded:</strong> 180×97×77 mm</li>
-                          <li><strong>Material:</strong> Magnesium alloy</li>
-                        </ul>
-                      </div>
-                      
-                      <div>
-                        <h3 className="font-medium mb-3">Battery & Charging</h3>
-                        <ul className="space-y-2 text-sm">
-                          <li><strong>Capacity:</strong> 5000 mAh</li>
-                          <li><strong>Voltage:</strong> 15.4 V</li>
-                          <li><strong>Charging Time:</strong> 90 minutes</li>
-                          <li><strong>Battery Type:</strong> LiPo 4S</li>
-                        </ul>
-                      </div>
-                    </div>
+                    <div
+                    className="prose max-w-none grid grid-cols-2 gap-[45px]"
+      dangerouslySetInnerHTML={{
+        
+        __html: DOMPurify.sanitize(product.spesification),
+      }}
+    />
                   </div>
                 </div>
 

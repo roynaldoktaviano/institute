@@ -14,6 +14,7 @@ export interface Training {
   location: string
   image: string
   description: string
+  short_description:string
 }
 
 export interface QuizQuestion {
@@ -43,6 +44,8 @@ export interface ProductKnowledge {
   summary: string
   image: string
   pdf_download: string
+  description: string
+  spesification: string
 }
 
 export interface QuizSubmission {
@@ -109,7 +112,7 @@ async getQuizzes(): Promise<Quiz[]> {
     return {
       id: quizId,
       week: quizData.week ?? 0,
-      title: quizData.title ?? item.title?.rendered ?? "Untitled Quiz",
+      title: item.title?.rendered ?? "Untitled Quiz",
       time_limit_minutes: quizData.time_limit_minutes ?? 0,
       questions: (quizData.questions || []).map((q: any, idx: number) => ({
         id: idx + 1, // karena dari API selalu `id: 0`
@@ -138,7 +141,9 @@ async getQuizzes(): Promise<Quiz[]> {
       product_name: item.title.rendered,
       summary: item.acf?.tagline || '',
       image: item._embedded['wp:featuredmedia'][0].source_url || '',
-      pdf_download: item.acf?.ebook_link || ''
+      pdf_download: item.acf?.ebook_link || '',
+      spesification : item.acf?.specifications,
+      description : item.acf?.product_overview
     }));
   } catch (error) {
     console.error('Failed to fetch product knowledge:', error);
