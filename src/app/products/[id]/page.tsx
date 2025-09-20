@@ -159,62 +159,22 @@ export default function ProductDetailPage() {
                 <div className="mb-8">
                   <h2 className="text-xl font-semibold mb-4">Key Features</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Card>
-                      <CardContent className="p-4">
-                        <div className="flex items-center space-x-3">
-                          <Camera className="h-8 w-8 text-blue-500" />
-                          <div>
-                            <h3 className="font-medium">Professional Camera</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              High-resolution imaging with advanced stabilization
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardContent className="p-4">
-                        <div className="flex items-center space-x-3">
-                          <Battery className="h-8 w-8 text-green-500" />
-                          <div>
-                            <h3 className="font-medium">Extended Flight Time</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              Long-lasting battery for extended operations
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardContent className="p-4">
-                        <div className="flex items-center space-x-3">
-                          <Wifi className="h-8 w-8 text-purple-500" />
-                          <div>
-                            <h3 className="font-medium">Advanced Connectivity</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              Reliable transmission over long distances
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardContent className="p-4">
-                        <div className="flex items-center space-x-3">
-                          <HardDrive className="h-8 w-8 text-orange-500" />
-                          <div>
-                            <h3 className="font-medium">Smart Storage</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              Ample storage for all your media files
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
+  {product.features.map((f: any, i: number) => (
+    <Card key={i}>
+      <CardContent className="p-4">
+        <div className="flex items-center space-x-3">
+          <div>
+            <h3 className="font-medium">{f.title}</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {f.description}
+            </p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  ))}
+</div>
+
                 </div>
 
                 {/* Technical Specifications */}
@@ -283,84 +243,12 @@ export default function ProductDetailPage() {
                     <Download className="h-4 w-4 mr-2" />
                     Download PDF Specs
                   </Button>
-                  
-                  <Button variant="outline" className="w-full">
-                    <Share2 className="h-4 w-4 mr-2" />
-                    Share Product
-                  </Button>
-                  
-                  <Button variant="outline" className="w-full">
-                    <Heart className="h-4 w-4 mr-2" />
-                    Add to Favorites
-                  </Button>
                 </CardContent>
               </Card>
 
-              {/* Quick Info Card */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Quick Info</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div>
-                    <span className="text-sm font-medium text-gray-500">Product ID</span>
-                    <p className="text-sm">#{product.id.toString().padStart(4, '0')}</p>
-                  </div>
-                  
-                  <div>
-                    <span className="text-sm font-medium text-gray-500">Category</span>
-                    <p className="text-sm">Professional Drone</p>
-                  </div>
-                  
-                  <div>
-                    <span className="text-sm font-medium text-gray-500">Availability</span>
-                    <Badge variant="default" className="text-xs">In Stock</Badge>
-                  </div>
-                  
-                  <div>
-                    <span className="text-sm font-medium text-gray-500">Last Updated</span>
-                    <p className="text-sm">{new Date().toLocaleDateString()}</p>
-                  </div>
-                </CardContent>
-              </Card>
+           
 
-              {/* Related Products */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Related Products</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 bg-gray-200 rounded-lg flex-shrink-0">
-                        <img 
-                          src="https://roynaldkalele.com/wp-content/uploads/mini3pro.jpg" 
-                          alt="Related product"
-                          className="w-full h-full object-cover rounded-lg"
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="text-sm font-medium">DJI Mini 3 Pro</h4>
-                        <p className="text-xs text-gray-500">Lightweight drone</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 bg-gray-200 rounded-lg flex-shrink-0">
-                        <img 
-                          src="https://roynaldkalele.com/wp-content/uploads/air2s.jpg" 
-                          alt="Related product"
-                          className="w-full h-full object-cover rounded-lg"
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="text-sm font-medium">DJI Air 2S</h4>
-                        <p className="text-xs text-gray-500">All-in-one drone</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+           
             </div>
           </div>
         </div>

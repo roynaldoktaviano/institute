@@ -46,6 +46,7 @@ export interface ProductKnowledge {
   pdf_download: string
   description: string
   spesification: string
+  features: string[]
 }
 
 export interface QuizSubmission {
@@ -133,18 +134,40 @@ async getQuizzes(): Promise<Quiz[]> {
   try {
     const res = await fetch('https://roynaldkalele.com/wp-json/wp/v2/product-knowledge?_embed');
     const data = await res.json();
+    
+   return data.map((item: any) => {
+  const keyFeatures = item.acf?.key_features || {};
 
-    return data.map((item: any) => ({
+  const features = [
+    {
+      title: keyFeatures.title_1,
+      description: keyFeatures.description_1 || keyFeatures.desicription_1, 
+    },
+    {
+      title: keyFeatures.title_2,
+      description: keyFeatures.description_2 || keyFeatures.desicription_2,
+    },
+    {
+      title: keyFeatures.title_3,
+      description: keyFeatures.description_3,
+    },
+    {
+      title: keyFeatures.title_4,
+      description: keyFeatures.description_4,
+    },
+  ].filter(f => f.title && f.description);
+  return {
+    id: item.id,
+    product_name: item.title.rendered,
+    summary: item.acf?.tagline || '',
+    image: item._embedded['wp:featuredmedia']?.[0]?.source_url || '',
+    pdf_download: item.acf?.ebook_link || '',
+    spesification: item.acf?.specifications,
+    description: item.acf?.product_overview,
+    features, 
+  };
+});
 
-      
-      id: item.id,
-      product_name: item.title.rendered,
-      summary: item.acf?.tagline || '',
-      image: item._embedded['wp:featuredmedia'][0].source_url || '',
-      pdf_download: item.acf?.ebook_link || '',
-      spesification : item.acf?.specifications,
-      description : item.acf?.product_overview
-    }));
   } catch (error) {
     console.error('Failed to fetch product knowledge:', error);
     return [];
