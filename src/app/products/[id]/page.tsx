@@ -191,38 +191,7 @@ export default function ProductDetailPage() {
                   </div>
                 </div>
 
-                {/* Applications */}
-                <div className="mb-8">
-                  <h2 className="text-xl font-semibold mb-4">Applications</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <Card>
-                      <CardContent className="p-4 text-center">
-                        <Badge variant="outline" className="mb-2">Photography</Badge>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Professional aerial photography and cinematography
-                        </p>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardContent className="p-4 text-center">
-                        <Badge variant="outline" className="mb-2">Mapping</Badge>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          High-precision surveying and mapping applications
-                        </p>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardContent className="p-4 text-center">
-                        <Badge variant="outline" className="mb-2">Inspection</Badge>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Infrastructure and industrial inspection
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </div>
+                
               </div>
             </div>
           </div>
