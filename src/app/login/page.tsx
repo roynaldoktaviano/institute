@@ -43,7 +43,7 @@ export default function LoginPage() {
       if (success) {
         toast({
           title: "Login successful",
-          description: "Welcome back to Drone Academy!",
+          description: "Welcome back to Doran Institute!",
         })
         router.push('/dashboard')
       } else {
@@ -71,7 +71,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            Drone Academy
+            Doran Institute
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
             Learning Management System

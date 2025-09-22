@@ -114,7 +114,7 @@ export default function DashboardPage() {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-4">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Drone Academy
+                Doran Institute
               </h1>
               <nav className="hidden md:flex space-x-4">
                 <Link
@@ -314,32 +314,37 @@ export default function DashboardPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {recentQuizzes.map((quiz, index) => (
-              <Card key={index} className="hover:shadow-md transition-shadow gap-[10px]">
-                <CardHeader className="pb-2">
-                    <CardTitle
-  className="text-sm"
-  dangerouslySetInnerHTML={{ __html: quiz.title }}
-/>
-                  {/* <CardDescription className="text-xs">
-                    Week {quiz.week}
-                  </CardDescription> */}
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center text-xs text-gray-500 mb-2">
-                    <Clock className="h-3 w-3 mr-1" />
-                    {quiz.time_limit_minutes} minutes
-                  </div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400 mb-3">
-                    {quiz.questions.length} questions
-                  </div>
-                  <Link href={`/quizzes/${quiz.id}`}>
-                    <Button size="sm" className="w-full cursor-pointer">
-                      Start Quiz
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
+  <Card key={index} className="hover:shadow-md transition-shadow gap-[10px]">
+    <CardHeader className="pb-2">
+      <CardTitle
+        className="text-sm"
+        dangerouslySetInnerHTML={{ __html: quiz.title }}
+      />
+    </CardHeader>
+    <CardContent>
+      <div className="flex items-center text-xs text-gray-500 mb-2">
+        <Clock className="h-3 w-3 mr-1" />
+        {quiz.time_limit_minutes} minutes
+      </div>
+      <div className="text-xs text-gray-600 dark:text-gray-400 mb-3">
+        {quiz.questions.length} questions
+      </div>
+
+      {quiz.completed ? (
+        <Button size="sm" className="w-full" disabled>
+          ✅ Completed
+        </Button>
+      ) : (
+        <Link href={`/quizzes/${quiz.id}`}>
+          <Button size="sm" className="w-full cursor-pointer">
+            Start Quiz
+          </Button>
+        </Link>
+      )}
+    </CardContent>
+  </Card>
+))}
+
           </div>
         </div>
 

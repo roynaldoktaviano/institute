@@ -15,20 +15,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Drone Academy LMS - Learning Management System",
+  title: "Doran Insititute - Learning Management System",
   description: "Professional drone training and certification platform. Learn drone mapping, photography, safety regulations, and more.",
   keywords: ["Drone", "LMS", "Training", "Academy", "Certification", "Photography", "Mapping"],
-  authors: [{ name: "Drone Academy" }],
+  authors: [{ name: "Doran Institute" }],
   openGraph: {
-    title: "Drone Academy LMS",
+    title: "Doran Insititute",
     description: "Professional drone training and certification platform",
-    url: "https://drone-academy.com",
-    siteName: "Drone Academy",
+    url: "https://doranistitute.com",
+    siteName: "Doran Institute",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Drone Academy LMS",
+    title: "Doran Institute",
     description: "Professional drone training and certification platform",
   },
 };
