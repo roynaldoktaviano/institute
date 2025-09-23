@@ -64,10 +64,29 @@ export default function DashboardPage() {
         setRecentQuizzes(quizzes.slice(0, 4));
         setRecentProducts(products.slice(0, 4));
 
-        setStats({
-          quizzesSubmitted: submissions.length,
-          trainingsParticipated: participations.length,
-        });
+        const savedUser = localStorage.getItem("lms_user")
+  if (!savedUser) return
+
+  const user = JSON.parse(savedUser)
+  const userId = user.id
+
+  // 🔥 ambil data quiz & training paralel
+  Promise.all([
+    fetch(`https://roynaldkalele.com/wp-json/lms/v1/user/${userId}/quiz`).then(res => res.json()),
+    // fetch(`https://roynaldkalele.com/wp-json/lms/v1/user/${userId}/training`).then(res => res.json())
+  ])
+    .then(([quizData]) => {
+      const submissions = quizData?.quizzes || []
+      // const participations = trainingData?.data || []
+
+      setStats({
+        quizzesSubmitted: submissions.length,   // jumlah quiz dikerjakan
+        trainingsParticipated: 2 // jumlah training diikuti
+      })
+    })
+    .catch(err => {
+      console.error("Error fetching stats:", err)
+    })
       } catch (error) {
         toast({
           title: "Error loading dashboard",
@@ -227,7 +246,7 @@ export default function DashboardPage() {
             <CardContent>
               <div className="text-2xl font-bold">
                 {Math.round(
-                  ((stats.quizzesSubmitted + stats.trainingsParticipated) /
+                  ((stats.quizzesSubmitted) /
                     10) *
                     100
                 )}
@@ -331,9 +350,12 @@ export default function DashboardPage() {
       </div>
 
       {quiz.completed ? (
-        <Button size="sm" className="w-full" disabled>
-          ✅ Completed
-        </Button>
+        <>
+        <p className={`${quiz.status == 'Tidak Lulus' ? 'bg-red-600' : 'bg-green-600'} p-1 font-bold  text-sm text-white rounded text-center`}>Score: {quiz.score} % ({quiz.status})</p>
+        {/* <Button size="sm" className="w-full bg-white text-black" disabled>
+          Quiz Sudah Dikerjakan
+        </Button> */}
+        </>
       ) : (
         <Link href={`/quizzes/${quiz.id}`}>
           <Button size="sm" className="w-full cursor-pointer">

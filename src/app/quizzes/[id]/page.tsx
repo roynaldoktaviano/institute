@@ -116,12 +116,18 @@ export default function QuizDetailPage() {
       setCurrentQuestion(prev => prev - 1)
     }
   }
-
+  
   const handleSubmitQuiz = async () => {
+
     if (!quiz) return
 
     try {
-      const result = await lmsApi.submitQuiz(quizId, answers)
+      const savedUser = localStorage.getItem("lms_user")!
+       const savedToken = localStorage.getItem("lms_token")
+
+       const user = JSON.parse(savedUser)
+       const userId = user.id 
+      const result = await lmsApi.submitQuiz(userId,quizId, answers)
       setScore(result.score)
       setQuizCompleted(true)
       setQuizStarted(false)

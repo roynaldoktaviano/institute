@@ -106,26 +106,47 @@ async getQuizzes(): Promise<Quiz[]> {
 
   const data = await res.json()
 
-  const quizzes: Quiz[] = data.map((item: any) => {
-    const quizData = item.quiz_data
-    const quizId = item.id
+  const savedUser = localStorage.getItem("lms_user")
+  const user = savedUser ? JSON.parse(savedUser) : null
+  let submissions: any[] = []
 
-    return {
-      id: quizId,
-      week: quizData.week ?? 0,
-      title: item.title?.rendered ?? "Untitled Quiz",
-      time_limit_minutes: quizData.time_limit_minutes ?? 0,
-      questions: (quizData.questions || []).map((q: any, idx: number) => ({
-        id: idx + 1, // karena dari API selalu `id: 0`
-        question: q.question,
-        options: q.options || [],
-        answer_type: q.answer_type ?? "multiple_choice",
-      })),
-      scoring: {
-        show_correct_answer: quizData.scoring?.show_correct_answer ?? false,
-      },
-    }
-  })
+  if (user?.id) {
+    const progressRes = await fetch(`https://roynaldkalele.com/wp-json/lms/v1/user/${user.id}/quiz`)
+    const progressData = await progressRes.json()
+    submissions = progressData?.quizzes || []
+  }
+
+
+ const quizzes: Quiz[] = data.map((item: any) => {
+  const quizData = item.quiz_data
+  const quizId = item.id
+
+  // cek apakah quiz sudah dikerjakan user
+  const submission = submissions.find(s => Number(s.quiz_id) === quizId)
+
+  return {
+    id: quizId,
+    week: quizData.week ?? 0,
+    title: item.title?.rendered ?? "Untitled Quiz",
+    time_limit_minutes: quizData.time_limit_minutes ?? 0,
+    questions: (quizData.questions || []).map((q: any, idx: number) => ({
+      id: idx + 1,
+      question: q.question,
+      options: q.options || [],
+      answer_type: q.answer_type ?? "multiple_choice",
+    })),
+    scoring: {
+      show_correct_answer: quizData.scoring?.show_correct_answer ?? false,
+    },
+
+    // tambahan status progress user
+    completed: !!submission,
+    score: submission?.score ?? null,
+    status: submission?.status?? null,
+    finished_at: submission?.created_at ?? null,
+  }
+})
+
 
   return quizzes
 }
@@ -174,7 +195,8 @@ async getQuizzes(): Promise<Quiz[]> {
   }
 }
 
-async  submitQuiz(
+async submitQuiz(
+  userId: string,
   quizId: number,
   answers: number[]
 ): Promise<{ score: number; status: string }> {
@@ -190,8 +212,8 @@ async  submitQuiz(
     }
 
     // Hitung skor
-    const questions = quiz.questions
     let score = 0
+    const questions = quiz.questions
 
     answers.forEach((answer, index) => {
       const correctAnswer = questions[index]?.correct_answer
@@ -201,49 +223,75 @@ async  submitQuiz(
         if (correctAnswer.includes(answer)) {
           score += 100 / questions.length
         }
-      } else {
-        if (answer === correctAnswer) {
-          score += 100 / questions.length
-        }
+      } else if (answer === correctAnswer) {
+        score += 100 / questions.length
       }
     })
 
     const roundedScore = Math.round(score)
     const status = roundedScore >= 70 ? "Lulus" : "Tidak Lulus"
-    const token = localStorage.getItem('lms_token')
+    const token = localStorage.getItem("lms_token")
 
-    // 🔥 Simpan ke WordPress via REST API custom
-    const wpRes = await fetch(`https://roynaldkalele.com/wp-json/lms/v1/submit-quiz`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}` 
-      },
-      credentials: "include", // kalau rely on WP login cookie
-      body: JSON.stringify({
-        quiz_id: quizId,
-        answers,
-        score: roundedScore,
-        status,
-      }),
-    })
+    if (!token) {
+      throw new Error("Token tidak ditemukan, silakan login dulu")
+    }
 
-    // Debugging detail
-    console.log("WP response status:", wpRes.status)
-    const responseText = await wpRes.text()
-    console.log("WP raw response:", responseText)
+    // Simpan ke WordPress via REST API custom
+    const wpRes = await fetch(
+      `https://roynaldkalele.com/wp-json/lms/v1/submit-quiz`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          user_id: userId, 
+          quiz_id: quizId,
+          answers,
+          score: roundedScore,
+          status,
+        }),
+      }
+    )
 
-    // if (!wpRes.ok) {
-    //   throw new Error(`Failed to save quiz submission. Status: ${wpRes.status}, Body: ${responseText}`)
-    // }
+    if (!wpRes.ok) {
+      const errText = await wpRes.text()
+      throw new Error(
+        `Failed to save quiz submission. Status: ${wpRes.status}, Body: ${errText}`
+      )
+    }
 
-    const result = JSON.parse(responseText)
+    const result = await wpRes.json()
+
+    // Opsional: update progress
+    try {
+      await fetch(
+        `https://roynaldkalele.com/wp-json/lms/v1/user/${userId}/quiz`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            quiz_id: quizId,
+            score: roundedScore,
+            status,
+          }),
+        }
+      )
+    } catch (progressErr) {
+      console.warn("Gagal update progress:", progressErr)
+    }
+
     return { score: roundedScore, status: result.status ?? status }
   } catch (err) {
     console.error("SubmitQuiz error:", err)
     throw new Error("Failed to submit quiz")
   }
 }
+
 
 
 
