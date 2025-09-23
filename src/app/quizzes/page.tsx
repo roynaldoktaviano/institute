@@ -16,7 +16,7 @@ export default function QuizzesPage() {
   const { user } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
-  const [quizzes, setQuizzes] = useState<Quiz[]>([])
+  const [quizzes, setQuizzes] = useState<any[]>([])
   const [submissions, setSubmissions] = useState<QuizSubmission[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -110,20 +110,24 @@ export default function QuizzesPage() {
           {quizzes.map((quiz, index) => {
             const status = getQuizStatus(index)
             const quizId = index + 1
+            
 
             return (
               <Card key={index} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div>
-                      <CardTitle className="text-lg">{quiz.title}</CardTitle>
-                      <CardDescription className="text-sm">Week {quiz.week}</CardDescription>
+                      <CardTitle
+                      className="text-lg"
+                      dangerouslySetInnerHTML={{ __html: quiz.title }}
+                    />
+                      {/* <CardDescription className="text-sm">Week {quiz.week}</CardDescription> */}
                     </div>
                     <Badge 
-                      variant={status.status === 'completed' ? 'default' : 'secondary'}
-                      className={status.status === 'completed' ? 'bg-green-100 text-green-800' : ''}
+                      variant={quiz.completed  ? 'default' : 'secondary'}
+                      className={quiz.completed ? 'bg-green-100 text-green-800' : ''}
                     >
-                      {status.status === 'completed' ? 'Completed' : 'Available'}
+                      {quiz.completed ? 'Selesai' : 'Belum Selesai'}
                     </Badge>
                   </div>
                 </CardHeader>
@@ -138,33 +142,33 @@ export default function QuizzesPage() {
                       {quiz.questions.length} questions
                     </div>
 
-                    {status.status === 'completed' && (
-                      <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3">
+                    {quiz.completed && (
+                      <div className={`${quiz.status === 'Lulus' ? 'bg-green-50 dark:bg-green-900/20': 'bg-red-50 dark:bg-red-900/20'} rounded-lg p-3`}>
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-sm font-medium text-green-800 dark:text-green-200">
-                            Quiz Completed
+                            Quiz Score
                           </span>
                           <Trophy className="h-4 w-4 text-green-600" />
                         </div>
-                        <div className="text-2xl font-bold text-green-800 dark:text-green-200">
-                          {status.score}%
+                        <div className={`${quiz.status === 'Lulus' ? 'text-green-800 dark:text-green-200': 'text-red-800 dark:text-red-200'} text-2xl font-bold `}>
+                          {quiz.score} / 100
                         </div>
-                        <Progress value={status.score} className="mt-2 h-2" />
-                        <div className="text-xs text-green-600 dark:text-green-400 mt-1">
-                          Completed on {new Date(status.submittedAt).toLocaleDateString()}
-                        </div>
+                        <Progress value={quiz.score} className="mt-2 h-2" />
+                        {/* <div className={`${quiz.status === 'Lulus' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'} text-xs  mt-1`}>
+                          Completed on {quiz.finished_at}
+                        </div> */}
                       </div>
                     )}
 
                     <div className="pt-2">
-                      {status.status === 'completed' ? (
+                      {quiz.completed ? (
                         <Button variant="outline" className="w-full" disabled>
                           <CheckCircle className="h-4 w-4 mr-2" />
                           Quiz Completed
                         </Button>
                       ) : (
                         <Link href={`/quizzes/${quizId}`}>
-                          <Button className="w-full">
+                          <Button className="w-full cursor-pointer">
                             Start Quiz
                           </Button>
                         </Link>

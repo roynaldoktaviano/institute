@@ -36,6 +36,8 @@ export interface Quiz {
       status: string
     }
   }
+  completed: any
+  
 }
 
 export interface ProductKnowledge {
@@ -50,6 +52,7 @@ export interface ProductKnowledge {
 }
 
 export interface QuizSubmission {
+  status: any
   quiz_id: number
   answers: number[]
   score: number
