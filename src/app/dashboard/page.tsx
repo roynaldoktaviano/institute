@@ -199,16 +199,16 @@ export default function DashboardPage() {
             Selamat Pagi, {user.name}!
           </h2>
           <p className="text-gray-600 dark:text-gray-400">
-            Continue your drone training journey
+            Teruskan tahapan pelatihan drone Anda menuju tingkat pemahaman dan keahlian yang lebih tinggi.
           </p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
+          <Card className="gap-1">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Quizzes Submitted
+                Jumlah Quiz Dikerjakan
               </CardTitle>
               <Trophy className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -223,7 +223,7 @@ export default function DashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Trainings Participated
+                Jumlah Training Diikuti
               </CardTitle>
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -240,7 +240,7 @@ export default function DashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Learning Progress
+                Progress Belajar
               </CardTitle>
               <BookOpen className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -262,7 +262,7 @@ export default function DashboardPage() {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Recent Trainings
+              Pelatihan Terbaru
             </h3>
             <Link href="/trainings">
               <Button variant="outline" className="cursor-pointer">See All</Button>
@@ -312,7 +312,7 @@ export default function DashboardPage() {
                   </p>
                   <Link href={`/trainings/${training.id}`}>
                     <Button size="sm" className="w-full mt-5 cursor-pointer">
-                      View Details
+                      Lihat Detail
                     </Button>
                   </Link>
                 </CardContent>
@@ -325,7 +325,7 @@ export default function DashboardPage() {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Weekly Quizzes
+              Quiz Terbaru
             </h3>
             <Link href="/quizzes">
               <Button variant="outline" className="cursor-pointer">See All</Button>
@@ -344,10 +344,10 @@ export default function DashboardPage() {
     <CardContent>
       <div className="flex items-center text-xs text-gray-500 mb-2">
         <Clock className="h-3 w-3 mr-1" />
-        {quiz.time_limit_minutes} minutes
+        {quiz.time_limit_minutes} menit
       </div>
       <div className="text-xs text-gray-600 dark:text-gray-400 mb-3">
-        {quiz.questions.length} questions
+        {quiz.questions.length} pertanyaan
       </div>
 
       {quiz.completed ? (
@@ -360,7 +360,7 @@ export default function DashboardPage() {
       ) : (
         <Link href={`/quizzes/${quiz.id}`}>
           <Button size="sm" className="w-full cursor-pointer">
-            Start Quiz
+            Mulai Quiz
           </Button>
         </Link>
       )}
@@ -407,7 +407,7 @@ export default function DashboardPage() {
                   <div className="flex space-x-2 mt-3">
                     <Link href={`/products/${product.id}`}>
                       <Button size="sm" className="flex-1 cursor-pointer">
-                        Read More
+                        Baca Detail
                       </Button>
                     </Link>
                     <Button size="sm" variant="outline" asChild>

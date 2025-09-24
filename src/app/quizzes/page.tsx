@@ -132,12 +132,12 @@ export default function QuizzesPage() {
                   href="/profile"
                   className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 >
-                  Hello, {user.name}
+                  Halo, {user.name}
                 </Link>
               </div>
               <Button variant="outline" size="sm" onClick={handleLogout}>
                 <LogOut className="h-4 w-4 mr-2" />
-                Logout
+                Keluar
               </Button>
             </div>
             </div>
