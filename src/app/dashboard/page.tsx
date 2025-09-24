@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { parse, format } from "date-fns";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 interface DashboardStats {
   quizzesSubmitted: number;
@@ -141,9 +142,15 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex w-full justify-between items-center">
-              <h1 className="text-2xl font-bold text-white dark:text-white">
+              {/* <h1 className="text-2xl font-bold text-white dark:text-white">
                 Doran Institute
-              </h1>
+              </h1> */}
+              <Image
+              src="/logo-test.png"
+              width={150}
+              height={`100`}
+              alt="Logo Test"
+              />
                <nav className="hidden md:flex space-x-4">
       {menus.map((menu) => (
         <Link
@@ -168,7 +175,7 @@ export default function DashboardPage() {
                 </Avatar>
                 <Link
                   href="/profile"
-                  className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  className="text-sm font-medium text-white dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 >
                   Hello, {user.name}
                 </Link>
@@ -189,7 +196,7 @@ export default function DashboardPage() {
         {/* Welcome Section */}
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Welcome back, {user.name}!
+            Selamat Pagi, {user.name}!
           </h2>
           <p className="text-gray-600 dark:text-gray-400">
             Continue your drone training journey
