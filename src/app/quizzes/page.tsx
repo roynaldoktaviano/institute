@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { Clock, CheckCircle, ArrowLeft, Trophy } from 'lucide-react'
+import { Clock, CheckCircle, ArrowLeft, Trophy, BookOpen } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
 
@@ -113,7 +113,7 @@ export default function QuizzesPage() {
             
 
             return (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
+              <Card key={index} className="hover:shadow-lg transition-shadow gap-[2px]">
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div>
@@ -123,40 +123,41 @@ export default function QuizzesPage() {
                     />
                       {/* <CardDescription className="text-sm">Week {quiz.week}</CardDescription> */}
                     </div>
-                    <Badge 
-                      variant={quiz.completed  ? 'default' : 'secondary'}
-                      className={quiz.completed ? 'bg-green-100 text-green-800' : ''}
-                    >
-                      {quiz.completed ? 'Selesai' : 'Belum Selesai'}
-                    </Badge>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
+                      <Badge 
+                      variant={quiz.completed  ? 'default' : 'secondary'}
+                      className={quiz.completed ? 'bg-green-100 text-green-800 px-4' : 'px-4'}
+                    >
+                      {quiz.completed ? 'Selesai' : 'Belum Selesai'}
+                    </Badge>
                     <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                       <Clock className="h-4 w-4 mr-2" />
                       {quiz.time_limit_minutes} minutes
                     </div>
                     
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                      <BookOpen className="h-4 w-4 mr-2" />
                       {quiz.questions.length} questions
                     </div>
 
                     {quiz.completed && (
                       <div className={`${quiz.status === 'Lulus' ? 'bg-green-50 dark:bg-green-900/20': 'bg-red-50 dark:bg-red-900/20'} rounded-lg p-3`}>
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-green-800 dark:text-green-200">
+                          <span className={`${quiz.status === 'Lulus' ? 'text-green-800 dark:text-green-200' : 'text-red-800 dark:text-red-200'} text-sm font-medium `}>
                             Quiz Score
                           </span>
-                          <Trophy className="h-4 w-4 text-green-600" />
+                          <Trophy className={`${quiz.status === 'Lulus' ? 'text-green-600' : 'text-red-600'} h-4 w-4 `} />
                         </div>
                         <div className={`${quiz.status === 'Lulus' ? 'text-green-800 dark:text-green-200': 'text-red-800 dark:text-red-200'} text-2xl font-bold `}>
                           {quiz.score} / 100
                         </div>
                         <Progress value={quiz.score} className="mt-2 h-2" />
-                        {/* <div className={`${quiz.status === 'Lulus' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'} text-xs  mt-1`}>
-                          Completed on {quiz.finished_at}
-                        </div> */}
+                        <div className={`${quiz.status === 'Lulus' ? 'bg-green-600 dark:bg-green-400' : 'bg-red-600 dark:bg-red-400'} w-fit mt-4 mb-2 px-2 py-1 text-sm text-white rounded`}>
+                          {quiz.status}
+                        </div>
                       </div>
                     )}
 
@@ -164,12 +165,12 @@ export default function QuizzesPage() {
                       {quiz.completed ? (
                         <Button variant="outline" className="w-full" disabled>
                           <CheckCircle className="h-4 w-4 mr-2" />
-                          Quiz Completed
+                          Quiz Sudah Dikerjakan
                         </Button>
                       ) : (
-                        <Link href={`/quizzes/${quizId}`}>
+                        <Link href={`/quizzes/${quiz.id}`}>
                           <Button className="w-full cursor-pointer">
-                            Start Quiz
+                            Kerjakan Quiz
                           </Button>
                         </Link>
                       )}

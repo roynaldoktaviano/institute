@@ -20,6 +20,7 @@ export default function QuizDetailPage() {
   const router = useRouter()
   const { toast } = useToast()
   const [quiz, setQuiz] = useState<Quiz | null>(null)
+   const [quizzes, setQuizzes] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [quizStarted, setQuizStarted] = useState(false)
   const [quizCompleted, setQuizCompleted] = useState(false)
@@ -40,6 +41,7 @@ export default function QuizDetailPage() {
   const loadQuiz = async () => {
     try {
       const quizzes = await lmsApi.getQuizzes()
+      setQuizzes(quizzes);
 
       // Cari quiz berdasarkan ID
       const foundQuiz = quizzes.find(q => q.id === quizId)
@@ -59,7 +61,7 @@ export default function QuizDetailPage() {
       // Check if user has already taken this quiz
       const submissions = await lmsApi.getQuizSubmissions()
       const hasTaken = submissions.some(s => s.quiz_id === quizId)
-      setHasTakenQuiz(hasTaken)
+      setHasTakenQuiz(foundQuiz.completed)
 
       // Initialize answers array
       setAnswers(new Array(foundQuiz.questions.length).fill(-1))

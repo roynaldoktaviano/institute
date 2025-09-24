@@ -18,6 +18,7 @@ import { Calendar, Clock, BookOpen, Trophy, LogOut, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { parse, format } from "date-fns";
+import { usePathname } from "next/navigation";
 
 interface DashboardStats {
   quizzesSubmitted: number;
@@ -42,6 +43,14 @@ export default function DashboardPage() {
   const [recentQuizzes, setRecentQuizzes] = useState<any[]>([]);
   const [recentProducts, setRecentProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+    const pathname = usePathname();
+    const menus = [
+    { name: "Dashboard", href: "/dashboard" },
+    { name: "Trainings", href: "/trainings" },
+    { name: "Quizzes", href: "/quizzes" },
+    { name: "Products", href: "/products" },
+    // { name: "Profile", href: "/profile" },
+  ];
 
   useEffect(() => {
     if (!user) {
@@ -128,48 +137,30 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b">
+      <header className="bg-[#31569A] py-2 rounded-b-xl dark:bg-gray-800 shadow-xs border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <div className="flex w-full justify-between items-center">
+              <h1 className="text-2xl font-bold text-white dark:text-white">
                 Doran Institute
               </h1>
-              <nav className="hidden md:flex space-x-4">
-                <Link
-                  href="/dashboard"
-                  className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  href="/trainings"
-                  className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                >
-                  Trainings
-                </Link>
-                <Link
-                  href="/quizzes"
-                  className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                >
-                  Quizzes
-                </Link>
-                <Link
-                  href="/products"
-                  className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                >
-                  Products
-                </Link>
-                <Link
-                  href="/profile"
-                  className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                >
-                  Profile
-                </Link>
-              </nav>
-            </div>
-
-            <div className="flex items-center space-x-4">
+               <nav className="hidden md:flex space-x-4">
+      {menus.map((menu) => (
+        <Link
+          key={menu.href}
+          href={menu.href}
+          className={`px-4 py-1 rounded text-sm transition-all
+            ${
+              pathname === menu.href
+                ? "bg-white text-black"
+                : "text-white hover:bg-white hover:text-black"
+            }`}
+        >
+          {menu.name}
+        </Link>
+      ))}
+    </nav>
+              <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={user.avatar_urls?.["96"]} alt={user.name} />
@@ -187,6 +178,9 @@ export default function DashboardPage() {
                 Logout
               </Button>
             </div>
+            </div>
+
+            
           </div>
         </div>
       </header>
