@@ -12,6 +12,7 @@ import { Clock, CheckCircle, ArrowLeft, Trophy, BookOpen, LogOut } from 'lucide-
 import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
 import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
+import Image from 'next/image'
 
 export default function QuizzesPage() {
   const { user, logout } = useAuth()
@@ -103,9 +104,15 @@ export default function QuizzesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex w-full justify-between items-center">
-              <h1 className="text-2xl font-bold text-white dark:text-white">
+              {/* <h1 className="text-2xl font-bold text-white dark:text-white">
                 Doran Institute
-              </h1>
+              </h1> */}
+              <Image
+              src="/logo-test.png"
+              width={150}
+              height={`100`}
+              alt="Logo Test"
+              />
                <nav className="hidden md:flex space-x-4">
       {menus.map((menu) => (
         <Link
@@ -130,14 +137,14 @@ export default function QuizzesPage() {
                 </Avatar>
                 <Link
                   href="/profile"
-                  className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  className="text-sm font-medium text-white dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 >
-                  Halo, {user.name}
+                  Hello, {user.name}
                 </Link>
               </div>
               <Button variant="outline" size="sm" onClick={handleLogout}>
                 <LogOut className="h-4 w-4 mr-2" />
-                Keluar
+                Logout
               </Button>
             </div>
             </div>
