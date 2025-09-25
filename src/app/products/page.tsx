@@ -1,22 +1,42 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth'
 import { lmsApi, ProductKnowledge } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Download, ArrowLeft, BookOpen } from 'lucide-react'
+import { Download, ArrowLeft, BookOpen, LogOut } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
+import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
+import Image from 'next/image'
 
 export default function ProductsPage() {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
   const [products, setProducts] = useState<ProductKnowledge[]>([])
   const [isLoading, setIsLoading] = useState(true)
+
+  const pathname = usePathname();
+        const menus = [
+        { name: "Dashboard", href: "/dashboard" },
+        { name: "Trainings", href: "/trainings" },
+        { name: "Quizzes", href: "/quizzes" },
+        { name: "Products", href: "/products" },
+        // { name: "Profile", href: "/profile" },
+      ];
+  
+       const handleLogout = () => {
+      logout();
+      toast({
+        title: "Logged out successfully",
+        description: "You have been logged out of your account.",
+      });
+      router.push("/");
+    };
 
   useEffect(() => {
     if (!user) {
@@ -60,18 +80,56 @@ export default function ProductsPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b">
+       <header className="bg-[#31569A] py-2 rounded-b-xl dark:bg-gray-800 shadow-xs border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
-              <Link href="/dashboard">
-                <Button variant="outline" size="sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Dashboard
-                </Button>
-              </Link>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Product Knowledge</h1>
+            <div className="flex w-full justify-between items-center">
+              {/* <h1 className="text-2xl font-bold text-white dark:text-white">
+                Doran Institute
+              </h1> */}
+              <Image
+              src="/logo-test.png"
+              width={150}
+              height={`100`}
+              alt="Logo Test"
+              />
+               <nav className="hidden md:flex space-x-4">
+      {menus.map((menu) => (
+        <Link
+          key={menu.href}
+          href={menu.href}
+          className={`px-4 py-1 rounded text-sm transition-all
+            ${
+              pathname === menu.href
+                ? "bg-white text-black"
+                : "text-white hover:bg-white hover:text-black"
+            }`}
+        >
+          {menu.name}
+        </Link>
+      ))}
+    </nav>
+              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={user.avatar_urls?.["96"]} alt={user.name} />
+                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <Link
+                  href="/profile"
+                  className="text-sm font-medium text-white dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                >
+                  Hello, {user.name}
+                </Link>
+              </div>
+              <Button variant="outline" size="sm" onClick={handleLogout}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
             </div>
+            </div>
+
+            
           </div>
         </div>
       </header>
@@ -88,15 +146,15 @@ export default function ProductsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
-            <Card key={product.id} className="hover:shadow-lg transition-shadow">
+            <Card key={product.id} className="hover:shadow-lg transition-shadow pt-0 pb-6 gap-2">
               <div className="aspect-square bg-gray-200 rounded-t-lg overflow-hidden">
                 <img 
                   src={product.image} 
                   alt={product.product_name}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 mb-2"
                 />
               </div>
-              <CardHeader>
+              <CardHeader className='gap-0 mt-2'>
                 <CardTitle className="text-lg">{product.product_name}</CardTitle>
               </CardHeader>
               <CardContent>
@@ -106,10 +164,10 @@ export default function ProductsPage() {
                   </p>
                   
                   <div className="flex space-x-2">
-                    <Link href={`/products/${product.id}`}>
+                    <Link href={`/products/${product.id}`} className='cursor-pointer'>
                       <Button className="flex-1">
                         <BookOpen className="h-4 w-4 mr-2" />
-                        Read More
+                        Lihat Detail
                       </Button>
                     </Link>
                     <Button 
