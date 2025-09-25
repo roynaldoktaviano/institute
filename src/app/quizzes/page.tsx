@@ -8,11 +8,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { Clock, CheckCircle, ArrowLeft, Trophy, BookOpen, LogOut } from 'lucide-react'
+import { Clock, CheckCircle, ArrowLeft, Trophy, BookOpen, LogOut, Menu, User } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
 import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
 import Image from 'next/image'
+import { Sheet, SheetTrigger, SheetTitle, SheetContent } from '@/components/ui/sheet'
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@radix-ui/react-dropdown-menu'
 
 export default function QuizzesPage() {
   const { user, logout } = useAuth()
@@ -23,6 +25,7 @@ export default function QuizzesPage() {
   const [isLoading, setIsLoading] = useState(true)
 
    const pathname = usePathname();
+   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
       const menus = [
       { name: "Dashboard", href: "/dashboard" },
       { name: "Trainings", href: "/trainings" },
@@ -101,58 +104,161 @@ export default function QuizzesPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <header className="bg-[#31569A] py-2 rounded-b-xl dark:bg-gray-800 shadow-xs border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex w-full justify-between items-center">
-              {/* <h1 className="text-2xl font-bold text-white dark:text-white">
-                Doran Institute
-              </h1> */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center py-4">
+          <div className="flex items-center justify-between w-full">
+            {/* Logo */}
+            <div className="flex-shrink-0">
               <Image
-              src="/logo-test.png"
-              width={150}
-              height={`100`}
-              alt="Logo Test"
+                src="/logo-test.png"
+                width={150}
+                height={100}
+                alt="Logo Test"
+                className="h-10 w-auto"
               />
-               <nav className="hidden md:flex space-x-4">
-      {menus.map((menu) => (
-        <Link
-          key={menu.href}
-          href={menu.href}
-          className={`px-4 py-1 rounded text-sm transition-all
-            ${
-              pathname === menu.href
-                ? "bg-white text-black"
-                : "text-white hover:bg-white hover:text-black"
-            }`}
-        >
-          {menu.name}
-        </Link>
-      ))}
-    </nav>
-              <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={user.avatar_urls?.["96"]} alt={user.name} />
-                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <Link
-                  href="/profile"
-                  className="text-sm font-medium text-white dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                >
-                  Hello, {user.name}
-                </Link>
-              </div>
-              <Button variant="outline" size="sm" onClick={handleLogout}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Logout
-              </Button>
-            </div>
             </div>
 
-            
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex space-x-4">
+              {menus.map((menu) => (
+                <Link
+                  key={menu.href}
+                  href={menu.href}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all
+                    ${
+                      pathname === menu.href
+                        ? "bg-white text-black"
+                        : "text-white hover:bg-white hover:text-black"
+                    }`}
+                >
+                  {menu.name}
+                </Link>
+              ))}
+            </nav>
+
+            {/* User Menu - Desktop */}
+            <div className="hidden md:flex items-center space-x-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="flex items-center space-x-2 cursor-pointer hover:bg-white/10 rounded-md p-2 transition-colors">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user.avatar_urls?.["96"]} alt={user.name} />
+                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm font-medium text-white">
+                      Hello, {user.name}
+                    </span>
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile" className="flex items-center">
+                      <User className="mr-2 h-4 w-4" />
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout} className="flex items-center">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {/* Mobile Menu */}
+            <div className="md:hidden flex items-center space-x-2">
+              {/* Mobile Navigation Menu */}
+              <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="sm" className="text-white hover:bg-white/10">
+                    <Menu className="h-6 w-6" />
+                  </Button>
+                </SheetTrigger>
+                 <SheetTitle className="hidden">Menu</SheetTitle>
+                <SheetContent side="right" className="w-64 bg-[#31569A] text-white border-white/20">
+                  <div className="flex flex-col space-y-4 mt-8">
+                    <nav className="space-y-2 px-3 mt-3">
+                      {menus.map((menu) => (
+                        <Link
+                          key={menu.href}
+                          href={menu.href}
+                          className={`block px-4 py-3 rounded-md text-sm font-medium transition-all
+                            ${
+                              pathname === menu.href
+                                ? "bg-white text-black"
+                                : "text-white hover:bg-white/10 hover:text-white"
+                            }`}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          {menu.name}
+                        </Link>
+                      ))}
+                    </nav>
+                    
+                    <div className="border-t border-white/20 pt-4">
+                      <div className="flex items-center space-x-3 px-4 py-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={user.avatar_urls?.["96"]} alt={user.name} />
+                          <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="text-sm font-medium">Hello, {user.name}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-1 px-4">
+                        <Link
+                          href="/profile"
+                          className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm hover:bg-white/10 transition-colors"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          <User className="h-4 w-4" />
+                          <span>Profile</span>
+                        </Link>
+                        <button
+                          onClick={() => {
+                            handleLogout();
+                            setIsMobileMenuOpen(false);
+                          }}
+                          className="flex items-center space-x-2 w-full px-3 py-2 rounded-md text-sm hover:bg-white/10 transition-colors text-left"
+                        >
+                          <LogOut className="h-4 w-4" />
+                          <span>Logout</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
+
+              {/* Mobile User Avatar */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="flex items-center space-x-2 cursor-pointer hover:bg-white/10 rounded-md p-2 transition-colors hidden">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user.avatar_urls?.["96"]} alt={user.name} />
+                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile" className="flex items-center">
+                      <User className="mr-2 h-4 w-4" />
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout} className="flex items-center">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
-      </header>
+      </div>
+    </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">

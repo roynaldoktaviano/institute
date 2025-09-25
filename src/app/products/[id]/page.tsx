@@ -59,19 +59,25 @@ export default function ProductDetailPage() {
     loadProduct()
   }, [user, router, toast, productId])
 
-  const handleDownload = () => {
-    if (product) {
-      window.open(product.pdf_download, '_blank')
-      toast({
-        title: "Download started",
-        description: "The product specification PDF is being downloaded.",
-      })
-    }
-  }
+  const handleDownload = async () => {
+  if (!product) return;
 
-  if (!user) {
-    return null
-  }
+  const res = await fetch(`/api/products/${product.id}/pdf`);
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${product.product_name}-specs.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  toast({
+    title: "Download started",
+    description: "The product specification PDF is being generated.",
+  });
+};
 
   function stripHtml(html: string) {
   return html.replace(/<[^>]*>?/gm, '');
@@ -123,7 +129,7 @@ export default function ProductDetailPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-2">
+          <div id='product-detail' className="lg:col-span-2">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
               <div className="aspect-square bg-gray-200">
                 <img 
@@ -206,7 +212,7 @@ export default function ProductDetailPage() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <Button 
-                    className="w-full" 
+                    className="w-full cursor-pointer" 
                     onClick={handleDownload}
                   >
                     <Download className="h-4 w-4 mr-2" />

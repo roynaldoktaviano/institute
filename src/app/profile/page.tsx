@@ -145,7 +145,7 @@ export default function ProfilePage() {
                   
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">Account type</span>
-                    <Badge variant="secondary">{user.roles.join(', ')}</Badge>
+                    {/* <Badge variant="secondary">{user.roles.join(', ')}</Badge> */}
                   </div>
                   
                   <Separator />
@@ -280,28 +280,6 @@ export default function ProfilePage() {
                       </span>
                     </div>
                   )}
-                </div>
-
-                {/* Account Information */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Account Information</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex items-center space-x-2 p-2 bg-gray-50 dark:bg-gray-800 rounded">
-                      <Shield className="h-4 w-4 text-gray-500" />
-                      <div>
-                        <div className="text-sm font-medium">Roles</div>
-                        <div className="text-xs text-gray-500">{user.roles.join(', ')}</div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2 p-2 bg-gray-50 dark:bg-gray-800 rounded">
-                      <Calendar className="h-4 w-4 text-gray-500" />
-                      <div>
-                        <div className="text-sm font-medium">Member Since</div>
-                        <div className="text-xs text-gray-500">{new Date().toLocaleDateString()}</div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
 
                 {/* Action Buttons */}
