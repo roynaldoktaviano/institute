@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useToast } from '@/hooks/use-toast'
+import Image from 'next/image'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -67,15 +68,19 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 to-blue-100 dark:from-gray-900 dark:to-gray-800 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-[url('/bg-drone-2.jpg')] bg-cover from-sky-50 to-blue-100 dark:from-gray-900 dark:to-gray-800 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            Doran Institute
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+           <Image
+                          src="/logo-test.png"
+                          width={250}
+                          height={`100`}
+                          alt="Logo Test"
+                          className='mx-auto'
+                          />
+          {/* <p className="text-gray-600 dark:text-gray-400">
             Learning Management System
-          </p>
+          </p> */}
         </div>
         
         <Card>
