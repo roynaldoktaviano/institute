@@ -153,50 +153,50 @@ async getQuizzes(): Promise<Quiz[]> {
 
   return quizzes
 }
-
-  async getProductKnowledge(): Promise<ProductKnowledge[]> {
+async getProductKnowledge(): Promise<ProductKnowledge[]> {
   try {
-    const res = await fetch('https://roynaldkalele.com/wp-json/wp/v2/product-knowledge?_embed');
+    const res = await fetch('https://dorangadget.com/wp-json/wp/v2/product?per_page=15&page=1&_embed');
     const data = await res.json();
-    
-   return data.map((item: any) => {
-  const keyFeatures = item.acf?.key_features || {};
 
-  const features = [
-    {
-      title: keyFeatures.title_1,
-      description: keyFeatures.description_1 || keyFeatures.desicription_1, 
-    },
-    {
-      title: keyFeatures.title_2,
-      description: keyFeatures.description_2 || keyFeatures.desicription_2,
-    },
-    {
-      title: keyFeatures.title_3,
-      description: keyFeatures.description_3,
-    },
-    {
-      title: keyFeatures.title_4,
-      description: keyFeatures.description_4,
-    },
-  ].filter(f => f.title && f.description);
-  return {
-    id: item.id,
-    product_name: item.title.rendered,
-    summary: item.acf?.tagline || '',
-    image: item._embedded['wp:featuredmedia']?.[0]?.source_url || '',
-    pdf_download: item.acf?.ebook_link || '',
-    spesification: item.acf?.specifications,
-    description: item.acf?.product_overview,
-    features, 
-  };
-});
+    return data.map((item: any) => {
+      // Ambil gambar utama
+      const image = item.better_featured_image?.source_url 
+                    || item._embedded?.['wp:featuredmedia']?.[0]?.source_url 
+                    || '';
+
+      // Ambil fitur key_features jika ada (fallback ke acf lama)
+      const keyFeatures = item.acf?.key_features || {};
+
+      const features = [
+        { title: keyFeatures.title_1, description: keyFeatures.description_1 || keyFeatures.desicription_1 },
+        { title: keyFeatures.title_2, description: keyFeatures.description_2 || keyFeatures.desicription_2 },
+        { title: keyFeatures.title_3, description: keyFeatures.description_3 },
+        { title: keyFeatures.title_4, description: keyFeatures.description_4 },
+      ].filter(f => f.title && f.description);
+
+      return {
+        id: item.id,
+        product_name: item.title.rendered,
+        summary: item.excerpt?.rendered || item.acf?.tagline || '',
+        image,
+        pdf_download: item.acf?.ebook_link || '',
+        spesification: item.acf?.specifications || '',
+        description: item.content?.rendered || item.acf?.product_overview || '',
+        price: item.yoast_head_json?.product_price_amount || '',
+        currency: item.yoast_head_json?.product_price_currency || '',
+        brand: item.yoast_head_json?.product_brand || '',
+        availability: item.yoast_head_json?.product_availability || '',
+        features,
+        link: item.link
+      };
+    });
 
   } catch (error) {
     console.error('Failed to fetch product knowledge:', error);
     return [];
   }
 }
+
 
 async submitQuiz(
   userId: string,

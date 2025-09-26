@@ -20,7 +20,7 @@ export async function GET(req: Request, { params }: RouteParams) {
 
   const page = await browser.newPage();
     await page.setCookie({
-    name: "next-auth.session-token", // atau nama cookie yang dipakai
+    name: "next-auth.session-token", 
     value: "isi_cookie_sessimu",
     domain: "localhost",
     path: "/",
@@ -30,17 +30,15 @@ export async function GET(req: Request, { params }: RouteParams) {
 
   // Pergi ke halaman produk
   await page.goto(`http://localhost:3000/products/${id}`, {
-    waitUntil: "networkidle0", // tunggu hingga network idle
+    waitUntil: "networkidle0", 
   });
 
-  // Tunggu selector muncul, tambahan fallback timeout
   try {
     await page.waitForSelector("#product-detail", { timeout: 60000 });
   } catch (err) {
     console.error("Selector #product-detail tidak ditemukan:", err);
   }
 
-  // Render halaman untuk PDF
   await page.emulateMediaType("screen");
 
   const pdfBuffer = await page.pdf({

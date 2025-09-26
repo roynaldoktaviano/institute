@@ -141,11 +141,12 @@ export default function ProductDetailPage() {
               
               <div className="p-6">
                 <div className="mb-6">
-                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                    {product.product_name}
+                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2"
+                  dangerouslySetInnerHTML={{ __html: product.product_name }}
+                  >
                   </h1>
-                  <p className="text-lg text-gray-600 dark:text-gray-400">
-                    {product.summary}
+                  <p className="text-lg text-gray-600 dark:text-gray-400"
+                  dangerouslySetInnerHTML={{ __html: product.summary }}>
                   </p>
                 </div>
 
@@ -155,8 +156,9 @@ export default function ProductDetailPage() {
                 <div className="mb-8">
                   <h2 className="text-xl font-semibold mb-4">Product Overview</h2>
                   <div className="prose prose-sm dark:prose-invert max-w-none">
-                    <p>
-                      {stripHtml(product.description)}
+                    <p
+                    dangerouslySetInnerHTML={{ __html: product.description}}
+                    >
                     </p>
                   </div>
                 </div>

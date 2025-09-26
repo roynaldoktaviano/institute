@@ -120,3 +120,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+.prose p {
+  
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 24px !important;
+
+}

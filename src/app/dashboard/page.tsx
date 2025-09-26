@@ -503,14 +503,16 @@ export default function DashboardPage() {
                   />
                 </div>
                 <CardHeader className="pb-0 mt-3">
-                  <CardTitle className="text-sm pb-0">
-                    {product.product_name}
-                  </CardTitle>
+                  <CardTitle
+                    className="text-sm"
+                    dangerouslySetInnerHTML={{ __html: product.product_name }}
+                  />
                 </CardHeader>
                 <CardContent>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
-                    {product.summary}
-                  </p>
+                  <p
+                  className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mb-3"
+                  dangerouslySetInnerHTML={{ __html: product.summary }}
+                ></p>
                   <div className="flex space-x-2 mt-3">
                     <Link href={`/products/${product.id}`}>
                       <Button size="sm" className="flex-1 cursor-pointer">

@@ -260,12 +260,17 @@ export default function ProductsPage() {
                 />
               </div>
               <CardHeader className='gap-0 mt-2'>
-                <CardTitle className="text-lg">{product.product_name}</CardTitle>
+                
+                <CardTitle
+                    className="text-sm"
+                    dangerouslySetInnerHTML={{ __html: product.product_name }}
+                  />
               </CardHeader>
+              
               <CardContent>
                 <div className="space-y-4">
-                  <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-3">
-                    {product.summary}
+                  <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-3"
+                  dangerouslySetInnerHTML={{ __html: product.summary }}>
                   </p>
                   
                   <div className="flex space-x-2">
