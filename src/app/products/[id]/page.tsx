@@ -165,22 +165,22 @@ export default function ProductDetailPage() {
 
                 {/* Key Features */}
                 <div className="mb-8">
-                  <h2 className="text-xl font-semibold mb-4">Key Features</h2>
+                  {/* <h2 className="text-xl font-semibold mb-4">Key Features</h2> */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-  {product.features.map((f: any, i: number) => (
-    <Card key={i}>
-      <CardContent className="p-4">
-        <div className="flex items-center space-x-3">
-          <div>
-            <h3 className="font-medium">{f.title}</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {f.description}
-            </p>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  ))}
+                  {product.features.map((f: any, i: number) => (
+                    <Card key={i}>
+                      <CardContent className="p-4">
+                        <div className="flex items-center space-x-3">
+                          <div>
+                            <h3 className="font-medium">{f.title}</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {f.description}
+                            </p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
 </div>
 
                 </div>
