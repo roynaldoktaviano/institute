@@ -11,6 +11,7 @@ import { Calendar, MapPin, Clock, Users, ArrowLeft, CheckCircle } from 'lucide-r
 import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
 import { parse, format } from "date-fns";
+import SlideViewer from '@/components/lms/SlideViewer'
 
 export default function TrainingDetailPage() {
   const { user } = useAuth()
@@ -160,13 +161,20 @@ function formatTrainingDate(dateStr: string) {
                     <p className="text-lg text-gray-600 dark:text-gray-400">
                       {training.topic}
                     </p>
-                      <iframe
-  src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(training.file)}`}
-  width="100%"
-  height="600"
-  frameBorder="0"
-  className='mt-6 mb-4'
-/>
+                      
+                      <div className="relative mt-6 mb-4">
+  <iframe
+    src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(training.file)}`}
+    width="100%"
+    height="600"
+    frameBorder="0"
+  />
+  {/* overlay transparan di atas iframe */}
+  <div className="absolute inset-0 h-[79vh]" onContextMenu={(e) => e.preventDefault()} />
+</div>
+
+
+                      
                   </div>
                   <Badge variant={training.type === 'online' ? 'default' : 'secondary'} className="text-sm">
                     {training.type}
