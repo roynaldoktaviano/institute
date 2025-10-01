@@ -128,3 +128,9 @@
     gap: 24px !important;
 
 }
+
+* {
+  user-select: none;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE10+ */
+}
