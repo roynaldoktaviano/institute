@@ -22,7 +22,6 @@ export async function GET(req: Request, { params }: RouteParams) {
     await page.setCookie({
     name: "next-auth.session-token", 
     value: "isi_cookie_sessimu",
-    domain: "localhost",
     path: "/",
     httpOnly: true,
     secure: false,

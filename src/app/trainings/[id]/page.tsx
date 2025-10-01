@@ -160,6 +160,13 @@ function formatTrainingDate(dateStr: string) {
                     <p className="text-lg text-gray-600 dark:text-gray-400">
                       {training.topic}
                     </p>
+                      <iframe
+  src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(training.file)}`}
+  width="100%"
+  height="600"
+  frameBorder="0"
+  className='mt-6 mb-4'
+/>
                   </div>
                   <Badge variant={training.type === 'online' ? 'default' : 'secondary'} className="text-sm">
                     {training.type}

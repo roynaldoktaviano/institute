@@ -15,6 +15,7 @@ export interface Training {
   image: string
   description: string
   short_description:string
+  file : string
 }
 
 export interface QuizQuestion {
@@ -91,6 +92,7 @@ export class LMSApi {
       description: item.acf?.isi_detail_training || "",
       short_description: item.acf?.deskripsi_traning || "",
       url: item.acf?.url_cta || "",
+      file : item.acf.file_power_point || "",
     }));
 
     return trainings;

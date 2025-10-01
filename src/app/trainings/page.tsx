@@ -296,10 +296,10 @@ export default function TrainingsPage() {
                     {training.short_description}
                   </p>
                   
-                  <Link href={`/trainings/${training.id}`}>
-                    <Button className="w-full">
+                  <Link href={`/trainings/${training.id}`} className='cursor-pointer'>
+                    <button className="w-full cursor-pointer">
                       View Details
-                    </Button>
+                    </button>
                   </Link>
                 </div>
               </CardContent>
