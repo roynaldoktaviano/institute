@@ -16,6 +16,7 @@ export interface Training {
   description: string
   short_description:string
   file : string
+  modul: []
 }
 
 export interface QuizQuestion {
@@ -23,6 +24,18 @@ export interface QuizQuestion {
   question: string
   options: string[]
   answer_type: 'multiple_choice'
+}
+
+export interface EvaluasiModul { 
+  id: number;
+  question: string
+  option: string[]
+}
+
+export interface Modul {
+  id: number
+  file: string
+  evaluasi: EvaluasiModul[] 
 }
 
 export interface Quiz {
@@ -93,6 +106,7 @@ export class LMSApi {
       short_description: item.acf?.deskripsi_traning || "",
       url: item.acf?.url_cta || "",
       file : item.acf.file_power_point || "",
+      modul: item.acf.pilih_modul || [],
     }));
 
     return trainings;
@@ -100,6 +114,11 @@ export class LMSApi {
     console.error("Error getTrainings:", err);
     return [];
   }
+}
+
+async  getModule(id: number) {
+  const res = await fetch(`https://roynaldkalele.com/wp-json/wp/v2/modul/${id}`);
+  return res.json();
 }
 
 

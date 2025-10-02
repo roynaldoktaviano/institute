@@ -1,98 +1,127 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { useAuth } from '@/lib/auth'
-import { lmsApi, Training } from '@/lib/api'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Calendar, MapPin, Clock, Users, ArrowLeft, CheckCircle } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
-import Link from 'next/link'
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth";
+import { lmsApi, Modul, Training } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Calendar,
+  MapPin,
+  Clock,
+  Users,
+  ArrowLeft,
+  CheckCircle,
+  Book,
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
 import { parse, format } from "date-fns";
-import SlideViewer from '@/components/lms/SlideViewer'
+import SlideViewer from "@/components/lms/SlideViewer";
 
 export default function TrainingDetailPage() {
-  const { user } = useAuth()
-  const params = useParams()
-  const router = useRouter()
-  const { toast } = useToast()
-  const [training, setTraining] = useState<Training | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [hasParticipated, setHasParticipated] = useState(false)
+  const { user } = useAuth();
+  const params = useParams();
+  const router = useRouter();
+  const { toast } = useToast();
+  const [training, setTraining] = useState<Training | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasParticipated, setHasParticipated] = useState(false);
+  const [modul, setModul] = useState<any[] | []>([]);
 
-  const trainingId = parseInt(params.id as string)
-
+  const trainingId = parseInt(params.id as string);
 
   function stripHtml(html: string) {
-  return html.replace(/<[^>]*>?/gm, '');
-}
-function formatTrainingDate(dateStr: string) {
-  // API: "28/09/2025 4:00 pm"
-  const parsed = parse(dateStr, "dd/MM/yyyy h:mm a", new Date());
-  return format(parsed, "dd MMMM yyyy - hh.mm aaaa");
-}
+    return html.replace(/<[^>]*>?/gm, "");
+  }
+  function formatTrainingDate(dateStr: string) {
+    // API: "28/09/2025 4:00 pm"
+    const parsed = parse(dateStr, "dd/MM/yyyy h:mm a", new Date());
+    return format(parsed, "dd MMMM yyyy - hh.mm aaaa");
+  }
 
   useEffect(() => {
     if (!user) {
-      router.push('/login')
-      return
+      router.push("/login");
+      return;
     }
 
     const loadTraining = async () => {
       try {
-        const trainings = await lmsApi.getTrainings()
-        const foundTraining = trainings.find(t => t.id === trainingId)
-        
+        const trainings = await lmsApi.getTrainings();
+        const foundTraining = trainings.find((t) => t.id === trainingId);
+
+        if (foundTraining?.modul) {
+        const modulesData = await Promise.all(
+          foundTraining.modul.map(async (id: number) => {
+            const res = await fetch(`https://roynaldkalele.com/wp-json/wp/v2/modul/${id}`);
+            return res.json();
+          })
+        );
+
+        setModul(modulesData);
+      }
+        // const modul = await lmsApi.getModule(foundTraining?.modul)
+
         if (!foundTraining) {
           toast({
             title: "Training not found",
             description: "The requested training could not be found.",
             variant: "destructive",
-          })
-          router.push('/trainings')
-          return
+          });
+          router.push("/trainings");
+          return;
         }
-        
-        setTraining(foundTraining)
-        
+
+        setTraining(foundTraining);
+
         // Check if user has participated in this training
-        const participations = await lmsApi.getTrainingParticipations()
-        setHasParticipated(participations.some(p => p.training_id === trainingId))
+        const participations = await lmsApi.getTrainingParticipations();
+        setHasParticipated(
+          participations.some((p) => p.training_id === trainingId)
+        );
       } catch (error) {
         toast({
           title: "Error loading training",
           description: "Please try again later.",
           variant: "destructive",
-        })
+        });
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    loadTraining()
-  }, [user, router, toast, trainingId])
+    loadTraining();
+  }, [user, router, toast, trainingId]);
+  
 
   const handleParticipate = async () => {
     try {
-      await lmsApi.participateInTraining(trainingId)
-      setHasParticipated(true)
+      await lmsApi.participateInTraining(trainingId);
+      setHasParticipated(true);
       toast({
         title: "Participation confirmed",
         description: "You have successfully registered for this training.",
-      })
+      });
     } catch (error) {
       toast({
         title: "Error registering",
         description: "Please try again later.",
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
 
   if (!user) {
-    return null
+    return null;
   }
 
   if (isLoading) {
@@ -103,7 +132,7 @@ function formatTrainingDate(dateStr: string) {
           <p>Loading training details...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!training) {
@@ -116,7 +145,7 @@ function formatTrainingDate(dateStr: string) {
           </Link>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -132,7 +161,9 @@ function formatTrainingDate(dateStr: string) {
                   Back to Trainings
                 </Button>
               </Link>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Detail Pelatihan</h1>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Detail Pelatihan
+              </h1>
             </div>
           </div>
         </div>
@@ -144,49 +175,91 @@ function formatTrainingDate(dateStr: string) {
           <div className="lg:col-span-2">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
               <div className="aspect-video bg-gray-200">
-                <img 
-                  src={training.image} 
+                <img
+                  src={training.image}
                   alt={training.title}
                   className="w-full h-full object-cover"
                 />
               </div>
-              
+
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h1
-  className="text-3xl font-bold text-gray-900 dark:text-white mb-2"
-  dangerouslySetInnerHTML={{ __html: training.title }}
-/>
+                      className="text-3xl font-bold text-gray-900 dark:text-white mb-2"
+                      dangerouslySetInnerHTML={{ __html: training.title }}
+                    />
                     <p className="text-lg text-gray-600 dark:text-gray-400">
                       {training.topic}
                     </p>
-                      
+
+                    {/* <p>Jumlah Modul : {training.modul.length} Modul Latihan</p> */}
+
+                     <div className="bg-gray-100 w-full  mb-4 mt-8  rounded-lg p-6 ">
+                      <h2 className="text-xl font-bold mb-3">Daftar Materi Training :</h2>
+                      {modul.map((m: any, index: number) => (
+                      <div key={m.id} className="gray-400">
+                        
+                        
+                        <p className="mb-2">
+  <span className="mr-3">{index + 1}.</span>
+  <span dangerouslySetInnerHTML={{ __html: m.title?.rendered ?? m.title }} />
+</p>
+
+
+                        {/* {m.acf?.materi_ppt && (
+                          <a href={m.acf.materi_ppt} target="_blank" rel="noopener noreferrer">
+                            Download PPT
+                          </a>
+                        )} */}
+
+                        {/* {m.acf?.evaluasi && (
+                          <div>
+                            <h3>Evaluasi</h3>
+                            {m.acf.evaluasi.map((q: any, idx: number) => (
+                              <p key={idx}>{q.pertanyaan}</p>
+                            ))}
+                          </div>
+                        )} */}
+                      </div>
+                    ))}
+                     </div>
+{/* 
+                    {training.file && (
                       <div className="relative mt-6 mb-4">
-  <iframe
-    src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(training.file)}`}
-    width="100%"
-    height="600"
-    frameBorder="0"
-  />
-  {/* overlay transparan di atas iframe */}
-  <div className="absolute inset-0 h-[79vh]" onContextMenu={(e) => e.preventDefault()} />
-</div>
-
-
-                      
+                        <iframe
+                          src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(
+                            training.file
+                          )}`}
+                          width="100%"
+                          height="600"
+                          frameBorder="0"
+                        />
+                        <div
+                          className="absolute inset-0 h-[79vh]"
+                          onContextMenu={(e) => e.preventDefault()}
+                        />
+                      </div>
+                    )} */}
                   </div>
-                  <Badge variant={training.type === 'online' ? 'default' : 'secondary'} className="text-sm">
+                  <Badge
+                    variant={
+                      training.type === "online" ? "default" : "secondary"
+                    }
+                    className="text-sm"
+                  >
                     {training.type}
                   </Badge>
                 </div>
 
                 <div className="prose prose-sm dark:prose-invert max-w-none">
-                  <h3 className="text-lg font-semibold mb-3">Tentang Pelatihan</h3>
+                  <h3 className="text-lg font-semibold mb-3">
+                    Tentang Pelatihan
+                  </h3>
                   <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                     {stripHtml(training.description)}
                   </p>
-                  
+
                   {/* <h3 className="text-lg font-semibold mb-3 mt-6">What you'll learn</h3>
                   <ul className="space-y-2">
                     <li className="flex items-start">
@@ -225,32 +298,40 @@ function formatTrainingDate(dateStr: string) {
                     {formatTrainingDate(training.date)}
                   </span>
                 </div>
-                
+
                 {/* <div className="flex items-center text-sm">
                   <Clock className="h-4 w-4 mr-2 text-gray-500" />
                   <span className="font-medium">Duration:</span>
                   <span className="ml-2">8 hours</span>
                 </div> */}
-                
+
                 <div className="flex items-center text-sm">
                   <MapPin className="h-4 w-4 mr-2 text-gray-500" />
                   <span className="font-medium">Lokasi:</span>
                   <span className="ml-2">{training.location}</span>
                 </div>
-{/*                 
+                                
                 <div className="flex items-center text-sm">
-                  <Users className="h-4 w-4 mr-2 text-gray-500" />
-                  <span className="font-medium">Capacity:</span>
-                  <span className="ml-2">20 participants</span>
+                  <Book className="h-4 w-4 mr-2 text-gray-500" />
+                  <span className="font-medium">Jumlah Modul:</span>
+                  <span className="ml-2">{training.modul.length} Modul Pelatihan</span>
                 </div>
-                 */}
+
+                <div className="pt-4 border-t">
+                  <Button
+                      className="w-full cursor-pointer bg-blue-900"
+                      onClick={() => window.open(`/modul/${modul[0].id}`, "_blank")}
+                    >
+                      Mulai Training
+                    </Button>
+                </div>
+                
                 <div className="pt-4 border-t">
                   {training.url === "" ? (
-                    <div className="text-center">
-                    </div>
+                    <div className="text-center"></div>
                   ) : (
-                    <Button 
-                      className="w-full" 
+                    <Button
+                      className="w-full"
                       onClick={() => window.open(training.url, "_blank")}
                     >
                       Lihat Training
@@ -263,5 +344,5 @@ function formatTrainingDate(dateStr: string) {
         </div>
       </main>
     </div>
-  )
+  );
 }
