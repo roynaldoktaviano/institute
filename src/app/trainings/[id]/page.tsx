@@ -319,11 +319,12 @@ export default function TrainingDetailPage() {
 
                 <div className="pt-4 border-t">
                   <Button
-                      className="w-full cursor-pointer bg-blue-900"
-                      onClick={() => window.open(`/modul/${modul[0].id}`, "_blank")}
-                    >
-                      Mulai Training
-                    </Button>
+  className="w-full cursor-pointer bg-blue-900"
+  onClick={() => window.open(`/modul/${modul[0].id}?trainingId=${training.id}`, "_blank")}
+>
+  Mulai Training
+</Button>
+
                 </div>
                 
                 <div className="pt-4 border-t">

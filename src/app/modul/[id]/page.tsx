@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Circle, BookOpen, FileText, Trophy, ArrowRight, ArrowLeft, RotateCcw } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 interface Modul {
   id: number;
@@ -34,6 +35,9 @@ const [modul, setModul] = useState<Modul | null>(null);
   const [currentModuleIndex, setCurrentModuleIndex] = useState(-1);
   const [isLastModule, setIsLastModule] = useState(false);
 
+  const searchParams = useSearchParams();
+  const trainingId = searchParams.get("trainingId");
+
   useEffect(() => {
     params.then(({ id }) => {
       // Fetch current module
@@ -43,14 +47,27 @@ const [modul, setModul] = useState<Modul | null>(null);
           setModul(data);
           
           // Fetch all modules to determine position
-          fetch(`https://roynaldkalele.com/wp-json/wp/v2/modul?per_page=100`)
+          fetch(`https://roynaldkalele.com/wp-json/wp/v2/traning/${trainingId}`)
             .then((res) => res.json())
-            .then((allData) => {
-              setAllModules(allData);
-              const currentIndex = allData.findIndex((m: Modul) => m.id === data.id);
-              setCurrentModuleIndex(currentIndex);
-              setIsLastModule(currentIndex === allData.length - 1);
+            .then((trainingData) => {
+              // ambil array modul id dari ACF
+              const modulIds = trainingData.acf?.pilih_modul || [];
+
+              // fetch detail modul berdasarkan id
+              Promise.all(
+                modulIds.map((id: number) =>
+                  fetch(`https://roynaldkalele.com/wp-json/wp/v2/modul/${id}`).then((res) => res.json())
+                )
+              ).then((modulDetails) => {
+                setAllModules(modulDetails);
+
+                // cari index modul sekarang
+                const currentIndex = modulDetails.findIndex((m: Modul) => m.id === data.id);
+                setCurrentModuleIndex(currentIndex);
+                setIsLastModule(currentIndex === modulDetails.length - 1);
+              });
             });
+
           
           setLoading(false);
         });
@@ -105,13 +122,14 @@ const [modul, setModul] = useState<Modul | null>(null);
   };
 
   const goToNextModule = () => {
-    if (currentModuleIndex >= 0 && currentModuleIndex < allModules.length - 1) {
-      const nextModule = allModules[currentModuleIndex + 1];
-      window.location.href = `/modul/${nextModule.id}`;
-    } else {
-      setStep(3);
-    }
-  };
+  if (currentModuleIndex >= 0 && currentModuleIndex < allModules.length - 1) {
+    const nextModule = allModules[currentModuleIndex + 1];
+    window.location.href = `/modul/${nextModule.id}?trainingId=${trainingId}`;
+  } else {
+    setStep(3);
+  }
+};
+
 
   const totalQuestions = modul?.acf?.quiz?.length || 0;
   const answeredQuestions = Object.keys(quizAnswers).length;
@@ -148,13 +166,14 @@ const [modul, setModul] = useState<Modul | null>(null);
               </div>
               <span className="text-sm font-medium">Evaluasi</span>
             </div>
-            <div className={`w-12 h-0.5 ${step >= 3 ? "bg-primary" : "bg-muted"}`}></div>
-            <div className={`flex items-center gap-2 ${step >= 3 ? "text-primary" : "text-muted-foreground"}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 3 ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
-                {step > 3 ? <CheckCircle className="w-4 h-4" /> : 3}
-              </div>
-              <span className="text-sm font-medium">Selesai</span>
-            </div>
+            {step > 3 && (
+              <><div className={`w-12 h-0.5 ${step >= 3 ? "bg-primary" : "bg-muted"}`}></div><div className={`flex items-center gap-2 ${step >= 3 ? "text-primary" : "text-muted-foreground"}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 3 ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
+                  {step > 3 ? <CheckCircle className="w-4 h-4" /> : 3}
+                </div>
+                <span className="text-sm font-medium">Selesai</span>
+              </div></>
+            )}
           </div>
         </div>
 
@@ -365,7 +384,7 @@ const [modul, setModul] = useState<Modul | null>(null);
                       <ArrowLeft className="w-4 h-4" />
                       Kembali ke Materi
                     </Button>
-                    <Button onClick={() => setStep(3)} className="gap-2">
+                    <Button onClick={goToNextModule} className="gap-2">
                       Lanjut ke Modul Berikutnya
                       <ArrowRight className="w-4 h-4" />
                     </Button>
