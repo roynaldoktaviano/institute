@@ -318,27 +318,24 @@ export default function TrainingDetailPage() {
                 </div>
 
                 <div className="pt-4 border-t">
-                  <Button
+                 {!(training.modul.length === 0) ? (
+                   <Button
   className="w-full cursor-pointer bg-blue-900"
   onClick={() => window.open(`/modul/${modul[0].id}?trainingId=${training.id}`, "_blank")}
 >
   Mulai Training
 </Button>
+                 ): (
+                   <Button
+                   disabled
+                    className="w-full cursor-pointer text-gray-800 bg-gray-300"
+                  >
+                    Training belum memiliki modul
+                  </Button>
+                 )}
 
                 </div>
-                
-                <div className="pt-4 border-t">
-                  {training.url === "" ? (
-                    <div className="text-center"></div>
-                  ) : (
-                    <Button
-                      className="w-full"
-                      onClick={() => window.open(training.url, "_blank")}
-                    >
-                      Lihat Training
-                    </Button>
-                  )}
-                </div>
+            
               </CardContent>
             </Card>
           </div>

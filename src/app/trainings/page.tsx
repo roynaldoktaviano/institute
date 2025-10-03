@@ -292,11 +292,11 @@ export default function TrainingsPage() {
                     {training.location}
                   </div>
                   
-                  <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-3">
+                  <p className="text-sm text-gray-700 mb-4 dark:text-gray-300 line-clamp-3">
                     {training.short_description}
                   </p>
                   
-                  <Link href={`/trainings/${training.id}`} className='cursor-pointer'>
+                  <Link href={`/trainings/${training.id}`} className='cursor-pointer bg-black mt-5 text-white text-sm py-1 rounded-lg'>
                     <button className="w-full cursor-pointer">
                       View Details
                     </button>
