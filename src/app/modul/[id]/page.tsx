@@ -15,17 +15,27 @@ interface Modul {
   title: { rendered: string };
   acf: {
     materi_ppt?: string;       // PPT / materi modul
-    quiz?: {             // quiz evaluasi
-      question: string;
-      options: string[];
-      answer: string;
+    soal_evaluasi_modul?: {             // quiz evaluasi
+      soal: string;
+      jawaban: string[];
+      kunci_jawaban: string;
     }[];
     deskripsi?: string;
   };
 }
 
+interface Evaluasi {
+  soal_evaluasi_modul?: {             // quiz evaluasi
+      soal: string;
+      jawaban: string[];
+      kunci_jawaban: string;
+    }[];
+}
+
+
 export default function ModulPage({ params }: { params: Promise<{ id: string }> }) {
 const [modul, setModul] = useState<Modul | null>(null);
+const [soal, setSoal] = useState<Evaluasi | null>(null);
   const [loading, setLoading] = useState(true);
   const [step, setStep] = useState(1);
   const [quizAnswers, setQuizAnswers] = useState<{ [key: number]: string }>({});
@@ -37,6 +47,16 @@ const [modul, setModul] = useState<Modul | null>(null);
 
   const searchParams = useSearchParams();
   const trainingId = searchParams.get("trainingId");
+
+  useEffect(() => {
+  if (modul) {
+    setQuizAnswers({});
+    setScore(0);
+    setShowResults(false);
+    setStep(1); 
+  }
+}, [modul]);
+
 
   useEffect(() => {
     params.then(({ id }) => {
@@ -73,6 +93,27 @@ const [modul, setModul] = useState<Modul | null>(null);
         });
     });
   }, [params]);
+
+  
+ useEffect(() => {
+  if (modul?.acf?.soal_evaluasi_modul) {
+    const soalModul = modul.acf.soal_evaluasi_modul;
+
+    const soalData = Object.keys(soalModul)
+      .filter((key) => key.startsWith("soal_"))
+      .map((key) => {
+        const i = key.split("_")[1];
+        return {
+          soal: soalModul[`soal_${i}`],
+          jawaban: soalModul[`jawaban_${i}`]?.split(",") ?? [],
+          kunci_jawaban: soalModul[`kunci_jawaban_${i}`],
+        };
+      });
+
+    setSoal({ soal_evaluasi_modul: soalData });
+  }
+}, [modul]);
+
   if (loading) return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
       <div className="text-center">
@@ -106,10 +147,10 @@ const [modul, setModul] = useState<Modul | null>(null);
   };
 
   const checkScore = () => {
-    if (!modul?.acf?.quiz) return;
+    if (!modul?.acf?.soal_evaluasi_modul) return;
     let correct = 0;
-    modul.acf.quiz.forEach((q, i) => {
-      if (quizAnswers[i] === q.answer) correct++;
+    soal?.soal_evaluasi_modul?.forEach((q, i) => {
+      if (quizAnswers[i] === q.kunci_jawaban) correct++;
     });
     setScore(correct);
     setShowResults(true);
@@ -119,6 +160,7 @@ const [modul, setModul] = useState<Modul | null>(null);
     setQuizAnswers({});
     setScore(0);
     setShowResults(false);
+    setSoal({});
   };
 
   const goToNextModule = () => {
@@ -131,7 +173,8 @@ const [modul, setModul] = useState<Modul | null>(null);
 };
 
 
-  const totalQuestions = modul?.acf?.quiz?.length || 0;
+
+  const totalQuestions = soal?.soal_evaluasi_modul?.length || 0;
   const answeredQuestions = Object.keys(quizAnswers).length;
   const progressPercentage = totalQuestions > 0 ? (answeredQuestions / totalQuestions) * 100 : 0;
 
@@ -228,7 +271,7 @@ const [modul, setModul] = useState<Modul | null>(null);
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="w-5 h-5 text-primary" />
-                📝 Evaluasi Pembelajaran
+                Evaluasi Pembelajaran {totalQuestions}
               </CardTitle>
               <CardDescription>
                 Jawab semua pertanyaan untuk menguji pemahaman Anda
@@ -244,16 +287,16 @@ const [modul, setModul] = useState<Modul | null>(null);
               )}
             </CardHeader>
             <CardContent className="space-y-6">
-              {modul.acf?.quiz ? (
+              {soal?.soal_evaluasi_modul ? (
                 <>
                   <div className="space-y-6">
-                    {modul.acf.quiz.map((q, i) => (
-                      <Card key={i} className={`border-2 transition-all ${showResults && quizAnswers[i] === q.answer ? "border-green-200 bg-green-50" : showResults && quizAnswers[i] && quizAnswers[i] !== q.answer ? "border-red-200 bg-red-50" : "border-slate-200"}`}>
+                    {soal?.soal_evaluasi_modul?.map((q, i) => (
+                      <Card key={i} className={`border-2 transition-all ${showResults && quizAnswers[i] === q.kunci_jawaban ? "border-green-200 bg-green-50" : showResults && quizAnswers[i] && quizAnswers[i] !== q.kunci_jawaban ? "border-red-200 bg-red-50" : "border-slate-200"}`}>
                         <CardContent className="p-6">
                           <div className="flex items-start gap-3">
                             <div className="flex-shrink-0 mt-1">
                               {showResults ? (
-                                quizAnswers[i] === q.answer ? (
+                                quizAnswers[i] === q.kunci_jawaban ? (
                                   <CheckCircle className="w-5 h-5 text-green-600" />
                                 ) : quizAnswers[i] ? (
                                   <div className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center">
@@ -273,7 +316,7 @@ const [modul, setModul] = useState<Modul | null>(null);
                                 <p className="font-medium text-slate-900 mb-1">
                                   Pertanyaan {i + 1}
                                 </p>
-                                <p className="text-slate-700">{q.question}</p>
+                                <p className="text-slate-700">{q.soal}</p>
                               </div>
                               
                               <RadioGroup
@@ -282,27 +325,27 @@ const [modul, setModul] = useState<Modul | null>(null);
                                 disabled={showResults}
                               >
                                 <div className="grid gap-3">
-                                  {q.options.map((opt, j) => (
+                                  {q.jawaban.map((opt, j) => (
                                     <div key={j} className="flex items-center space-x-2">
                                       <RadioGroupItem value={opt} id={`q-${i}-opt-${j}`} />
                                       <Label 
                                         htmlFor={`q-${i}-opt-${j}`} 
                                         className={`flex-1 cursor-pointer p-3 rounded-lg border transition-all ${
-                                          showResults && opt === q.answer 
+                                          showResults && opt === q.kunci_jawaban 
                                             ? "border-green-300 bg-green-100 text-green-800" 
-                                            : showResults && opt === quizAnswers[i] && opt !== q.answer
+                                            : showResults && opt === quizAnswers[i] && opt !== q.kunci_jawaban
                                             ? "border-red-300 bg-red-100 text-red-800"
                                             : "border-slate-200 hover:bg-slate-50"
                                         }`}
                                       >
                                         <div className="flex items-center justify-between">
                                           <span>{opt}</span>
-                                          {showResults && opt === q.answer && (
+                                          {showResults && opt === q.kunci_jawaban && (
                                             <Badge variant="secondary" className="bg-green-200 text-green-800">
                                               Benar
                                             </Badge>
                                           )}
-                                          {showResults && opt === quizAnswers[i] && opt !== q.answer && (
+                                          {showResults && opt === quizAnswers[i] && opt !== q.kunci_jawaban && (
                                             <Badge variant="destructive">
                                               Salah
                                             </Badge>
