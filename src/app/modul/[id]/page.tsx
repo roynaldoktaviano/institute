@@ -103,16 +103,23 @@ const [soal, setSoal] = useState<Evaluasi | null>(null);
       .filter((key) => key.startsWith("soal_"))
       .map((key) => {
         const i = key.split("_")[1];
-        return {
-          soal: soalModul[`soal_${i}`],
-          jawaban: soalModul[`jawaban_${i}`]?.split(",") ?? [],
-          kunci_jawaban: soalModul[`kunci_jawaban_${i}`],
-        };
-      });
+        const soal = soalModul[`soal_${i}`];
+        const jawaban = soalModul[`jawaban_${i}`]?.split(",") ?? [];
+        const kunci_jawaban = soalModul[`kunci_jawaban_${i}`];
+
+        return { soal, jawaban, kunci_jawaban };
+      })
+      // filter soal kosong (tidak terisi)
+      .filter(
+        (item) =>
+          item.soal?.trim() !== "" &&
+          (item.jawaban.length > 0 || item.kunci_jawaban?.trim() !== "")
+      );
 
     setSoal({ soal_evaluasi_modul: soalData });
   }
 }, [modul]);
+
 
   if (loading) return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
@@ -271,12 +278,12 @@ const [soal, setSoal] = useState<Evaluasi | null>(null);
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="w-5 h-5 text-primary" />
-                Evaluasi Pembelajaran {totalQuestions}
+                Evaluasi Pembelajaran
               </CardTitle>
               <CardDescription>
                 Jawab semua pertanyaan untuk menguji pemahaman Anda
               </CardDescription>
-              {!showResults && totalQuestions > 0 && (
+              {!showResults && totalQuestions !== 0 && (
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm text-muted-foreground">
                     <span>Progress: {answeredQuestions}/{totalQuestions} pertanyaan</span>
@@ -364,6 +371,11 @@ const [soal, setSoal] = useState<Evaluasi | null>(null);
                   </div>
 
                   <div className="flex flex-col gap-4 pt-4">
+                    {totalQuestions === 0 && (
+                  <><div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <FileText className="w-8 h-8 text-slate-400" />
+                      </div><p className="text-muted-foreground mb-4 text-center">Tidak ada evaluasi untuk modul ini.</p></>
+                  )}
                     {!showResults ? (
                       <div className="flex gap-3">
                         <Button 
@@ -375,12 +387,19 @@ const [soal, setSoal] = useState<Evaluasi | null>(null);
                           Kembali ke Materi
                         </Button>
                         <Button 
-                          onClick={checkScore} 
+                          onClick={totalQuestions === 0 ? goToNextModule : checkScore} 
                           disabled={answeredQuestions !== totalQuestions}
                           className="flex-1 gap-2"
                         >
                           <CheckCircle className="w-4 h-4" />
-                          {answeredQuestions === totalQuestions ? "Lihat Hasil" : `Jawab ${totalQuestions - answeredQuestions} pertanyaan lagi`}
+                          {
+                            totalQuestions === 0
+                              ? "Modul Selanjutnya"
+                              : answeredQuestions === totalQuestions
+                                ? "Lihat Hasil"
+                                : `Jawab ${totalQuestions - answeredQuestions} pertanyaan lagi`
+                          }
+
                         </Button>
                       </div>
                     ) : (
@@ -418,10 +437,7 @@ const [soal, setSoal] = useState<Evaluasi | null>(null);
                 </>
               ) : (
                 <div className="text-center py-8">
-                  <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FileText className="w-8 h-8 text-slate-400" />
-                  </div>
-                  <p className="text-muted-foreground mb-4">Tidak ada evaluasi untuk modul ini.</p>
+                   
                   <div className="flex gap-3 justify-center">
                     <Button variant="outline" onClick={() => setStep(1)} className="gap-2">
                       <ArrowLeft className="w-4 h-4" />
