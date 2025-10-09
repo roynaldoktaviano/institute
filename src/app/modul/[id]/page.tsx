@@ -206,7 +206,8 @@ const [soal, setSoal] = useState<Evaluasi | null>(null);
     
     const res = await fetch('https://roynaldkalele.com/wp-json/training-results/v1/submit', {
   method: 'POST',
-  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, },
+  headers: { 'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`, },
   // credentials: 'include',
   body: JSON.stringify({
     training_id: trainingId,
@@ -224,7 +225,8 @@ const [soal, setSoal] = useState<Evaluasi | null>(null);
     }
 
     const data = await res.json();
-    return data; // { success, post_id, badge_awarded, progress }
+    console.log(data);
+    return data; 
   } catch (err) {
     console.error(err);
     throw err;
