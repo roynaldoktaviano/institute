@@ -153,7 +153,7 @@ const [soal, setSoal] = useState<Evaluasi | null>(null);
     setQuizAnswers({ ...quizAnswers, [qIndex]: option });
   };
 
-  const checkScore = () => {
+  const checkScore = async () => {
     if (!modul?.acf?.soal_evaluasi_modul) return;
     let correct = 0;
     soal?.soal_evaluasi_modul?.forEach((q, i) => {
@@ -161,7 +161,21 @@ const [soal, setSoal] = useState<Evaluasi | null>(null);
     });
     setScore(correct);
     setShowResults(true);
+
+      try {
+        await submitTrainingResult({
+          trainingId: Number(trainingId),
+          moduleId: modul.id,
+          score: correct,
+          totalQuestions: modul.acf?.soal_evaluasi_modul.length,
+          answers: quizAnswers,
+        });
+        console.log("✅ Modul result submitted");
+      } catch (err) {
+        console.error("❌ Gagal submit modul:", err);
+      }
   };
+  
 
  const resetQuiz = () => {
     setQuizAnswers({});
@@ -169,6 +183,53 @@ const [soal, setSoal] = useState<Evaluasi | null>(null);
     setShowResults(false);
     setSoal({});
   };
+
+  async function submitTrainingResult({
+  trainingId,
+  moduleId,
+  score,
+  totalQuestions,
+  answers,
+}: {
+  trainingId: number;
+  moduleId: number;
+  score: number;
+  totalQuestions: number;
+  answers: any;
+}) {
+  try {
+    const token = localStorage.getItem("lms_token")
+
+    if (!token) {
+      throw new Error("Token tidak ditemukan, silakan login dulu")
+    }
+    
+    const res = await fetch('https://roynaldkalele.com/wp-json/training-results/v1/submit', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, },
+  // credentials: 'include',
+  body: JSON.stringify({
+    training_id: trainingId,
+    module_id: moduleId,
+    score,
+    total_questions: totalQuestions,
+    answers,
+  }),
+});
+
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData?.message || `HTTP Error ${res.status}`);
+    }
+
+    const data = await res.json();
+    return data; // { success, post_id, badge_awarded, progress }
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
 
   const goToNextModule = () => {
   if (currentModuleIndex >= 0 && currentModuleIndex < allModules.length - 1) {
