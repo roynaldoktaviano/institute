@@ -167,7 +167,7 @@ const [soal, setSoal] = useState<Evaluasi | null>(null);
           trainingId: Number(trainingId),
           moduleId: modul.id,
           score: correct,
-          totalQuestions: modul.acf?.soal_evaluasi_modul.length,
+          totalQuestions: soal?.soal_evaluasi_modul?.length,
           answers: quizAnswers,
         });
         console.log("✅ Modul result submitted");
@@ -184,7 +184,7 @@ const [soal, setSoal] = useState<Evaluasi | null>(null);
     setSoal({});
   };
 
-  async function submitTrainingResult({
+async function submitTrainingResult({
   trainingId,
   moduleId,
   score,
@@ -194,44 +194,57 @@ const [soal, setSoal] = useState<Evaluasi | null>(null);
   trainingId: number;
   moduleId: number;
   score: number;
-  totalQuestions: number;
+  totalQuestions: number | undefined;
   answers: any;
 }) {
   try {
-    const token = localStorage.getItem("lms_token")
+    const token = localStorage.getItem("lms_token");
 
     if (!token) {
-      throw new Error("Token tidak ditemukan, silakan login dulu")
+      throw new Error("Token tidak ditemukan, silakan login terlebih dahulu.");
     }
-    
-    const res = await fetch('https://roynaldkalele.com/wp-json/training-results/v1/submit', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`, },
-  // credentials: 'include',
-  body: JSON.stringify({
-    training_id: trainingId,
-    module_id: moduleId,
-    score,
-    total_questions: totalQuestions,
-    answers,
-  }),
-});
 
+    const res = await fetch("https://roynaldkalele.com/wp-json/training-results/v1/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        training_id: trainingId,
+        module_id: moduleId,
+        score,
+        total_questions: totalQuestions,
+        answers,
+      }),
+    });
 
+    // Baca raw response dulu untuk debugging
+    const text = await res.text();
+    console.log("🔍 Raw response:", text);
+
+    // Tangani error HTTP
     if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      throw new Error(errData?.message || `HTTP Error ${res.status}`);
+      throw new Error(`HTTP ${res.status}: ${text}`);
     }
 
-    const data = await res.json();
-    console.log(data);
-    return data; 
+    // Parse JSON aman
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      throw new Error(`Response bukan JSON valid: ${text}`);
+    }
+
+    console.log("✅ Parsed:", data);
+    return data;
+
   } catch (err) {
-    console.error(err);
+    console.error("❌ Gagal submit training result:", err);
     throw err;
   }
 }
+
 
   const goToNextModule = () => {
   if (currentModuleIndex >= 0 && currentModuleIndex < allModules.length - 1) {

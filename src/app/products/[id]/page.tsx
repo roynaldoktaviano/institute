@@ -12,6 +12,8 @@ import { Download, ArrowLeft, BookOpen, Share2, Heart, Camera, Battery, Wifi, Ha
 import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
 import DOMPurify from 'isomorphic-dompurify';
+import { cleanAndNormalizeHTML } from '@/lib/cleanwp'
+
 
 export default function ProductDetailPage() {
   const { user } = useAuth()
@@ -155,11 +157,12 @@ export default function ProductDetailPage() {
                 {/* Product Overview */}
                 <div className="mb-8">
                   <h2 className="text-xl font-semibold mb-4">Product Overview</h2>
-                  <div className="prose prose-sm dark:prose-invert max-w-none">
-                    <p
-                    dangerouslySetInnerHTML={{ __html: product.description}}
+                  <div className="prose prose-neutral max-w-none leading-relaxed">
+                    {/* <p
+                      dangerouslySetInnerHTML={{ __html: cleanAndNormalizeHTML(product.description)}}
+                  
                     >
-                    </p>
+                    </p> */}
                   </div>
                 </div>
 

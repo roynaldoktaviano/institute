@@ -10,6 +10,32 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+		typography: {
+        DEFAULT: {
+          css: {
+            p: {
+              marginTop: '0.5em',
+              marginBottom: '0.5em',
+            },
+            strong: {
+              fontWeight: '600',
+            },
+            img: {
+              marginTop: '1.5em',
+              marginBottom: '1.5em',
+              borderRadius: '0.75rem',
+            },
+            'h2, h3, h4': {
+              marginTop: '1.5em',
+              marginBottom: '0.5em',
+              fontWeight: '700',
+            },
+            br: {
+              display: 'none', // hilangkan <br /> double dari WordPress
+            },
+          },
+        },
+      },
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
