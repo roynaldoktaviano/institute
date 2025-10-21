@@ -73,6 +73,24 @@ export interface QuizSubmission {
   submitted_at: string
 }
 
+interface Module {
+  module_id: number
+  title: string
+  completed: boolean
+  score: string | null
+}
+
+interface TrainingProgress {
+  user_id: number
+  user_name: string
+  training_id: number
+  training_title: string
+  total_modules: number
+  completed_modules: number
+  modules: Module[]
+}
+
+
 export class LMSApi {
   private getAuthHeaders() {
     const token = localStorage.getItem('lms_token')
@@ -324,18 +342,23 @@ async submitQuiz(
     return JSON.parse(localStorage.getItem('quiz_submissions') || '[]')
   }
 
-  async getTrainingParticipations(): Promise<{ training_id: number; participated_at: string }[]> {
-    return JSON.parse(localStorage.getItem('training_participations') || '[]')
-  }
+async getTrainingParticipation(userId: number): Promise<number> {
+  try {
+    const res = await fetch(`https://roynaldkalele.com/wp-json/training-progress/v1/results?user_id=${userId}`)
+    if (!res.ok) throw new Error('Failed to fetch training progress')
 
-  async participateInTraining(trainingId: number): Promise<void> {
-    const participations = JSON.parse(localStorage.getItem('training_participations') || '[]')
-    participations.push({
-      training_id: trainingId,
-      participated_at: new Date().toISOString()
-    })
-    localStorage.setItem('training_participations', JSON.stringify(participations))
+    const data: TrainingProgress[] = await res.json()
+
+    // Filter trainings yang selesai
+    const completedTrainings = data.filter(t => t.total_modules > 0 && t.completed_modules === t.total_modules)
+
+    return completedTrainings.length
+  } catch (err) {
+    console.error(err)
+    return 0
   }
+}
+
 }
 
 export const lmsApi = new LMSApi()

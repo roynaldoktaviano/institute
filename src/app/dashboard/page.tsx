@@ -45,6 +45,8 @@ export default function DashboardPage() {
   const [recentTrainings, setRecentTrainings] = useState<any[]>([]);
   const [recentQuizzes, setRecentQuizzes] = useState<any[]>([]);
   const [recentProducts, setRecentProducts] = useState<any[]>([]);
+   const [recentParticipant, setParticipant] = useState<any>();
+  
   const [isLoading, setIsLoading] = useState(true);
     const pathname = usePathname();
    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -65,18 +67,22 @@ export default function DashboardPage() {
 
     const loadDashboardData = async () => {
       try {
+        const userLog = localStorage.getItem("lms_user");
+        const users = JSON.parse(userLog!)
+        const usersId = users.id
         const [trainings, quizzes, products, submissions, participations] =
           await Promise.all([
             lmsApi.getTrainings(),
             lmsApi.getQuizzes(),
             lmsApi.getProductKnowledge(),
             lmsApi.getQuizSubmissions(),
-            lmsApi.getTrainingParticipations(),
+            lmsApi.getTrainingParticipation(usersId),
           ]);
 
         setRecentTrainings(trainings.slice(0, 4));
         setRecentQuizzes(quizzes.slice(0, 4));
         setRecentProducts(products.slice(0, 4));
+        setParticipant(participations);
 
         const savedUser = localStorage.getItem("lms_user")
   if (!savedUser) return
@@ -336,7 +342,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {stats.trainingsParticipated}
+                {recentParticipant}
               </div>
               <p className="text-xs text-muted-foreground">
                 Expand your skills

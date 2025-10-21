@@ -13,6 +13,8 @@ import { Separator } from '@/components/ui/separator'
 import { ArrowLeft, Save, User, Mail, Shield, Calendar, Edit } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
+import axios from 'axios'
+
 
 interface UserProfile {
   name: string
@@ -37,6 +39,59 @@ export default function ProfilePage() {
     phone: '',
     company: ''
   })
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
+  
+  
+  const [uploading, setUploading] = useState(false)
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0]
+  if (!file) return
+
+  // Preview sementara
+  const previewUrl = URL.createObjectURL(file)
+  setAvatarPreview(previewUrl)
+
+  const formData = new FormData()
+  formData.append('avatar', file)
+
+  setUploading(true)
+  try {
+    const token = localStorage.getItem("lms_token");
+
+    if (!token) {
+      throw new Error("Token tidak ditemukan, silakan login terlebih dahulu.");
+    }
+    const res = await axios.post(
+      `https://roynaldkalele.com/wp-json/custom-user/v1/upload-avatar`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`, // jika kamu pakai JWT auth
+        },
+      }
+    )
+
+    toast({
+      title: 'Avatar updated!',
+      description: 'Your profile picture has been updated.',
+    })
+
+    // Update avatar URL di frontend
+    setAvatarPreview(res.data.avatar_url)
+  } catch (err: any) {
+    toast({
+      title: 'Upload failed',
+      description: err.response?.data?.message || 'Something went wrong.',
+      variant: 'destructive',
+    })
+  } finally {
+    setUploading(false)
+  }
+}
+
+
 
   useEffect(() => {
     if (!user) {
@@ -129,10 +184,32 @@ export default function ProfilePage() {
           <div className="lg:col-span-1">
             <Card>
               <CardHeader className="text-center">
-                <Avatar className="h-24 w-24 mx-auto mb-4">
-                  <AvatarImage src={user.avatar_urls?.['96']} alt={user.name} />
-                  <AvatarFallback className="text-2xl">{user.name.charAt(0)}</AvatarFallback>
-                </Avatar>
+               <div className="relative w-fit mx-auto">
+  <Avatar className="h-24 w-24 mx-auto mb-4 cursor-pointer group">
+    <AvatarImage
+      src={avatarPreview || user.custom_avatar || user.avatar_urls?.['96']}
+      alt={user.name}
+    />
+    <AvatarFallback className="text-2xl">
+      {user.name.charAt(0)}
+    </AvatarFallback>
+
+    {/* Overlay edit icon */}
+    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+      <Edit className="text-white h-6 w-6" />
+    </div>
+  </Avatar>
+
+  {/* Hidden input file */}
+  <input
+    type="file"
+    accept="image/*"
+    className="absolute inset-0 opacity-0 cursor-pointer"
+    onChange={handleAvatarChange}
+    disabled={uploading}
+  />
+</div>
+
                 <CardTitle>{profile.displayName}</CardTitle>
                 <CardDescription>{user.email}</CardDescription>
               </CardHeader>

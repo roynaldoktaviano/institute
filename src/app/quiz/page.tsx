@@ -231,7 +231,7 @@ export default function QuizPage() {
           user={{
             displayName: user.displayName,
             email: user.email,
-            avatar: user.avatar_urls?.["96"]
+            avatar: user.custom_avatar || user.avatar_urls?.['96']
           }}
           activeTab="quiz"
           onTabChange={(tab) => {

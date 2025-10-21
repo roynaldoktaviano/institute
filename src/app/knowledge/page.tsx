@@ -252,7 +252,7 @@ export default function KnowledgePage() {
           user={{
             displayName: user.displayName,
             email: user.email,
-            avatar: user.avatar_urls?.["96"]
+            avatar: user.custom_avatar
           }}
           activeTab="knowledge"
           onTabChange={(tab) => {

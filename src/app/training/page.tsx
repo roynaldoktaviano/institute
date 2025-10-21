@@ -191,7 +191,7 @@ export default function TrainingPage() {
           user={{
             displayName: user.displayName,
             email: user.email,
-            avatar: user.avatar_urls?.["96"]
+            avatar: user.custom_avatar || user.avatar_urls?.['96']
           }}
           activeTab="training"
           onTabChange={(tab) => {
