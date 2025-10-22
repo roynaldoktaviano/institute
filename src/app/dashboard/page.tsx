@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { lmsApi } from "@/lib/api";
+import { lmsApi, TrainingSummary } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -45,7 +45,7 @@ export default function DashboardPage() {
   const [recentTrainings, setRecentTrainings] = useState<any[]>([]);
   const [recentQuizzes, setRecentQuizzes] = useState<any[]>([]);
   const [recentProducts, setRecentProducts] = useState<any[]>([]);
-   const [recentParticipant, setParticipant] = useState<any>();
+   const [recentParticipant, setParticipant] = useState<TrainingSummary | null>(null);
   
   const [isLoading, setIsLoading] = useState(true);
     const pathname = usePathname();
@@ -342,7 +342,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {recentParticipant}
+                {recentParticipant?.completedTrainings} <span className="text-sm text-gray-500">/ {recentParticipant?.totalTrainings} </span> 
               </div>
               <p className="text-xs text-muted-foreground">
                 Expand your skills
@@ -383,54 +383,77 @@ export default function DashboardPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {recentTrainings.map((training) => (
-              <Card
-                key={training.id}
-                className="hover:shadow-md transition-shadow pt-0 pb-6 gap-[8px]"
-              >
-                <div className="aspect-video bg-gray-200 rounded-t-lg">
-                  <img
-                    src={training.image}
-                    alt={training.title}
-                    className="w-full h-full object-cover rounded-t-lg"
-                  />
-                </div>
-                <CardHeader className="pb-2 flex justify-between mt-3">
-                  <div>
+           {recentTrainings.map((training) => {
+  // Cari progress untuk training ini
+  const matchedTraining = recentParticipant?.trainings.find(
+    (t) => t.training_id === training.id
+  )
+
+  // Cek apakah semua modulnya sudah selesai
+  const isCompleted =
+    matchedTraining &&
+    matchedTraining.total_modules > 0 &&
+    matchedTraining.completed_modules === matchedTraining.total_modules
+
+  return (
+    <Card
+      key={training.id}
+      className="hover:shadow-md transition-shadow pt-0 pb-6 gap-[8px]"
+    >
+      <div className="aspect-video bg-gray-200 rounded-t-lg">
+        <img
+          src={training.image}
+          alt={training.title}
+          className="w-full h-full object-cover rounded-t-lg"
+        />
+      </div>
+
+      <CardHeader className="pb-2 flex justify-between mt-3">
+        <div>
           <CardTitle
-  className="text-sm"
-  dangerouslySetInnerHTML={{ __html: training.title }}
-/>
-                    <CardDescription className="text-xs mt-2">
-                      {training.topic}
-                    </CardDescription>
-                  </div>
-                  <Badge
-                    variant={
-                      training.type === "online" ? "default" : "secondary"
-                    }
-                  >
-                    {training.type}
-                  </Badge>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
-                    <div className="flex items-center">
-                      <Calendar className="h-3 w-3 mr-1" />
-                      {formatTrainingDate(training.date)}
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
-                    {training.short_description}
-                  </p>
-                  <Link href={`/trainings/${training.id}`}>
-                    <Button size="sm" className="w-full mt-5 cursor-pointer">
-                      Lihat Detail
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
+            className="text-sm"
+            dangerouslySetInnerHTML={{ __html: training.title }}
+          />
+          <CardDescription className="text-xs mt-2">
+            {training.topic}
+          </CardDescription>
+        </div>
+        <Badge
+          variant={training.type === 'online' ? 'default' : 'secondary'}
+        >
+          {training.type}
+        </Badge>
+      </CardHeader>
+
+      <CardContent className="pt-0">
+        <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+          <div className="flex items-center">
+            <Calendar className="h-3 w-3 mr-1" />
+            {formatTrainingDate(training.date)}
+          </div>
+        </div>
+
+        <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
+          {training.short_description}
+        </p>
+
+      {isCompleted ? (
+  <p className="w-full mt-5 text-sm p-2 bg-green-400 text-center text-white font-semibold rounded-2xl">
+    Sudah Menyelesaikan Training Ini
+  </p>
+) : (
+  <Link href={`/trainings/${training.id}`}>
+    <Button size="sm" className="w-full mt-5 cursor-pointer">
+      Lihat Detail
+    </Button>
+  </Link>
+)}
+
+      </CardContent>
+    </Card>
+  )
+})}
+
           </div>
         </div>
 

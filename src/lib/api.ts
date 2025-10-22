@@ -73,13 +73,6 @@ export interface QuizSubmission {
   submitted_at: string
 }
 
-interface Module {
-  module_id: number
-  title: string
-  completed: boolean
-  score: string | null
-}
-
 interface TrainingProgress {
   user_id: number
   user_name: string
@@ -88,6 +81,19 @@ interface TrainingProgress {
   total_modules: number
   completed_modules: number
   modules: Module[]
+}
+
+interface Module {
+  module_id: number
+  title: string
+  completed: boolean
+  score: string | null
+}
+
+export interface TrainingSummary {
+  totalTrainings: number
+  completedTrainings: number
+  trainings: TrainingProgress[]
 }
 
 
@@ -342,22 +348,42 @@ async submitQuiz(
     return JSON.parse(localStorage.getItem('quiz_submissions') || '[]')
   }
 
-async getTrainingParticipation(userId: number): Promise<number> {
+ async getTrainingParticipation(userId: number): Promise<TrainingSummary> {
   try {
     const res = await fetch(`https://roynaldkalele.com/wp-json/training-progress/v1/results?user_id=${userId}`)
     if (!res.ok) throw new Error('Failed to fetch training progress')
 
     const data: TrainingProgress[] = await res.json()
 
-    // Filter trainings yang selesai
-    const completedTrainings = data.filter(t => t.total_modules > 0 && t.completed_modules === t.total_modules)
+    // Pastikan data valid dan normalize
+    const trainings = data.map(training => ({
+      ...training,
+      modules: training.modules.map(module => ({
+        ...module,
+        completed: !!module.completed
+      }))
+    }))
 
-    return completedTrainings.length
+    // Hitung training yang selesai
+    const completedTrainings = trainings.filter(
+      t => t.total_modules > 0 && t.completed_modules === t.total_modules
+    )
+
+    return {
+      totalTrainings: trainings.length,
+      completedTrainings: completedTrainings.length,
+      trainings
+    }
   } catch (err) {
     console.error(err)
-    return 0
+    return {
+      totalTrainings: 0,
+      completedTrainings: 0,
+      trainings: []
+    }
   }
 }
+
 
 }
 

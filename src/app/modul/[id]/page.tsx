@@ -157,7 +157,7 @@ const [soal, setSoal] = useState<Evaluasi | null>(null);
     if (!modul?.acf?.soal_evaluasi_modul) return;
     let correct = 0;
     soal?.soal_evaluasi_modul?.forEach((q, i) => {
-      if (quizAnswers[i] === q.kunci_jawaban) correct++;
+      if (quizAnswers[i] == q.kunci_jawaban) correct++;
     });
     setScore(correct);
     setShowResults(true);
@@ -555,12 +555,14 @@ async function submitTrainingResult({
               )}
 
               <div className="flex gap-3 justify-center">
-                <Button variant="outline" onClick={() => setStep(2)} className="gap-2">
-                  <ArrowLeft className="w-4 h-4" />
-                  Lihat Hasil Quiz
+                <Button asChild variant="outline" className="gap-2">
+                  <a href="/">
+                    Kembali ke Beranda
+                    <ArrowLeft className="w-4 h-4" />
+                  </a>
                 </Button>
               <Button asChild className="gap-2">
-                  <a href="/training">
+                  <a href="/trainings">
                     Kembali ke Daftar Training
                     <ArrowRight className="w-4 h-4" />
                   </a>
