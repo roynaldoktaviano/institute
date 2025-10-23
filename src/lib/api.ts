@@ -96,6 +96,24 @@ export interface TrainingSummary {
   trainings: TrainingProgress[]
 }
 
+export async function getUserData() {
+  const token = localStorage.getItem("lms_token")
+  if (!token) throw new Error("Token tidak ditemukan")
+
+  const res = await fetch("https://roynaldkalele.com/wp-json/custom/v1/user", {
+    credentials: "include",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!res.ok) throw new Error("Gagal mengambil data user")
+
+  const data = await res.json()
+  return data
+}
+
+
 
 export class LMSApi {
   private getAuthHeaders() {

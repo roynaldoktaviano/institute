@@ -89,7 +89,7 @@ export default function TrainingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-200 dark:bg-gray-900">
       {/* Header */}
          <header className="bg-[#31569A] py-2 rounded-b-xl dark:bg-gray-800 shadow-xs border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

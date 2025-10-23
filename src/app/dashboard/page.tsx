@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { lmsApi, TrainingSummary } from "@/lib/api";
+import { getUserData, lmsApi, TrainingSummary } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -36,6 +36,20 @@ function formatTrainingDate(dateStr: string) {
   return format(parsed, "dd MMMM yyyy - hh.mm aaaa");
 }
 
+interface UserData {
+  id: number
+  name: string
+  email: string
+  avatar: string
+  registered_date: string
+  total_exp: number
+  level_id: number
+  level_name: string
+  min_exp: number
+  max_exp: number
+  progress_percent: number
+}
+
 export default function DashboardPage() {
   const { user, logout } = useAuth();
   const router = useRouter();
@@ -45,6 +59,7 @@ export default function DashboardPage() {
     quizzesSubmitted: 0,
     trainingsParticipated: 0,
   });
+  const [usern, setUsern] = useState<UserData | null>(null)
   const [recentTrainings, setRecentTrainings] = useState<any[]>([]);
   const [recentQuizzes, setRecentQuizzes] = useState<any[]>([]);
   const [recentProducts, setRecentProducts] = useState<any[]>([]);
@@ -63,6 +78,17 @@ export default function DashboardPage() {
   ];
 
   useEffect(() => {
+        const loadUser = async () => {
+    try {
+      const userData = await getUserData()
+      console.log("User:", userData)
+      setUsern(userData) // misal kamu punya state
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  loadUser()
     if (!user) {
       router.push("/login");
       return;
@@ -89,6 +115,12 @@ export default function DashboardPage() {
         
 
         const savedUser = localStorage.getItem("lms_user")
+//         console.log("raw:", savedUser);
+// try {
+//   console.log("parsed:", JSON.parse(savedUser!));
+// } catch(e) {
+//   console.error("gagal parse:", e);
+// }
   if (!savedUser) return
 
   const user = JSON.parse(savedUser)
@@ -151,7 +183,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-[#f1f5f8] dark:bg-gray-900">
       {/* Header */}
        <header className="bg-[#31569A] py-2 rounded-b-xl dark:bg-gray-800 shadow-xs border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -312,70 +344,97 @@ export default function DashboardPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Selamat Pagi, {user.name}!
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            Teruskan tahapan pelatihan drone Anda menuju tingkat pemahaman dan keahlian yang lebih tinggi.
-          </p>
+        <div className="mb-8 bg-white px-8 py-7 rounded-2xl">
+         <div className="flex gap-8 items-center">
+  <img
+    src={usern?.avatar}
+    alt="User Avatar"
+    className="w-30 h-30 rounded-full"
+  />
+  <div className="w-full">
+    {/* <p className="text-sm italic">{usern?.email}</p> */}
+    <h2 className="text-3xl font-bold text-gray-900 dark:text-white my-2">
+      {usern?.name}
+    </h2>
+    <p className="text-sm text-gray-400">
+      Tanggal Daftar : {usern?.registered_date}
+    </p>
+
+    <div className="mt-3 w-full">
+      <div className=" text-sm text-gray-600 mb-1 w-full">
+        <span className="mt-4 mb-8">
+          <span className="px-2 py-1 bg-amber-300 rounded"><strong>{usern?.level_name}</strong></span>
+        </span>
+        
+
+      <div className="w-full bg-gray-200 mt-4 mb-2 rounded-full h-2.5 overflow-hidden">
+        <div
+          className="bg-green-500 h-2.5 rounded-full transition-all duration-500"
+          style={{
+            width: `${usern?.progress_percent ?? 0}%`,
+          }}
+        ></div>
+       
+      </div>
+       <span className="">
+  {(usern ? usern.total_exp : 0)} / {(usern ? usern.max_exp : 0)} EXP
+</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+          {/* Stats Cards */}
+          <div className="grid mt-10 grid-cols-1 md:grid-cols-3">
+            <Card className="gap-1 shadow-none  border-r-1 border-r-black border-t-none border-b-none border-l-none rounded-none">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <Trophy className="h-6 w-6 text-white bg-blue-900 p-1 rounded" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.quizzesSubmitted} 
+                <span className="text-sm text-gray-500"> / {stats.totalQuiz} Total Quiz</span> 
+                </div>
+                <p className="text-xs mt-2 text-muted-foreground">
+                  Jumlah Quiz Dikerjakan
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="gap-1 shadow-none  border-r-1 border-r-black border-t-none border-b-none border-l-none rounded-none">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                
+                <Calendar className="h-6 w-6 text-white bg-blue-900 p-1 rounded"  />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {recentParticipant?.completedTrainings} <span className="text-sm text-gray-500">/ {recentParticipant?.totalTrainings} Total Training</span> 
+                </div>
+                <p className="text-xs mt-2 text-muted-foreground">
+                  Jumlah Training Diikuti
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="gap-1 shadow-none   rounded-none">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+               
+                <BookOpen className="h-6 w-6 text-white bg-blue-900 p-1 rounded" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {Math.round(
+                    ((stats.quizzesSubmitted / stats.totalQuiz) * 0.5 + (recentParticipant?.completedTrainings! / recentParticipant?.totalTrainings!) * 0.5 ) *
+                      100
+                  )}
+                  %
+                </div>
+                <p className="text-xs mt-2 text-muted-foreground">Progress Belajar</p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="gap-1">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Jumlah Quiz Dikerjakan
-              </CardTitle>
-              <Trophy className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.quizzesSubmitted} 
-              <span className="text-sm text-gray-500"> / {stats.totalQuiz} Total Quiz</span> 
-              </div>
-              <p className="text-xs mt-2 text-muted-foreground">
-                Keep up the good work!
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="gap-1">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Jumlah Training Diikuti
-              </CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {recentParticipant?.completedTrainings} <span className="text-sm text-gray-500">/ {recentParticipant?.totalTrainings} Total Training</span> 
-              </div>
-              <p className="text-xs mt-2 text-muted-foreground">
-                Expand your skills
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="gap-1">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Progress Belajar
-              </CardTitle>
-              <BookOpen className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {Math.round(
-                  ((stats.quizzesSubmitted / stats.totalQuiz) * 0.5 + (recentParticipant?.completedTrainings! / recentParticipant?.totalTrainings!) * 0.5 ) *
-                    100
-                )}
-                %
-              </div>
-              <p className="text-xs mt-2 text-muted-foreground">Overall progress</p>
-            </CardContent>
-          </Card>
-        </div>
+        
 
         {/* Recent Trainings */}
         <div className="mb-8">
