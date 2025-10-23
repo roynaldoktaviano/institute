@@ -1,102 +1,127 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '@/lib/auth'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { ArrowLeft, Save, User, Mail, Shield, Calendar, Edit } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
-import Link from 'next/link'
-import axios from 'axios'
-
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import {
+  ArrowLeft,
+  Save,
+  User,
+  Mail,
+  Shield,
+  Calendar,
+  Edit,
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
+import axios from "axios";
+import { UserData } from "../dashboard/page";
+import { getUserData } from "@/lib/api";
 
 interface UserProfile {
-  name: string
-  email: string
-  displayName: string
-  bio: string
-  phone: string
-  company: string
+  name: string;
+  email: string;
+  displayName: string;
+  bio: string;
+  phone: string;
+  company: string;
 }
 
 export default function ProfilePage() {
-  const { user, logout } = useAuth()
-  const router = useRouter()
-  const { toast } = useToast()
-  const [isLoading, setIsLoading] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
+  const { user, logout } = useAuth();
+  const router = useRouter();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState<UserProfile>({
-    name: '',
-    email: '',
-    displayName: '',
-    bio: '',
-    phone: '',
-    company: ''
-  })
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
-  
-  
-  const [uploading, setUploading] = useState(false)
+    name: "",
+    email: "",
+    displayName: "",
+    bio: "",
+    phone: "",
+    company: "",
+  });
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [usern, setUsern] = useState<UserData | null>(null);
+
+  const [uploading, setUploading] = useState(false);
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0]
-  if (!file) return
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  // Preview sementara
-  const previewUrl = URL.createObjectURL(file)
-  setAvatarPreview(previewUrl)
+    // Preview sementara
+    const previewUrl = URL.createObjectURL(file);
+    setAvatarPreview(previewUrl);
 
-  const formData = new FormData()
-  formData.append('avatar', file)
+    const formData = new FormData();
+    formData.append("avatar", file);
 
-  setUploading(true)
-  try {
-    const token = localStorage.getItem("lms_token");
+    setUploading(true);
+    try {
+      const token = localStorage.getItem("lms_token");
 
-    if (!token) {
-      throw new Error("Token tidak ditemukan, silakan login terlebih dahulu.");
-    }
-    const res = await axios.post(
-      `https://roynaldkalele.com/wp-json/custom-user/v1/upload-avatar`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`, // jika kamu pakai JWT auth
-        },
+      if (!token) {
+        throw new Error(
+          "Token tidak ditemukan, silakan login terlebih dahulu."
+        );
       }
-    )
+      const res = await axios.post(
+        `https://roynaldkalele.com/wp-json/custom-user/v1/upload-avatar`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`, // jika kamu pakai JWT auth
+          },
+        }
+      );
 
-    toast({
-      title: 'Avatar updated!',
-      description: 'Your profile picture has been updated.',
-    })
+      toast({
+        title: "Avatar updated!",
+        description: "Your profile picture has been updated.",
+      });
 
-    // Update avatar URL di frontend
-    setAvatarPreview(res.data.avatar_url)
-  } catch (err: any) {
-    toast({
-      title: 'Upload failed',
-      description: err.response?.data?.message || 'Something went wrong.',
-      variant: 'destructive',
-    })
-  } finally {
-    setUploading(false)
-  }
-}
-
-
+      // Update avatar URL di frontend
+      setAvatarPreview(res.data.avatar_url);
+    } catch (err: any) {
+      toast({
+        title: "Upload failed",
+        description: err.response?.data?.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const userData = await getUserData();
+        console.log("User:", userData);
+        setUsern(userData); // misal kamu punya state
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    loadUser();
     if (!user) {
-      router.push('/login')
-      return
+      router.push("/login");
+      return;
     }
 
     // Load profile data
@@ -104,35 +129,35 @@ export default function ProfilePage() {
       name: user.name,
       email: user.email,
       displayName: user.name,
-      bio: '',
-      phone: '',
-      company: ''
-    })
-  }, [user, router])
+      bio: "",
+      phone: "",
+      company: "",
+    });
+  }, [user, router]);
 
   const handleSave = async () => {
-    setIsLoading(true)
-    
+    setIsLoading(true);
+
     try {
       // Simulate API call to update profile
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       toast({
         title: "Profile updated",
         description: "Your profile has been successfully updated.",
-      })
-      
-      setIsEditing(false)
+      });
+
+      setIsEditing(false);
     } catch (error) {
       toast({
         title: "Error updating profile",
         description: "Please try again later.",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleCancel = () => {
     if (user) {
@@ -140,16 +165,16 @@ export default function ProfilePage() {
         name: user.name,
         email: user.email,
         displayName: user.name,
-        bio: '',
-        phone: '',
-        company: ''
-      })
+        bio: "",
+        phone: "",
+        company: "",
+      });
     }
-    setIsEditing(false)
-  }
+    setIsEditing(false);
+  };
 
   if (!user) {
-    return null
+    return null;
   }
 
   return (
@@ -165,9 +190,11 @@ export default function ProfilePage() {
                   Back to Dashboard
                 </Button>
               </Link>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Profile</h1>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Profile
+              </h1>
             </div>
-            
+
             {!isEditing && (
               <Button onClick={() => setIsEditing(true)}>
                 <Edit className="h-4 w-4 mr-2" />
@@ -184,49 +211,53 @@ export default function ProfilePage() {
           <div className="lg:col-span-1">
             <Card>
               <CardHeader className="text-center">
-               <div className="relative w-fit mx-auto">
-  <Avatar className="h-24 w-24 mx-auto mb-4 cursor-pointer group">
-    <AvatarImage
-      src={avatarPreview || user.custom_avatar || user.avatar_urls?.['96']}
-      alt={user.name}
-    />
-    <AvatarFallback className="text-2xl">
-      {user.name.charAt(0)}
-    </AvatarFallback>
+                <div className="relative w-fit mx-auto">
+                  <Avatar className="h-24 w-24 mx-auto mb-4 cursor-pointer group">
+                    <AvatarImage
+                      src={
+                        avatarPreview ||
+                        user.custom_avatar ||
+                        user.avatar_urls?.["96"]
+                      }
+                      alt={user.name}
+                    />
+                    <AvatarFallback className="text-2xl">
+                      {user.name.charAt(0)}
+                    </AvatarFallback>
 
-    {/* Overlay edit icon */}
-    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
-      <Edit className="text-white h-6 w-6" />
-    </div>
-  </Avatar>
+                    {/* Overlay edit icon */}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+                      <Edit className="text-white h-6 w-6" />
+                    </div>
+                  </Avatar>
 
-  {/* Hidden input file */}
-  <input
-    type="file"
-    accept="image/*"
-    className="absolute inset-0 opacity-0 cursor-pointer"
-    onChange={handleAvatarChange}
-    disabled={uploading}
-  />
-</div>
+                  {/* Hidden input file */}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    onChange={handleAvatarChange}
+                    disabled={uploading}
+                  />
+                </div>
 
                 <CardTitle>{profile.displayName}</CardTitle>
-                <CardDescription>{user.email}</CardDescription>
+                <CardDescription>{usern?.email}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">Member since</span>
-                    <span className="text-sm">{new Date().toLocaleDateString()}</span>
+                    <span className="text-xs">{usern?.registered_date}</span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">Account type</span>
-                    {/* <Badge variant="secondary">{user.roles.join(', ')}</Badge> */}
+                    <span className="text-sm text-gray-500">Level</span>
+                    <span className="text-xs">{usern?.level_name}</span>
                   </div>
-                  
+
                   <Separator />
-                  
+
                   <div className="space-y-2">
                     <h4 className="text-sm font-medium">Quick Stats</h4>
                     <div className="grid grid-cols-2 gap-2 text-center">
@@ -240,15 +271,15 @@ export default function ProfilePage() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <Separator />
-                  
-                  <Button 
-                    variant="outline" 
-                    className="w-full" 
+
+                  <Button
+                    variant="outline"
+                    className="w-full"
                     onClick={() => {
-                      logout()
-                      router.push('/login')
+                      logout();
+                      router.push("/login");
                     }}
                   >
                     Logout
@@ -264,7 +295,9 @@ export default function ProfilePage() {
               <CardHeader>
                 <CardTitle>Profile Information</CardTitle>
                 <CardDescription>
-                  {isEditing ? 'Edit your profile information' : 'View your profile information'}
+                  {isEditing
+                    ? "Edit your profile information"
+                    : "View your profile information"}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -275,7 +308,12 @@ export default function ProfilePage() {
                       <Input
                         id="displayName"
                         value={profile.displayName}
-                        onChange={(e) => setProfile({...profile, displayName: e.target.value})}
+                        onChange={(e) =>
+                          setProfile({
+                            ...profile,
+                            displayName: e.target.value,
+                          })
+                        }
                       />
                     ) : (
                       <div className="flex items-center space-x-2 p-2 bg-gray-50 dark:bg-gray-800 rounded">
@@ -284,62 +322,27 @@ export default function ProfilePage() {
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="email">Email Address</Label>
                     {isEditing ? (
                       <Input
                         id="email"
                         type="email"
-                        value={profile.email}
-                        onChange={(e) => setProfile({...profile, email: e.target.value})}
+                        value={usern?.email}
+                        onChange={(e) =>
+                          setProfile({ ...profile, email: e.target.value })
+                        }
                       />
                     ) : (
                       <div className="flex items-center space-x-2 p-2 bg-gray-50 dark:bg-gray-800 rounded">
                         <Mail className="h-4 w-4 text-gray-500" />
-                        <span>{profile.email}</span>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    {isEditing ? (
-                      <Input
-                        id="phone"
-                        type="tel"
-                        value={profile.phone}
-                        onChange={(e) => setProfile({...profile, phone: e.target.value})}
-                        placeholder="Enter your phone number"
-                      />
-                    ) : (
-                      <div className="flex items-center space-x-2 p-2 bg-gray-50 dark:bg-gray-800 rounded">
-                        <span className={profile.phone ? '' : 'text-gray-500'}>
-                          {profile.phone || 'Not provided'}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="company">Company</Label>
-                    {isEditing ? (
-                      <Input
-                        id="company"
-                        value={profile.company}
-                        onChange={(e) => setProfile({...profile, company: e.target.value})}
-                        placeholder="Enter your company name"
-                      />
-                    ) : (
-                      <div className="flex items-center space-x-2 p-2 bg-gray-50 dark:bg-gray-800 rounded">
-                        <span className={profile.company ? '' : 'text-gray-500'}>
-                          {profile.company || 'Not provided'}
-                        </span>
+                        <span>{usern?.email}</span>
                       </div>
                     )}
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="bio">Bio</Label>
                   {isEditing ? (
@@ -347,13 +350,15 @@ export default function ProfilePage() {
                       id="bio"
                       className="w-full min-h-[100px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       value={profile.bio}
-                      onChange={(e) => setProfile({...profile, bio: e.target.value})}
+                      onChange={(e) =>
+                        setProfile({ ...profile, bio: e.target.value })
+                      }
                       placeholder="Tell us about yourself..."
                     />
                   ) : (
                     <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded min-h-[80px]">
-                      <span className={profile.bio ? '' : 'text-gray-500'}>
-                        {profile.bio || 'No bio provided'}
+                      <span className={profile.bio ? "" : "text-gray-500"}>
+                        {profile.bio || "No bio provided"}
                       </span>
                     </div>
                   )}
@@ -366,7 +371,9 @@ export default function ProfilePage() {
                       Cancel
                     </Button>
                     <Button onClick={handleSave} disabled={isLoading}>
-                      {isLoading ? 'Saving...' : (
+                      {isLoading ? (
+                        "Saving..."
+                      ) : (
                         <>
                           <Save className="h-4 w-4 mr-2" />
                           Save Changes
@@ -381,5 +388,5 @@ export default function ProfilePage() {
         </div>
       </main>
     </div>
-  )
+  );
 }

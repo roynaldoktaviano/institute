@@ -36,7 +36,7 @@ function formatTrainingDate(dateStr: string) {
   return format(parsed, "dd MMMM yyyy - hh.mm aaaa");
 }
 
-interface UserData {
+export interface UserData {
   id: number
   name: string
   email: string
@@ -78,7 +78,7 @@ export default function DashboardPage() {
   ];
 
   useEffect(() => {
-        const loadUser = async () => {
+  const loadUser = async () => {
     try {
       const userData = await getUserData()
       console.log("User:", userData)
@@ -115,12 +115,6 @@ export default function DashboardPage() {
         
 
         const savedUser = localStorage.getItem("lms_user")
-//         console.log("raw:", savedUser);
-// try {
-//   console.log("parsed:", JSON.parse(savedUser!));
-// } catch(e) {
-//   console.error("gagal parse:", e);
-// }
   if (!savedUser) return
 
   const user = JSON.parse(savedUser)
@@ -385,10 +379,10 @@ export default function DashboardPage() {
 </div>
 
           {/* Stats Cards */}
-          <div className="grid mt-10 grid-cols-1 md:grid-cols-3">
-            <Card className="gap-1 shadow-none  border-r-1 border-r-black border-t-none border-b-none border-l-none rounded-none">
+          <div className="grid mt-10 grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="gap-1 shadow-none  border-r-1 bg-gray-100 rounded-xl">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <Trophy className="h-6 w-6 text-white bg-blue-900 p-1 rounded" />
+                <Trophy className="h-6 w-6 text-blue-900 bg-white p-1 rounded" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.quizzesSubmitted} 
@@ -400,10 +394,10 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            <Card className="gap-1 shadow-none  border-r-1 border-r-black border-t-none border-b-none border-l-none rounded-none">
+            <Card className="gap-1 shadow-none  border-r-1 bg-gray-100 rounded-xl">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 
-                <Calendar className="h-6 w-6 text-white bg-blue-900 p-1 rounded"  />
+                <Calendar className="h-6 w-6 text-blue-900 bg-white p-1 rounded"  />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
@@ -415,10 +409,10 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            <Card className="gap-1 shadow-none   rounded-none">
+            <Card className="gap-1 shadow-none bg-gray-100 rounded-xl">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                
-                <BookOpen className="h-6 w-6 text-white bg-blue-900 p-1 rounded" />
+                <BookOpen className="h-6 w-6 text-blue-900 bg-white p-1 rounded" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
