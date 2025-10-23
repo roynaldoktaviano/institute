@@ -146,7 +146,7 @@ async  getModule(id: number) {
 }
 
 
-async getQuizzes(): Promise<Quiz[]> {
+async getQuizzes(): Promise<{ quizzes: Quiz[]; total: number }> {
   const res = await fetch("https://roynaldkalele.com/wp-json/wp/v2/quiz", { cache: "no-store" })
   if (!res.ok) {
     throw new Error(`Failed to fetch quizzes: ${res.status}`)
@@ -164,40 +164,39 @@ async getQuizzes(): Promise<Quiz[]> {
     submissions = progressData?.quizzes || []
   }
 
+  const quizzes: Quiz[] = data.map((item: any) => {
+    const quizData = item.quiz_data
+    const quizId = item.id
 
- const quizzes: Quiz[] = data.map((item: any) => {
-  const quizData = item.quiz_data
-  const quizId = item.id
+    const submission = submissions.find(s => Number(s.quiz_id) === quizId)
 
-  // cek apakah quiz sudah dikerjakan user
-  const submission = submissions.find(s => Number(s.quiz_id) === quizId)
+    return {
+      id: quizId,
+      week: quizData.week ?? 0,
+      title: item.title?.rendered ?? "Untitled Quiz",
+      time_limit_minutes: quizData.time_limit_minutes ?? 0,
+      questions: (quizData.questions || []).map((q: any, idx: number) => ({
+        id: idx + 1,
+        question: q.question,
+        options: q.options || [],
+        answer_type: q.answer_type ?? "multiple_choice",
+      })),
+      scoring: {
+        show_correct_answer: quizData.scoring?.show_correct_answer ?? false,
+      },
+      completed: !!submission,
+      score: submission?.score ?? null,
+      status: submission?.status ?? null,
+      finished_at: submission?.created_at ?? null,
+    }
+  })
 
   return {
-    id: quizId,
-    week: quizData.week ?? 0,
-    title: item.title?.rendered ?? "Untitled Quiz",
-    time_limit_minutes: quizData.time_limit_minutes ?? 0,
-    questions: (quizData.questions || []).map((q: any, idx: number) => ({
-      id: idx + 1,
-      question: q.question,
-      options: q.options || [],
-      answer_type: q.answer_type ?? "multiple_choice",
-    })),
-    scoring: {
-      show_correct_answer: quizData.scoring?.show_correct_answer ?? false,
-    },
-
-    // tambahan status progress user
-    completed: !!submission,
-    score: submission?.score ?? null,
-    status: submission?.status?? null,
-    finished_at: submission?.created_at ?? null,
+    quizzes,
+    total: quizzes.length, // ✅ total quiz di sini
   }
-})
-
-
-  return quizzes
 }
+
 async getProductKnowledge(): Promise<ProductKnowledge[]> {
   try {
     const res = await fetch('https://dorangadget.com/wp-json/wp/v2/product?per_page=15&page=1&_embed');

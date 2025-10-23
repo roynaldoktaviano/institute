@@ -55,7 +55,7 @@ export default function QuizzesPage() {
           lmsApi.getQuizzes(),
           lmsApi.getQuizSubmissions()
         ])
-        setQuizzes(quizzesData)
+        setQuizzes(quizzesData.quizzes)
         setSubmissions(submissionsData)
       } catch (error) {
         toast({

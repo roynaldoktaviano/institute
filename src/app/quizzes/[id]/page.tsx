@@ -41,10 +41,10 @@ export default function QuizDetailPage() {
   const loadQuiz = async () => {
     try {
       const quizzes = await lmsApi.getQuizzes()
-      setQuizzes(quizzes);
+      setQuizzes(quizzes.quizzes);
 
       // Cari quiz berdasarkan ID
-      const foundQuiz = quizzes.find(q => q.id === quizId)
+      const foundQuiz = quizzes.quizzes.find(q => q.id === quizId)
 
       if (!foundQuiz) {
         toast({

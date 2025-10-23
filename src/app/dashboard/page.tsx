@@ -22,8 +22,10 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import {Sheet, SheetTrigger, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { stat } from "fs";
 
 interface DashboardStats {
+  totalQuiz: number;
   quizzesSubmitted: number;
   trainingsParticipated: number;
 }
@@ -39,6 +41,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [stats, setStats] = useState<DashboardStats>({
+    totalQuiz:0,
     quizzesSubmitted: 0,
     trainingsParticipated: 0,
   });
@@ -80,9 +83,10 @@ export default function DashboardPage() {
           ]);
 
         setRecentTrainings(trainings.slice(0, 4));
-        setRecentQuizzes(quizzes.slice(0, 4));
+        setRecentQuizzes(quizzes.quizzes.slice(0, 4));
         setRecentProducts(products.slice(0, 4));
         setParticipant(participations);
+        
 
         const savedUser = localStorage.getItem("lms_user")
   if (!savedUser) return
@@ -100,6 +104,7 @@ export default function DashboardPage() {
       // const participations = trainingData?.data || []
 
       setStats({
+        totalQuiz : quizzes.total,
         quizzesSubmitted: submissions.length,   // jumlah quiz dikerjakan
         trainingsParticipated: 2 // jumlah training diikuti
       })
@@ -326,8 +331,10 @@ export default function DashboardPage() {
               <Trophy className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.quizzesSubmitted}</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="text-2xl font-bold">{stats.quizzesSubmitted} 
+              <span className="text-sm text-gray-500"> / {stats.totalQuiz} Total Quiz</span> 
+              </div>
+              <p className="text-xs mt-2 text-muted-foreground">
                 Keep up the good work!
               </p>
             </CardContent>
@@ -342,9 +349,9 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {recentParticipant?.completedTrainings} <span className="text-sm text-gray-500">/ {recentParticipant?.totalTrainings} </span> 
+                {recentParticipant?.completedTrainings} <span className="text-sm text-gray-500">/ {recentParticipant?.totalTrainings} Total Training</span> 
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs mt-2 text-muted-foreground">
                 Expand your skills
               </p>
             </CardContent>
@@ -360,13 +367,12 @@ export default function DashboardPage() {
             <CardContent>
               <div className="text-2xl font-bold">
                 {Math.round(
-                  ((stats.quizzesSubmitted) /
-                    10) *
+                  ((stats.quizzesSubmitted / stats.totalQuiz) * 0.5 + (recentParticipant?.completedTrainings! / recentParticipant?.totalTrainings!) * 0.5 ) *
                     100
                 )}
                 %
               </div>
-              <p className="text-xs text-muted-foreground">Overall progress</p>
+              <p className="text-xs mt-2 text-muted-foreground">Overall progress</p>
             </CardContent>
           </Card>
         </div>
