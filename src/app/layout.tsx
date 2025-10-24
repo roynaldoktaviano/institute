@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import { AuthProvider } from "@/lib/auth";
-import BlockInspect from "@/components/BlockInspect";
+import ClientWrapper from "@/components/lms/ClientWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,12 +15,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Doran Insititute - Learning Management System",
-  description: "Professional drone training and certification platform. Learn drone mapping, photography, safety regulations, and more.",
+  title: "Doran Institute - Learning Management System",
+  description:
+    "Professional drone training and certification platform. Learn drone mapping, photography, safety regulations, and more.",
   keywords: ["Drone", "LMS", "Training", "Academy", "Certification", "Photography", "Mapping"],
   authors: [{ name: "Doran Institute" }],
   openGraph: {
-    title: "Doran Insititute",
+    title: "Doran Institute",
     description: "Professional drone training and certification platform",
     url: "https://doranistitute.com",
     siteName: "Doran Institute",
@@ -44,10 +44,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
-        <BlockInspect />
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <ClientWrapper>{children}</ClientWrapper>
         <Toaster />
       </body>
     </html>
