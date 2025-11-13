@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AuthProvider } from "@/lib/auth";
+import { AuthProvider, useAuth } from "@/lib/auth";
 import BlockInspect from "@/components/BlockInspect";
 import Sidebar from "./Sidebar";
 
@@ -11,15 +11,15 @@ export default function ClientWrapper({
   children: React.ReactNode;
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const {user} = useAuth();
 
   return (
-    <AuthProvider>
+    
       <div className="flex min-h-screen bg-background text-foreground">
         {/* Sidebar */}
         <Sidebar
-          user={{ name: "Susi Programmer", avatar_urls: undefined }}
+          user={{ name: user?.name, avatar_urls: user?.avatar_urls }}
          
-          handleLogout={() => console.log("Logout")}
           onCollapseChange={setIsCollapsed}
         />
 
@@ -35,6 +35,6 @@ export default function ClientWrapper({
           </main>
         </div>
       </div>
-    </AuthProvider>
+    
   );
 }

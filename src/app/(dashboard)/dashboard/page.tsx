@@ -90,10 +90,10 @@ export default function DashboardPage() {
   }
 
   loadUser()
-    if (!user) {
-      router.push("/login");
-      return;
-    }
+    // if (!user) {
+    //   router.push("/login");
+    //   return;
+    // }
 
     const loadDashboardData = async () => {
       try {

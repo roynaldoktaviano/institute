@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   Home,
@@ -30,13 +30,14 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/lib/auth";
+import { useToast } from "@/hooks/use-toast";
 
 interface SidebarProps {
   user: {
-    name: string;
+    name: string | undefined;
     avatar_urls?: { [key: string]: string };
   };
-  handleLogout: () => void;
     onCollapseChange?: (collapsed: boolean) => void;
 }
 
@@ -47,10 +48,22 @@ const menus = [
   { name: "Products", href: "/products", icon: Package },
 ];
 
-export default function Sidebar({ user, handleLogout, onCollapseChange }: SidebarProps) {
+export default function Sidebar({ user, onCollapseChange }: SidebarProps) {
   const pathname = usePathname();
+  const { logout } = useAuth();
+  const { toast } = useToast();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const router = useRouter();
+
+    const handleLogout = () => {
+    logout();
+    toast({
+      title: "Logged out successfully",
+      description: "You have been logged out of your account.",
+    });
+    router.push("/login");
+  };
 
   return (
     <>
@@ -118,7 +131,7 @@ export default function Sidebar({ user, handleLogout, onCollapseChange }: Sideba
               >
                 <Avatar className="h-9 w-9 border border-white/20">
                   <AvatarImage src={user.avatar_urls?.["96"]} alt={user.name} />
-                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                  <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
                 </Avatar>
                 {!isCollapsed && (
                   <div className="flex flex-col text-sm">
@@ -192,7 +205,7 @@ export default function Sidebar({ user, handleLogout, onCollapseChange }: Sideba
               <div className="flex items-center gap-3 mb-3">
                 <Avatar className="h-10 w-10 border border-white/20">
                   <AvatarImage src={user.avatar_urls?.["96"]} alt={user.name} />
-                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                  <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div>
                   <p className="font-medium">{user.name}</p>

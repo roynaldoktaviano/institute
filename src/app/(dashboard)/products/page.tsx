@@ -202,7 +202,7 @@ export default function ProductsPage() {
                           className="flex items-center space-x-2 w-full px-3 py-2 rounded-md text-sm hover:bg-white/10 transition-colors text-left"
                         >
                           <LogOut className="h-4 w-4" />
-                          <span>Logout</span>
+                          <span>Logouts</span>
                         </button>
                       </div>
                     </div>
