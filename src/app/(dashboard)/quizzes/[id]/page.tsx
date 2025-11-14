@@ -1,166 +1,182 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { useAuth } from '@/lib/auth'
-import { lmsApi, Quiz } from '@/lib/api'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Label } from '@/components/ui/label'
-import { Progress } from '@/components/ui/progress'
-import { Badge } from '@/components/ui/badge'
-import { Clock, ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
-import Link from 'next/link'
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth";
+import { lmsApi, Quiz } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Clock, ArrowLeft, CheckCircle, AlertCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
 
 export default function QuizDetailPage() {
-  const { user } = useAuth()
-  const params = useParams()
-  const router = useRouter()
-  const { toast } = useToast()
-  const [quiz, setQuiz] = useState<Quiz | null>(null)
-   const [quizzes, setQuizzes] = useState<any[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [quizStarted, setQuizStarted] = useState(false)
-  const [quizCompleted, setQuizCompleted] = useState(false)
-  const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [answers, setAnswers] = useState<number[]>([])
-  const [timeRemaining, setTimeRemaining] = useState(0)
-  const [score, setScore] = useState(0)
-  const [hasTakenQuiz, setHasTakenQuiz] = useState(false)
+  const { user } = useAuth();
+  const params = useParams();
+  const router = useRouter();
+  const { toast } = useToast();
+  const [quiz, setQuiz] = useState<Quiz | null>(null);
+  const [quizzes, setQuizzes] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [quizStarted, setQuizStarted] = useState(false);
+  const [quizCompleted, setQuizCompleted] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState<number[]>([]);
+  const [timeRemaining, setTimeRemaining] = useState(0);
+  const [score, setScore] = useState(0);
+  const [hasTakenQuiz, setHasTakenQuiz] = useState(false);
+  const [shuffledQuestions, setShuffledQuestions] = useState<any[]>([]);
 
-  const quizId = parseInt(params.id as string)
+  const quizId = parseInt(params.id as string);
 
   useEffect(() => {
-  if (!user) {
-    router.push('/login')
-    return
-  }
-
-  const loadQuiz = async () => {
-    try {
-      const quizzes = await lmsApi.getQuizzes()
-      setQuizzes(quizzes.quizzes);
-
-      // Cari quiz berdasarkan ID
-      const foundQuiz = quizzes.quizzes.find(q => q.id === quizId)
-
-      if (!foundQuiz) {
-        toast({
-          title: "Quiz not found",
-          description: "The requested quiz could not be found.",
-          variant: "destructive",
-        })
-        router.push('/quizzes')
-        return
-      }
-
-      setQuiz(foundQuiz)
-
-      // Check if user has already taken this quiz
-      const submissions = await lmsApi.getQuizSubmissions()
-      const hasTaken = submissions.some(s => s.quiz_id === quizId)
-      setHasTakenQuiz(foundQuiz.completed)
-
-      // Initialize answers array
-      setAnswers(new Array(foundQuiz.questions.length).fill(-1))
-      setTimeRemaining(foundQuiz.time_limit_minutes * 60)
-    } catch (error) {
-      toast({
-        title: "Error loading quiz",
-        description: "Please try again later.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoading(false)
+    if (!user) {
+      router.push("/login");
+      return;
     }
+
+    const loadQuiz = async () => {
+      try {
+        const quizzes = await lmsApi.getQuizzes();
+        setQuizzes(quizzes.quizzes);
+
+        // Cari quiz berdasarkan ID
+        const foundQuiz = quizzes.quizzes.find((q) => q.id === quizId);
+
+        if (!foundQuiz) {
+          toast({
+            title: "Quiz not found",
+            description: "The requested quiz could not be found.",
+            variant: "destructive",
+          });
+          router.push("/quizzes");
+          return;
+        }
+
+        setQuiz(foundQuiz);
+
+        // Check if user has already taken this quiz
+        const submissions = await lmsApi.getQuizSubmissions();
+        const hasTaken = submissions.some((s) => s.quiz_id === quizId);
+        setHasTakenQuiz(foundQuiz.completed);
+
+        // Initialize answers array
+        const randomized = shuffleArray(foundQuiz.questions)
+        setShuffledQuestions(randomized)
+        setAnswers(new Array(randomized.length).fill(-1))
+        setTimeRemaining(foundQuiz.time_limit_minutes * 60);
+      } catch (error) {
+        toast({
+          title: "Error loading quiz",
+          description: "Please try again later.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadQuiz();
+  }, [user, router, toast, quizId]);
+
+  function shuffleArray(array: any[]) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
   }
 
-  loadQuiz()
-}, [user, router, toast, quizId])
-
-
   useEffect(() => {
-    let timer: NodeJS.Timeout
-    
+    let timer: NodeJS.Timeout;
+
     if (quizStarted && !quizCompleted && timeRemaining > 0) {
       timer = setInterval(() => {
-        setTimeRemaining(prev => {
+        setTimeRemaining((prev) => {
           if (prev <= 1) {
-            handleSubmitQuiz()
-            return 0
+            handleSubmitQuiz();
+            return 0;
           }
-          return prev - 1
-        })
-      }, 1000)
+          return prev - 1;
+        });
+      }, 1000);
     }
 
     return () => {
-      if (timer) clearInterval(timer)
-    }
-  }, [quizStarted, quizCompleted, timeRemaining])
+      if (timer) clearInterval(timer);
+    };
+  }, [quizStarted, quizCompleted, timeRemaining]);
 
   const handleAnswerSelect = (questionIndex: number, answerIndex: number) => {
-    const newAnswers = [...answers]
-    newAnswers[questionIndex] = answerIndex
-    setAnswers(newAnswers)
-  }
+    const newAnswers = [...answers];
+    newAnswers[questionIndex] = answerIndex;
+    setAnswers(newAnswers);
+  };
 
   const handleNextQuestion = () => {
     if (currentQuestion < quiz!.questions.length - 1) {
-      setCurrentQuestion(prev => prev + 1)
+      setCurrentQuestion((prev) => prev + 1);
     }
-  }
+  };
 
   const handlePreviousQuestion = () => {
     if (currentQuestion > 0) {
-      setCurrentQuestion(prev => prev - 1)
+      setCurrentQuestion((prev) => prev - 1);
     }
-  }
-  
-  const handleSubmitQuiz = async () => {
+  };
 
-    if (!quiz) return
+  const handleSubmitQuiz = async () => {
+    if (!quiz) return;
 
     try {
-      const savedUser = localStorage.getItem("lms_user")!
-       const savedToken = localStorage.getItem("lms_token")
+      const savedUser = localStorage.getItem("lms_user")!;
+      const savedToken = localStorage.getItem("lms_token");
 
-       const user = JSON.parse(savedUser)
-       const userId = user.id 
-      const result = await lmsApi.submitQuiz(userId,quizId, answers)
-      setScore(result.score)
-      setQuizCompleted(true)
-      setQuizStarted(false)
-      
+      const user = JSON.parse(savedUser);
+      const userId = user.id;
+      const result = await lmsApi.submitQuiz(userId, quizId, answers);
+      setScore(result.score);
+      setQuizCompleted(true);
+      setQuizStarted(false);
+
       toast({
         title: "Quiz submitted",
         description: `Your score: ${result.score}% (${result.status})`,
-      })
+      });
     } catch (error) {
       toast({
         title: "Error submitting quiz",
         description: "Please try again later.",
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
 
   const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60)
-    const remainingSeconds = seconds % 60
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
-  }
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+  };
 
   const getProgress = () => {
-    if (!quiz) return 0
-    const answeredQuestions = answers.filter(answer => answer !== -1).length
-    return (answeredQuestions / quiz.questions.length) * 100
-  }
+    if (!quiz) return 0;
+    const answeredQuestions = answers.filter((answer) => answer !== -1).length;
+    return (answeredQuestions / quiz.questions.length) * 100;
+  };
 
   if (!user) {
-    return null
+    return null;
   }
 
   if (isLoading) {
@@ -171,7 +187,7 @@ export default function QuizDetailPage() {
           <p>Loading quiz...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!quiz) {
@@ -184,7 +200,7 @@ export default function QuizDetailPage() {
           </Link>
         </div>
       </div>
-    )
+    );
   }
 
   if (hasTakenQuiz) {
@@ -195,7 +211,8 @@ export default function QuizDetailPage() {
             <AlertCircle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
             <CardTitle>Quiz Already Taken</CardTitle>
             <CardDescription>
-              You have already completed this quiz. Each quiz can only be taken once.
+              You have already completed this quiz. Each quiz can only be taken
+              once.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -205,7 +222,7 @@ export default function QuizDetailPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (quizCompleted) {
@@ -215,22 +232,21 @@ export default function QuizDetailPage() {
           <CardHeader className="text-center">
             <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
             <CardTitle>Quiz Completed!</CardTitle>
-            <CardDescription>
-              {quiz.title}
-            </CardDescription>
+            <CardDescription>{quiz.title}</CardDescription>
           </CardHeader>
           <CardContent className="text-center">
             <div className="text-4xl font-bold text-green-600 mb-2">
               {score}%
             </div>
-            <Badge 
-              variant={score >= 70 ? 'default' : 'destructive'}
+            <Badge
+              variant={score >= 70 ? "default" : "destructive"}
               className="mb-4"
             >
-              {score >= 70 ? 'Passed' : 'Failed'}
+              {score >= 70 ? "Passed" : "Failed"}
             </Badge>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-              Thank you for completing the quiz. Your results have been recorded.
+              Thank you for completing the quiz. Your results have been
+              recorded.
             </p>
             <Link href="/quizzes">
               <Button className="w-full">Back to Quizzes</Button>
@@ -238,7 +254,7 @@ export default function QuizDetailPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -258,7 +274,7 @@ export default function QuizDetailPage() {
                 {quiz.title}
               </h1>
             </div>
-            
+
             {quizStarted && (
               <div className="flex items-center space-x-4">
                 <Badge variant="outline" className="flex items-center">
@@ -279,27 +295,38 @@ export default function QuizDetailPage() {
           <div className="max-w-2xl mx-auto">
             <Card>
               <CardHeader>
-                <CardTitle className="text-center">Ready to start the quiz?</CardTitle>
+                <CardTitle className="text-center">
+                  Ready to start the quiz?
+                </CardTitle>
                 <CardDescription className="text-center">
-                  Week {quiz.week} • {quiz.questions.length} questions • {quiz.time_limit_minutes} minutes
+                  Week {quiz.week} • {quiz.questions.length} questions •{" "}
+                  {quiz.time_limit_minutes} minutes
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
                   <h3 className="font-semibold mb-2">Quiz Instructions:</h3>
                   <ul className="text-sm space-y-1 text-gray-600 dark:text-gray-400">
-                    <li>• You have {quiz.time_limit_minutes} minutes to complete all questions</li>
+                    <li>
+                      • You have {quiz.time_limit_minutes} minutes to complete
+                      all questions
+                    </li>
                     <li>• Each question has multiple choice answers</li>
-                    <li>• You can navigate between questions before submitting</li>
+                    <li>
+                      • You can navigate between questions before submitting
+                    </li>
                     <li>• Once submitted, you cannot retake this quiz</li>
                     <li>• Passing score is 70% or higher</li>
                   </ul>
                 </div>
-                
+
                 <div className="text-center">
-                  <Button 
-                    size="lg" 
-                    onClick={() => setQuizStarted(true)}
+                  <Button
+                    size="lg"
+                    onClick={() => {
+                      setShuffledQuestions(shuffleArray(quiz.questions));
+                      setQuizStarted(true);
+                    }}
                     className="w-full sm:w-auto"
                   >
                     Start Quiz
@@ -316,7 +343,8 @@ export default function QuizDetailPage() {
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm font-medium">Progress</span>
                   <span className="text-sm text-gray-600 dark:text-gray-400">
-                    {answers.filter(a => a !== -1).length} of {quiz.questions.length} answered
+                    {answers.filter((a) => a !== -1).length} of{" "}
+                    {quiz.questions.length} answered
                   </span>
                 </div>
                 <Progress value={getProgress()} className="h-2" />
@@ -330,49 +358,60 @@ export default function QuizDetailPage() {
                   Question {currentQuestion + 1}
                 </CardTitle>
                 <CardDescription className="text-base font-medium text-gray-900 dark:text-white">
-                  {quiz.questions[currentQuestion].question}
+                  {shuffledQuestions[currentQuestion].question
+}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <RadioGroup 
-                  value={answers[currentQuestion]?.toString()} 
-                  onValueChange={(value) => handleAnswerSelect(currentQuestion, parseInt(value))}
+                <RadioGroup
+                  value={answers[currentQuestion]?.toString()}
+                  onValueChange={(value) =>
+                    handleAnswerSelect(currentQuestion, parseInt(value))
+                  }
                 >
-                  {quiz.questions[currentQuestion].options.map((option, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <RadioGroupItem value={index.toString()} id={`option-${index}`} />
-                      <Label htmlFor={`option-${index}`} className="cursor-pointer">
-                        {option}
-                      </Label>
-                    </div>
-                  ))}
+                  {quiz.questions[currentQuestion].options.map(
+                    (option, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <RadioGroupItem
+                          value={index.toString()}
+                          id={`option-${index}`}
+                        />
+                        <Label
+                          htmlFor={`option-${index}`}
+                          className="cursor-pointer"
+                        >
+                          {option}
+                        </Label>
+                      </div>
+                    )
+                  )}
                 </RadioGroup>
               </CardContent>
             </Card>
 
             {/* Navigation */}
             <div className="flex justify-between items-center">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={handlePreviousQuestion}
                 disabled={currentQuestion === 0}
               >
                 Previous
               </Button>
-              
+
               <div className="text-sm text-gray-600 dark:text-gray-400">
                 {currentQuestion + 1} / {quiz.questions.length}
               </div>
-              
+
               {currentQuestion === quiz.questions.length - 1 ? (
-                <Button 
+                <Button
                   onClick={handleSubmitQuiz}
                   disabled={answers[currentQuestion] === -1}
                 >
                   Submit Quiz
                 </Button>
               ) : (
-                <Button 
+                <Button
                   onClick={handleNextQuestion}
                   disabled={answers[currentQuestion] === -1}
                 >
@@ -391,10 +430,16 @@ export default function QuizDetailPage() {
                   {quiz.questions.map((_, index) => (
                     <Button
                       key={index}
-                      variant={currentQuestion === index ? "default" : "outline"}
+                      variant={
+                        currentQuestion === index ? "default" : "outline"
+                      }
                       size="sm"
                       onClick={() => setCurrentQuestion(index)}
-                      className={answers[index] !== -1 ? "bg-green-100 border-green-300" : ""}
+                      className={
+                        answers[index] !== -1
+                          ? "bg-green-100 border-green-300"
+                          : ""
+                      }
                     >
                       {index + 1}
                     </Button>
@@ -406,5 +451,5 @@ export default function QuizDetailPage() {
         )}
       </main>
     </div>
-  )
+  );
 }

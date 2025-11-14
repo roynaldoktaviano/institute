@@ -179,15 +179,14 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#f1f5f8] dark:bg-gray-900">
-      {/* Header */}
 
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
+
         <div className="mb-8 bg-white px-8 py-7 rounded-2xl">
          <div className="flex gap-8 items-center">
   <img
-    src={usern?.avatar}
+    src={user.avatar_urls?.["96"]}
     alt="User Avatar"
     className="w-30 h-30 rounded-full"
   />
