@@ -4,6 +4,7 @@ import * as React from 'react'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 interface User {
+  custom_avatar: string | null
   id: number
   name: string
   email: string
@@ -116,3 +117,4 @@ export function useAuth() {
   }
   return context
 }
+
