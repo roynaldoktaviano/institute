@@ -39,6 +39,7 @@ export interface Modul {
 }
 
 export interface Quiz {
+  id: number
   week: number
   title: string
   time_limit_minutes: number
