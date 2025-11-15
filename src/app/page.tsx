@@ -28,6 +28,8 @@ import {
   ArrowRight,
   Play
 } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
 
 export default function DroneInstituteLMS() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -38,12 +40,15 @@ export default function DroneInstituteLMS() {
        <div className="min-h-screen bg-background mx-auto w-full max-w-[1600px]">
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-20">
-        <div className="container flex h-16 items-center justify-between px-4">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <Plane className="h-8 w-8 text-blue-600" />
-              <span className="text-xl font-bold text-blue-900">Drone Institute</span>
-            </div>
+        <div className="container grid grid-cols-3 h-16 items-center justify-between px-4">
+          <div className="">
+            <Image
+              src='/logo-biru.png'
+              width={1920}
+              height={1080}
+              alt='Logo Drone Institute Biru'
+              className='w-[20%] h-auto'
+              />
           </div>
           
           <nav className="hidden md:flex items-center space-x-6">
@@ -59,9 +64,11 @@ export default function DroneInstituteLMS() {
             {/* <Button variant="ghost" size="sm" className="hidden md:flex">
               Login
             </Button> */}
-            <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+            <Link href="/login" className='ml-auto'>
+            <Button size="sm" className="bg-[#31569A] hover:bg-blue-700">
               Log In
             </Button>
+            </Link>
             <Button
               variant="ghost"
               size="sm"
@@ -84,8 +91,8 @@ export default function DroneInstituteLMS() {
               <a href="#pricing" className="text-sm font-medium hover:text-blue-600 transition-colors">Pricing</a>
               <a href="#contact" className="text-sm font-medium hover:text-blue-600 transition-colors">Contact</a>
               <div className="flex space-x-2 pt-2">
-                <Button variant="ghost" size="sm" className="flex-1">Sign In</Button>
-                <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700">Get Started</Button>
+                <Button variant="ghost" size="sm" className="flex-1">Log In</Button>
+                {/* <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700">Get Started</Button> */}
               </div>
             </nav>
           </div>
@@ -93,7 +100,7 @@ export default function DroneInstituteLMS() {
       </header>
 
       {/* Hero Section */}
-      <section id="home" className="relative py-20 lg:py-32 px-20">
+      <section id="home" className="relative py-20 lg:py-20 px-8 lg:px-20">
         <div className="container px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
@@ -136,7 +143,12 @@ export default function DroneInstituteLMS() {
             <div className="relative">
               <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8">
                 <div className="aspect-video bg-blue-200 rounded-lg flex items-center justify-center">
-                  <Plane className="h-24 w-24 text-blue-600" />
+                  <Image
+                  src="/bg-drone.jpg"
+                  width={1920}
+                  height={1080}
+                  alt='Drone Insitute'
+                  className='w-full h-auto rounded-2xl'></Image>
                 </div>
               </div>
             </div>
@@ -145,11 +157,11 @@ export default function DroneInstituteLMS() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-blue-50 px-20">
+      <section id="features" className="py-20 bg-blue-50 px-8 lg:px-20">
         <div className="container px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-blue-900 mb-4">
-              Why Choose Drone Institute?
+              Kenapa Memilih Drone Institute?
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Experience the future of drone education with our cutting-edge platform
@@ -162,9 +174,9 @@ export default function DroneInstituteLMS() {
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                   <Target className="h-6 w-6 text-blue-600" />
                 </div>
-                <CardTitle className="text-blue-900">Precision Training</CardTitle>
+                <CardTitle className="text-blue-900">Penilaian Skill yang Akurat</CardTitle>
                 <CardDescription>
-                  Learn from industry experts with hands-on flight experience
+                  Platform ini dirancang untuk mengukur kemampuan Anda secara tepat—mulai dari dasar hingga tingkat mahir. Setiap modul memiliki evaluasi terstruktur sehingga Anda dapat melihat progres secara jelas dan objektif.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -174,9 +186,9 @@ export default function DroneInstituteLMS() {
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                   <Camera className="h-6 w-6 text-blue-600" />
                 </div>
-                <CardTitle className="text-blue-900">Aerial Photography</CardTitle>
+                <CardTitle className="text-blue-900">Pemahaman Produk yang Mendalam</CardTitle>
                 <CardDescription>
-                  Master cinematic drone shots and professional photography techniques
+                  Pelajari fitur, fungsi, komponen, hingga perawatan drone melalui materi yang dibuat oleh praktisi berpengalaman. Cocok untuk meningkatkan product knowledge dan kesiapan penggunaan drone di lapangan.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -186,9 +198,9 @@ export default function DroneInstituteLMS() {
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                   <Navigation className="h-6 w-6 text-blue-600" />
                 </div>
-                <CardTitle className="text-blue-900">GPS Navigation</CardTitle>
+                <CardTitle className="text-blue-900">Simulasi Penerbangan yang Realistis</CardTitle>
                 <CardDescription>
-                  Advanced navigation and autonomous flight control systems
+                  Asah kemampuan menerbangkan drone melalui simulasi interaktif yang aman. Baik pemula maupun pilot berpengalaman dapat meningkatkan teknik tanpa risiko kerusakan perangkat.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -198,9 +210,9 @@ export default function DroneInstituteLMS() {
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                   <Shield className="h-6 w-6 text-blue-600" />
                 </div>
-                <CardTitle className="text-blue-900">Safety First</CardTitle>
+                <CardTitle className="text-blue-900">Fokus pada Keamanan & Regulasi</CardTitle>
                 <CardDescription>
-                  Comprehensive safety protocols and emergency procedures
+                  Keselamatan adalah prioritas utama. Anda akan mempelajari standar keamanan, prosedur darurat, serta aturan penerbangan drone agar lebih siap menghadapi kondisi nyata.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -210,9 +222,9 @@ export default function DroneInstituteLMS() {
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                   <Zap className="h-6 w-6 text-blue-600" />
                 </div>
-                <CardTitle className="text-blue-900">Fast Track</CardTitle>
+                <CardTitle className="text-blue-900">Jalur Belajar yang Terarah</CardTitle>
                 <CardDescription>
-                  Accelerated learning paths for quick certification
+                  Drone Institute menyediakan jalur pembelajaran yang telah disesuaikan dengan tujuan Anda—baik untuk meningkatkan skill teknis, product knowledge, maupun pengoperasian drone secara profesional.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -222,9 +234,9 @@ export default function DroneInstituteLMS() {
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                   <Globe className="h-6 w-6 text-blue-600" />
                 </div>
-                <CardTitle className="text-blue-900">Global Recognition</CardTitle>
+                <CardTitle className="text-blue-900">Materi Terupdate Sesuai Perkembangan Teknologi</CardTitle>
                 <CardDescription>
-                  Internationally recognized certifications and credentials
+                  Dunia drone berkembang cepat. Materi di Drone Institute selalu diperbarui agar pengguna mendapatkan informasi terkini mengenai teknologi, fitur, dan tren terbaru di industri drone.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -233,7 +245,7 @@ export default function DroneInstituteLMS() {
       </section>
 
       {/* Success Stories */}
-      <section className="py-20">
+      <section className="py-20 px-8 lg:px-20">
         <div className="container px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-blue-900 mb-4">
@@ -325,117 +337,10 @@ export default function DroneInstituteLMS() {
           </div>
         </div>
       </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-blue-50">
-        <div className="container px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-blue-900 mb-4">
-              Choose Your Flight Path
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Flexible pricing plans designed for every aspiring drone pilot
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader className="text-center">
-                <CardTitle className="text-xl">Starter</CardTitle>
-                <div className="text-3xl font-bold text-blue-900">$29<span className="text-lg font-normal text-muted-foreground">/month</span></div>
-                <CardDescription>Perfect for beginners</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span>Basic Flight Training</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span>10 Video Lessons</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span>Community Access</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span>Mobile App Access</span>
-                </div>
-                <Button className="w-full" variant="outline">Get Started</Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow border-blue-500 border-2 relative">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <Badge className="bg-blue-600 text-white">Most Popular</Badge>
-              </div>
-              <CardHeader className="text-center">
-                <CardTitle className="text-xl">Professional</CardTitle>
-                <div className="text-3xl font-bold text-blue-900">$75<span className="text-lg font-normal text-muted-foreground">/month</span></div>
-                <CardDescription>For serious pilots</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span>Everything in Starter</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span>Advanced Flight Maneuvers</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span>FAA Test Preparation</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span>1-on-1 Mentorship</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span>Certificate of Completion</span>
-                </div>
-                <Button className="w-full bg-blue-600 hover:bg-blue-700">Get Started</Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader className="text-center">
-                <CardTitle className="text-xl">Enterprise</CardTitle>
-                <div className="text-3xl font-bold text-blue-900">$150<span className="text-lg font-normal text-muted-foreground">/month</span></div>
-                <CardDescription>For teams and organizations</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span>Everything in Professional</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span>Team Management</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span>Custom Training Programs</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span>Priority Support</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span>API Access</span>
-                </div>
-                <Button className="w-full" variant="outline">Contact Sales</Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
+ 
 
       {/* Success Story Highlight */}
-      <section className="py-20">
+      <section className="py-20 px-8 lg:px-20">
         <div className="container px-4">
           <Card className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
             <CardContent className="p-12 lg:p-16">
@@ -485,16 +390,21 @@ export default function DroneInstituteLMS() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-blue-900 text-white py-12">
+      <footer className="bg-[#31569A] text-white py-12 px-20">
         <div className="container px-4">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <Plane className="h-8 w-8" />
-                <span className="text-xl font-bold">Drone Institute</span>
+                <Image 
+                src="/logo-test.png"
+                width={1920}
+                height={1080}
+                alt='Logo Drone Institute'
+                className='w-[55%] h-auto'
+                ></Image>
               </div>
-              <p className="text-blue-200">
-                Empowering the next generation of drone pilots with world-class education.
+              <p className="text-blue-200 ">
+                 Tingkatkan skill menerbangkan drone dengan kurikulum modern yang dirancang untuk kebutuhan hobi, industri, hingga sertifikasi resmi.
               </p>
             </div>
             <div>
@@ -531,7 +441,7 @@ export default function DroneInstituteLMS() {
             </div>
           </div>
           <div className="border-t border-blue-800 mt-8 pt-8 text-center text-blue-200">
-            <p>&copy; 2025 Drone Institute. All rights reserved.</p>
+            <p>&copy; PT Doran Sukses Indonesai. All rights reserved.</p>
           </div>
         </div>
       </footer>
