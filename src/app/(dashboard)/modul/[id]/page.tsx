@@ -21,6 +21,7 @@ interface Modul {
       kunci_jawaban: string;
     }[];
     deskripsi?: string;
+    video_materi?:string;
   };
 }
 
@@ -316,7 +317,7 @@ async function submitTrainingResult({
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {modul.acf?.materi_ppt ? (
+              {modul.acf?.materi_ppt || modul.acf?.video_materi ? (
                 <div className="bg-slate-50 rounded-lg p-4">
                   <iframe
                     src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(modul.acf?.materi_ppt)}`}
@@ -324,6 +325,14 @@ async function submitTrainingResult({
                     height="500"
                     className="border rounded-lg bg-white"
                   />
+                  <iframe
+                  className="w-full h-[400px] mt-10"
+                  src={modul.acf?.video_materi}
+                  title="YouTube video"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  
+                ></iframe>
                 </div>
               ) : (
                 <div className="bg-slate-50 rounded-lg p-6">
@@ -336,7 +345,8 @@ async function submitTrainingResult({
                     </div>
                   </div>
                 </div>
-              )}
+              )
+              }
 
               <div className="flex justify-end pt-4">
                 <Button onClick={() => setStep(2)} className="gap-2">

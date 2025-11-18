@@ -36,6 +36,7 @@ export interface Modul {
   id: number
   file: string
   evaluasi: EvaluasiModul[] 
+  video: string
 }
 
 export interface Quiz {
