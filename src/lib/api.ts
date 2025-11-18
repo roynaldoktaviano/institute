@@ -218,7 +218,7 @@ async getQuizzes(): Promise<{ quizzes: Quiz[]; total: number }> {
 
 async getProductKnowledge(): Promise<ProductKnowledge[]> {
   try {
-    const res = await fetch('https://dorangadget.com/wp-json/wp/v2/product?per_page=15&page=1&_embed');
+    const res = await fetch('https://dorangadget.com/wp-json/wp/v2/product?per_page=100&page=1&product_cat=753&_embed');
     const data = await res.json();
 
     return data.map((item: any) => {
