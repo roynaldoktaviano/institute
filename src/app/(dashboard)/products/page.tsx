@@ -31,7 +31,7 @@ export default function ProductsPage() {
         // { name: "Profile", href: "/profile" },
       ];
   
-       const handleLogout = () => {
+      const handleLogout = () => {
       logout();
       toast({
         title: "Logged out successfully",

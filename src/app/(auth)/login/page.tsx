@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useToast } from '@/hooks/use-toast'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -71,6 +72,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-[url('/bg-drone-2.jpg')] bg-cover from-sky-50 to-blue-100 dark:from-gray-900 dark:to-gray-800 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
+           <Link href="/">
            <Image
                           src="/logo-test.png"
                           width={250}
@@ -78,9 +80,8 @@ export default function LoginPage() {
                           alt="Logo Test"
                           className='mx-auto'
                           />
-          {/* <p className="text-gray-600 dark:text-gray-400">
-            Learning Management System
-          </p> */}
+           </Link>
+      
         </div>
         
         <Card>
