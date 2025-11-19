@@ -16,7 +16,6 @@ export default function ClientWrapper({
   return (
     
       <div className="flex min-h-screen bg-background text-foreground">
-        {/* Sidebar */}
         <Sidebar
           user={{ name: user?.name, avatar_urls: user?.avatar_urls }}
          
