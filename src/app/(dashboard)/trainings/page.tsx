@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth'
-import { lmsApi, Training } from '@/lib/api'
+import { lmsApi, Training, TrainingSummary } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -22,6 +22,7 @@ export default function TrainingsPage() {
   const { toast } = useToast()
   const [trainings, setTrainings] = useState<Training[]>([])
   const [isLoading, setIsLoading] = useState(true)
+     const [recentParticipant, setParticipant] = useState<TrainingSummary | null>(null);
   const pathname = usePathname();
    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
         const menus = [
@@ -72,15 +73,33 @@ export default function TrainingsPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Loading trainings...</p>
+  return (
+    <div className="min-h-screen flex items-center justify-center px-6">
+      <div className="w-full max-w-md space-y-6 animate-pulse">
+
+        <div className="h-6 bg-gray-200 rounded-md w-3/4 mx-auto"></div>
+
+        <div className="p-6 border border-gray-200 rounded-2xl shadow-sm space-y-4">
+          
+          <div className="w-full h-40 bg-gray-200 rounded-xl"></div>
+
+          <div className="space-y-3">
+            <div className="h-4 bg-gray-200 rounded-md w-5/6"></div>
+            <div className="h-4 bg-gray-200 rounded-md w-4/6"></div>
+          </div>
+
+          <div className="space-y-3">
+            <div className="h-3 bg-gray-200 rounded-md w-full"></div>
+            <div className="h-3 bg-gray-200 rounded-md w-11/12"></div>
+          </div>
+
+          <div className="h-10 bg-gray-200 rounded-xl w-full"></div>
         </div>
       </div>
-    )
-  }
+    </div>
+  );
+}
+
 
   function formatTrainingDate(dateStr: string) {
     // API: "28/09/2025 4:00 pm"
@@ -101,8 +120,17 @@ export default function TrainingsPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {trainings.map((training) => (
-            <Card key={training.id} className="hover:shadow-lg transition-shadow pt-0 pb-6">
+          {trainings.map((training) => {
+            const matchedTraining = recentParticipant?.trainings.find(
+              (t) => t.training_id === training.id
+            )
+
+              const isCompleted =
+              matchedTraining &&
+              matchedTraining.total_modules > 0 &&
+              matchedTraining.completed_modules === matchedTraining.total_modules
+            return (
+              <Card key={training.id} className="hover:shadow-lg transition-shadow pt-0 pb-6">
               <div className="aspect-video bg-gray-200 rounded-t-lg overflow-hidden">
                 <img 
                   src={training.image} 
@@ -138,15 +166,22 @@ export default function TrainingsPage() {
                     {training.short_description}
                   </p>
                   
-                  <Link href={`/trainings/${training.id}`} className='cursor-pointer bg-black mt-5 text-white text-sm py-1 rounded-lg'>
-                    <button className="w-full cursor-pointer">
-                      View Details
-                    </button>
-                  </Link>
+                  {isCompleted ? (
+  <p className="w-full mt-5 text-sm p-2 bg-green-400 text-center text-white font-semibold rounded-2xl">
+    Sudah Menyelesaikan Training Ini
+  </p>
+) : (
+  <Link href={`/trainings/${training.id}`}>
+    <Button size="sm" className="w-full mt-5 cursor-pointer">
+      Lihat Detail
+    </Button>
+  </Link>
+)}
                 </div>
               </CardContent>
             </Card>
-          ))}
+            )
+          })}
         </div>
       </main>
     </div>

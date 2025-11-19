@@ -166,16 +166,37 @@ export default function DashboardPage() {
     return null;
   }
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Loading dashboard...</p>
+if (isLoading) {
+  return (
+    <div className="min-h-screen flex items-center justify-center px-6">
+      <div className="w-full max-w-md space-y-6 animate-pulse">
+        {/* Title Skeleton */}
+        <div className="h-6 bg-gray-200 rounded-md w-3/4 mx-auto"></div>
+
+        {/* Card Skeleton */}
+        <div className="p-6 border border-gray-200 rounded-2xl shadow-sm space-y-4">
+          
+          {/* Thumbnail */}
+          <div className="w-full h-40 bg-gray-200 rounded-xl"></div>
+
+          <div className="space-y-3">
+            <div className="h-4 bg-gray-200 rounded-md w-5/6"></div>
+            <div className="h-4 bg-gray-200 rounded-md w-4/6"></div>
+          </div>
+
+          <div className="space-y-3">
+            <div className="h-3 bg-gray-200 rounded-md w-full"></div>
+            <div className="h-3 bg-gray-200 rounded-md w-11/12"></div>
+          </div>
+
+          {/* Button Skeleton */}
+          <div className="h-10 bg-gray-200 rounded-xl w-full"></div>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+}
+
 
   return (
     <div className="min-h-screen bg-[#f1f5f8] dark:bg-gray-900">
