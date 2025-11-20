@@ -238,8 +238,9 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            <Card className="gap-1 shadow-none h-fit flex flex-row border-[#ff7700] border-r-1 bg-[#fee4cd] rounded-xl">
-              <CardHeader className="flex flex-row items-center w-[25%] justify-between space-y-0">
+            <Card className="gap-1 shadow-none h-fit  border-[#ff7700] border-r-1 bg-[#fee4cd] rounded-xl">
+              <div className="flex flex-row">
+                <CardHeader className="flex flex-row items-center w-[25%] justify-between space-y-0">
                 <Calendar className="h-12 w-12 text-[#ff7700] bg-white p-3 rounded" />
               </CardHeader>
               <CardContent className="p-0">
@@ -252,7 +253,15 @@ export default function DashboardPage() {
                 <p className="text-xs mt-2 text-muted-foreground">
                   Jumlah Training Diikuti
                 </p>
+                
               </CardContent>
+              </div>
+              <div className="px-6 mt-3">
+                <hr className="border-t border-[#ff7700] w-full" />
+                <p className="mt-3 text-[#ff7700] text-sm">
+                  Lihat Detail
+                </p>
+              </div>
             </Card>
 
             <Card className="gap-1 shadow-none flex flex-row h-fit border-[#0097fb] bg-[#ccebff] rounded-xl">
