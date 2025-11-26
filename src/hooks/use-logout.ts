@@ -2,32 +2,35 @@
 
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import AuthService from "@/lib/auth"
+import { useAuth } from "@/lib/auth" // <-- pakai ini, bukan AuthService
 
 export function useLogout() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const authService = AuthService.getInstance()
+  const { logout } = useAuth() // <-- ini dia logout dari provider
 
-  const logout = async () => {
+  const doLogout = async () => {
     setLoading(true)
     setError(null)
+
     try {
-      await authService.logoutAndRedirect("/")
+      await logout()              // <-- panggil logout yang sudah ada
+      router.push("/login")       // <-- sama seperti logic kamu
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Logout failed"
-      setError(errorMessage)
+      const message = err instanceof Error ? err.message : "Logout failed"
+      setError(message)
+
       setTimeout(() => {
-        router.push("/")
-      }, 1000)
+        router.push("/login")
+      }, 800)
     } finally {
       setLoading(false)
     }
   }
 
   return {
-    logout,
+    logout: doLogout,
     loading,
     error
   }

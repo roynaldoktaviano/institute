@@ -14,14 +14,32 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, Clock, BookOpen, Trophy, LogOut, User, Menu,  } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  BookOpen,
+  Trophy,
+  LogOut,
+  User,
+  Menu,
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { parse, format } from "date-fns";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
-import {Sheet, SheetTrigger, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@radix-ui/react-dropdown-menu";
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { stat } from "fs";
 import Sidebar from "@/components/lms/Sidebar";
 
@@ -38,17 +56,17 @@ function formatTrainingDate(dateStr: string) {
 }
 
 export interface UserData {
-  id: number
-  name: string
-  email: string
-  avatar: string
-  registered_date: string
-  total_exp: number
-  level_id: number
-  level_name: string
-  min_exp: number
-  max_exp: number
-  progress_percent: number
+  id: number;
+  name: string;
+  email: string;
+  avatar: string;
+  registered_date: string;
+  total_exp: number;
+  level_id: number;
+  level_name: string;
+  min_exp: number;
+  max_exp: number;
+  progress_percent: number;
 }
 
 export default function DashboardPage() {
@@ -56,21 +74,23 @@ export default function DashboardPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [stats, setStats] = useState<DashboardStats>({
-    totalQuiz:0,
+    totalQuiz: 0,
     quizzesSubmitted: 0,
     trainingsParticipated: 0,
   });
-  const [usern, setUsern] = useState<UserData | null>(null)
+  const [usern, setUsern] = useState<UserData | null>(null);
   const [recentTrainings, setRecentTrainings] = useState<any[]>([]);
   const [recentQuizzes, setRecentQuizzes] = useState<any[]>([]);
   const [recentProducts, setRecentProducts] = useState<any[]>([]);
-   const [recentParticipant, setParticipant] = useState<TrainingSummary | null>(null);
-  
-  const [isLoading, setIsLoading] = useState(true);
-    const pathname = usePathname();
-   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [recentParticipant, setParticipant] = useState<TrainingSummary | null>(
+    null
+  );
 
-    const menus = [
+  const [isLoading, setIsLoading] = useState(true);
+  const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const menus = [
     { name: "Dashboard", href: "/dashboard" },
     { name: "Trainings", href: "/trainings" },
     { name: "Quizzes", href: "/quizzes" },
@@ -79,27 +99,27 @@ export default function DashboardPage() {
   ];
 
   useEffect(() => {
-  const loadUser = async () => {
-    try {
-      const userData = await getUserData()
-      console.log("User:", userData)
-      setUsern(userData) // misal kamu punya state
-    } catch (err) {
-      console.error(err)
-    }
-  }
+    const loadUser = async () => {
+      try {
+        const userData = await getUserData();
+        console.log("User:", userData);
+        setUsern(userData); // misal kamu punya state
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
-  loadUser()
-    if (!user) {
-      router.push("/login");
-      return;
-    }
+    loadUser();
+    // if (!user) {
+    //   router.push("/login");
+    //   return;
+    // }
 
     const loadDashboardData = async () => {
       try {
         const userLog = localStorage.getItem("lms_user");
-        const users = JSON.parse(userLog!)
-        const usersId = users.id
+        const users = JSON.parse(userLog!);
+        const usersId = users.id;
         const [trainings, quizzes, products, submissions, participations] =
           await Promise.all([
             lmsApi.getTrainings(),
@@ -113,32 +133,33 @@ export default function DashboardPage() {
         setRecentQuizzes(quizzes.quizzes.slice(0, 4));
         setRecentProducts(products.slice(0, 4));
         setParticipant(participations);
-        
 
-        const savedUser = localStorage.getItem("lms_user")
-  if (!savedUser) return
+        const savedUser = localStorage.getItem("lms_user");
+        if (!savedUser) return;
 
-  const user = JSON.parse(savedUser)
-  const userId = user.id
+        const user = JSON.parse(savedUser);
+        const userId = user.id;
 
-  // 🔥 ambil data quiz & training paralel
-  Promise.all([
-    fetch(`https://roynaldkalele.com/wp-json/lms/v1/user/${userId}/quiz`).then(res => res.json()),
-    // fetch(`https://roynaldkalele.com/wp-json/lms/v1/user/${userId}/training`).then(res => res.json())
-  ])
-    .then(([quizData]) => {
-      const submissions = quizData?.quizzes || []
-      // const participations = trainingData?.data || []
+        // 🔥 ambil data quiz & training paralel
+        Promise.all([
+          fetch(
+            `https://roynaldkalele.com/wp-json/lms/v1/user/${userId}/quiz`
+          ).then((res) => res.json()),
+          // fetch(`https://roynaldkalele.com/wp-json/lms/v1/user/${userId}/training`).then(res => res.json())
+        ])
+          .then(([quizData]) => {
+            const submissions = quizData?.quizzes || [];
+            // const participations = trainingData?.data || []
 
-      setStats({
-        totalQuiz : quizzes.total,
-        quizzesSubmitted: submissions.length,   // jumlah quiz dikerjakan
-        trainingsParticipated: 2 // jumlah training diikuti
-      })
-    })
-    .catch(err => {
-      console.error("Error fetching stats:", err)
-    })
+            setStats({
+              totalQuiz: quizzes.total,
+              quizzesSubmitted: submissions.length, // jumlah quiz dikerjakan
+              trainingsParticipated: 2, // jumlah training diikuti
+            });
+          })
+          .catch((err) => {
+            console.error("Error fetching stats:", err);
+          });
       } catch (error) {
         toast({
           title: "Error loading dashboard",
@@ -168,71 +189,48 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Loading dashboard...</p>
+      <div className="min-h-screen flex items-center justify-center px-6">
+        <div className="w-full max-w-md space-y-6 animate-pulse">
+          <div className="h-6 bg-gray-200 rounded-md w-3/4 mx-auto"></div>
+
+          <div className="p-6 border border-gray-200 rounded-2xl shadow-sm space-y-4">
+            <div className="w-full h-40 bg-gray-200 rounded-xl"></div>
+
+            <div className="space-y-3">
+              <div className="h-4 bg-gray-200 rounded-md w-5/6"></div>
+              <div className="h-4 bg-gray-200 rounded-md w-4/6"></div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="h-3 bg-gray-200 rounded-md w-full"></div>
+              <div className="h-3 bg-gray-200 rounded-md w-11/12"></div>
+            </div>
+            <div className="h-10 bg-gray-200 rounded-xl w-full"></div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#f1f5f8] dark:bg-gray-900">
-      {/* Header */}
-
-
+    <div className="min-h-screen bg-[#f7f8fa] dark:bg-gray-900">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8 bg-white px-8 py-7 rounded-2xl">
-         <div className="flex gap-8 items-center">
-  <img
-    src={usern?.avatar}
-    alt="User Avatar"
-    className="w-30 h-30 rounded-full"
-  />
-  <div className="w-full">
-    {/* <p className="text-sm italic">{usern?.email}</p> */}
-    <h2 className="text-3xl font-bold text-gray-900 dark:text-white my-2">
-      {usern?.name}
-    </h2>
-    <p className="text-sm text-gray-400">
-      Tanggal Daftar : {usern?.registered_date}
-    </p>
-
-    <div className="mt-3 w-full">
-      <div className=" text-sm text-gray-600 mb-1 w-full">
-        <span className="mt-4 mb-8">
-          <span className="px-2 py-1 bg-amber-300 rounded"><strong>{usern?.level_name}</strong></span>
-        </span>
-        
-
-      <div className="w-full bg-gray-200 mt-4 mb-2 rounded-full h-2.5 overflow-hidden">
-        <div
-          className="bg-green-500 h-2.5 rounded-full transition-all duration-500"
-          style={{
-            width: `${usern?.progress_percent ?? 0}%`,
-          }}
-        ></div>
-       
-      </div>
-       <span className="">
-  {(usern ? usern.total_exp : 0)} / {(usern ? usern.max_exp : 0)} EXP
-</span>
-      </div>
-    </div>
-  </div>
-</div>
-
+         <h3 className="text-2xl font-bold text-black dark:text-white">
+              Course Overview
+          </h3>
           {/* Stats Cards */}
-          <div className="grid mt-10 grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="gap-1 shadow-none  border-r-1 bg-gray-100 rounded-xl">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <Trophy className="h-6 w-6 text-blue-900 bg-white p-1 rounded" />
+          <div className="grid mb-8 mt-4 grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="gap-1 shadow-none flex-row h-fit items-center border-[#008169] flex  border-r-1 bg-[#d8f3ee] rounded-xl">
+              <CardHeader className="flex flex-row w-[25%] items-center justify-between space-y-0 ">
+                <Trophy className="h-12 w-12 text-[#008169] bg-white p-3 rounded" />
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.quizzesSubmitted} 
-                <span className="text-sm text-gray-500"> / {stats.totalQuiz} Total Quiz</span> 
+              <CardContent className="p-0">
+                <div className="text-2xl font-bold">
+                  {stats.quizzesSubmitted}
+                  <span className="text-sm text-gray-500">
+                    {" "}
+                    / {stats.totalQuiz} Total Quiz
+                  </span>
                 </div>
                 <p className="text-xs mt-2 text-muted-foreground">
                   Jumlah Quiz Dikerjakan
@@ -240,41 +238,54 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            <Card className="gap-1 shadow-none  border-r-1 bg-gray-100 rounded-xl">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                
-                <Calendar className="h-6 w-6 text-blue-900 bg-white p-1 rounded"  />
+            <Card className="gap-1 shadow-none h-fit  border-[#ff7700] border-r-1 bg-[#fee4cd] rounded-xl">
+              <div className="flex flex-row">
+                <CardHeader className="flex flex-row items-center w-[25%] justify-between space-y-0">
+                <Calendar className="h-12 w-12 text-[#ff7700] bg-white p-3 rounded" />
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 <div className="text-2xl font-bold">
-                  {recentParticipant?.completedTrainings} <span className="text-sm text-gray-500">/ {recentParticipant?.totalTrainings} Total Training</span> 
+                  {recentParticipant?.completedTrainings}{" "}
+                  <span className="text-sm text-gray-500">
+                    / {recentParticipant?.totalTrainings} Total Training
+                  </span>
                 </div>
                 <p className="text-xs mt-2 text-muted-foreground">
                   Jumlah Training Diikuti
                 </p>
+                
               </CardContent>
+              </div>
+              <div className="px-6 mt-3">
+                <hr className="border-t border-[#ff7700] w-full" />
+                <p className="mt-3 text-[#ff7700] text-sm">
+                  Lihat Detail
+                </p>
+              </div>
             </Card>
 
-            <Card className="gap-1 shadow-none bg-gray-100 rounded-xl">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-               
-                <BookOpen className="h-6 w-6 text-blue-900 bg-white p-1 rounded" />
+            <Card className="gap-1 shadow-none flex flex-row h-fit border-[#0097fb] bg-[#ccebff] rounded-xl">
+              <CardHeader className="flex flex-row items-center w-[25%] justify-between space-y-0 ">
+                <BookOpen className="h-12 w-12 text-[#0097fb] bg-white p-3 rounded" />
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 <div className="text-2xl font-bold">
                   {Math.round(
-                    ((stats.quizzesSubmitted / stats.totalQuiz) * 0.5 + (recentParticipant?.completedTrainings! / recentParticipant?.totalTrainings!) * 0.5 ) *
+                    ((stats.quizzesSubmitted / stats.totalQuiz) * 0.5 +
+                      (recentParticipant?.completedTrainings! /
+                        recentParticipant?.totalTrainings!) *
+                        0.5) *
                       100
                   )}
                   %
                 </div>
-                <p className="text-xs mt-2 text-muted-foreground">Progress Belajar</p>
+                <p className="text-xs mt-2 text-muted-foreground">
+                  Progress Belajar
+                </p>
               </CardContent>
             </Card>
           </div>
-        </div>
 
-        
 
         {/* Recent Trainings */}
         <div className="mb-8">
@@ -283,82 +294,88 @@ export default function DashboardPage() {
               Pelatihan Terbaru
             </h3>
             <Link href="/trainings">
-              <Button variant="outline" className="cursor-pointer">See All</Button>
+              <Button variant="outline" className="cursor-pointer">
+                See All
+              </Button>
             </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-           {recentTrainings.map((training) => {
-  // Cari progress untuk training ini
-  const matchedTraining = recentParticipant?.trainings.find(
-    (t) => t.training_id === training.id
-  )
+            {recentTrainings.map((training) => {
+              // Cari progress untuk training ini
+              const matchedTraining = recentParticipant?.trainings.find(
+                (t) => t.training_id === training.id
+              );
 
-  // Cek apakah semua modulnya sudah selesai
-  const isCompleted =
-    matchedTraining &&
-    matchedTraining.total_modules > 0 &&
-    matchedTraining.completed_modules === matchedTraining.total_modules
+              // Cek apakah semua modulnya sudah selesai
+              const isCompleted =
+                matchedTraining &&
+                matchedTraining.total_modules > 0 &&
+                matchedTraining.completed_modules ===
+                  matchedTraining.total_modules;
 
-  return (
-    <Card
-      key={training.id}
-      className="hover:shadow-md transition-shadow pt-0 pb-6 gap-[8px]"
-    >
-      <div className="aspect-video bg-gray-200 rounded-t-lg">
-        <img
-          src={training.image}
-          alt={training.title}
-          className="w-full h-full object-cover rounded-t-lg"
-        />
-      </div>
+              return (
+                <Card
+                  key={training.id}
+                  className="hover:shadow-md transition-shadow pt-0 pb-6 gap-[8px]"
+                >
+                  <div className="aspect-video bg-gray-200 rounded-t-lg">
+                    <img
+                      src={training.image}
+                      alt={training.title}
+                      className="w-full h-full object-cover rounded-t-lg"
+                    />
+                  </div>
 
-      <CardHeader className="pb-2 flex justify-between mt-3">
-        <div>
-          <CardTitle
-            className="text-sm"
-            dangerouslySetInnerHTML={{ __html: training.title }}
-          />
-          <CardDescription className="text-xs mt-2">
-            {training.topic}
-          </CardDescription>
-        </div>
-        <Badge
-          variant={training.type === 'online' ? 'default' : 'secondary'}
-        >
-          {training.type}
-        </Badge>
-      </CardHeader>
+                  <CardHeader className="pb-2 flex justify-between mt-3">
+                    <div>
+                      <CardTitle
+                        className="text-sm"
+                        dangerouslySetInnerHTML={{ __html: training.title }}
+                      />
+                      <CardDescription className="text-xs mt-2">
+                        {training.topic}
+                      </CardDescription>
+                    </div>
+                    <Badge
+                      variant={
+                        training.type === "online" ? "default" : "secondary"
+                      }
+                    >
+                      {training.type}
+                    </Badge>
+                  </CardHeader>
 
-      <CardContent className="pt-0">
-        <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
-          <div className="flex items-center">
-            <Calendar className="h-3 w-3 mr-1" />
-            {formatTrainingDate(training.date)}
-          </div>
-        </div>
+                  <CardContent className="pt-0">
+                    <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+                      <div className="flex items-center">
+                        <Calendar className="h-3 w-3 mr-1" />
+                        {formatTrainingDate(training.date)}
+                      </div>
+                    </div>
 
-        <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
-          {training.short_description}
-        </p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
+                      {training.short_description}
+                    </p>
 
-      {isCompleted ? (
-  <p className="w-full mt-5 text-sm p-2 bg-green-400 text-center text-white font-semibold rounded-2xl">
-    Sudah Menyelesaikan Training Ini
-  </p>
-) : (
-  <Link href={`/trainings/${training.id}`}>
-    <Button size="sm" className="w-full mt-5 cursor-pointer">
-      Lihat Detail
-    </Button>
-  </Link>
-)}
-
-      </CardContent>
-    </Card>
-  )
-})}
-
+                    {isCompleted ? (
+                      <p className="w-full mt-5 text-sm p-2 bg-green-400 text-center text-white font-semibold rounded-2xl">
+                        Sudah Menyelesaikan Training Ini
+                      </p>
+                    ) : (
+                      <Link href={`/trainings/${training.id}`}>
+                        <Button
+                          size="sm"
+                          className="w-full mt-5 cursor-pointer"
+                        >
+                          Lihat Detail
+                        </Button>
+                      </Link>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
 
@@ -369,46 +386,58 @@ export default function DashboardPage() {
               Quiz Terbaru
             </h3>
             <Link href="/quizzes">
-              <Button variant="outline" className="cursor-pointer">See All</Button>
+              <Button variant="outline" className="cursor-pointer">
+                See All
+              </Button>
             </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {recentQuizzes.map((quiz, index) => (
-  <Card key={index} className="hover:shadow-md transition-shadow gap-[10px]">
-    <CardHeader className="pb-2">
-      <CardTitle
-        className="text-sm"
-        dangerouslySetInnerHTML={{ __html: quiz.title }}
-      />
-    </CardHeader>
-    <CardContent>
-      <div className="flex items-center text-xs text-gray-500 mb-2">
-        <Clock className="h-3 w-3 mr-1" />
-        {quiz.time_limit_minutes} menit
-      </div>
-      <div className="text-xs text-gray-600 dark:text-gray-400 mb-3">
-        {quiz.questions.length} pertanyaan
-      </div>
+              <Card
+                key={index}
+                className="hover:shadow-md transition-shadow gap-[10px]"
+              >
+                <CardHeader className="pb-2">
+                  <CardTitle
+                    className="text-sm"
+                    dangerouslySetInnerHTML={{ __html: quiz.title }}
+                  />
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center text-xs text-gray-500 mb-2">
+                    <Clock className="h-3 w-3 mr-1" />
+                    {quiz.time_limit_minutes} menit
+                  </div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400 mb-3">
+                    {quiz.questions.length} pertanyaan
+                  </div>
 
-      {quiz.completed ? (
-        <>
-        <p className={`${quiz.status == 'Tidak Lulus' ? 'bg-red-600' : 'bg-green-600'} p-1 font-bold  text-sm text-white rounded text-center`}>Score: {quiz.score} % ({quiz.status})</p>
-        {/* <Button size="sm" className="w-full bg-white text-black" disabled>
+                  {quiz.completed ? (
+                    <>
+                      <p
+                        className={`${
+                          quiz.status == "Tidak Lulus"
+                            ? "bg-red-600"
+                            : "bg-green-600"
+                        } p-1 font-bold  text-sm text-white rounded text-center`}
+                      >
+                        Score: {quiz.score} % ({quiz.status})
+                      </p>
+                      {/* <Button size="sm" className="w-full bg-white text-black" disabled>
           Quiz Sudah Dikerjakan
         </Button> */}
-        </>
-      ) : (
-        <Link href={`/quizzes/${quiz.id}`}>
-          <Button size="sm" className="w-full cursor-pointer">
-            Mulai Quiz
-          </Button>
-        </Link>
-      )}
-    </CardContent>
-  </Card>
-))}
-
+                    </>
+                  ) : (
+                    <Link href={`/quizzes/${quiz.id}`}>
+                      <Button size="sm" className="w-full cursor-pointer">
+                        Mulai Quiz
+                      </Button>
+                    </Link>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
 
@@ -419,7 +448,9 @@ export default function DashboardPage() {
               Product Knowledge
             </h3>
             <Link href="/products">
-              <Button variant="outline" className="cursor-pointer">See All</Button>
+              <Button variant="outline" className="cursor-pointer">
+                See All
+              </Button>
             </Link>
           </div>
 
@@ -444,9 +475,9 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <p
-                  className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mb-3"
-                  dangerouslySetInnerHTML={{ __html: product.summary }}
-                ></p>
+                    className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mb-3"
+                    dangerouslySetInnerHTML={{ __html: product.summary }}
+                  ></p>
                   <div className="flex space-x-2 mt-3">
                     <Link href={`/products/${product.id}`}>
                       <Button size="sm" className="flex-1 cursor-pointer">

@@ -60,15 +60,17 @@ export default function TrainingDetailPage() {
         const foundTraining = trainings.find((t) => t.id === trainingId);
 
         if (foundTraining?.modul) {
-        const modulesData = await Promise.all(
-          foundTraining.modul.map(async (id: number) => {
-            const res = await fetch(`https://roynaldkalele.com/wp-json/wp/v2/modul/${id}`);
-            return res.json();
-          })
-        );
+          const modulesData = await Promise.all(
+            foundTraining.modul.map(async (id: number) => {
+              const res = await fetch(
+                `https://roynaldkalele.com/wp-json/wp/v2/modul/${id}`
+              );
+              return res.json();
+            })
+          );
 
-        setModul(modulesData);
-      }
+          setModul(modulesData);
+        }
         // const modul = await lmsApi.getModule(foundTraining?.modul)
 
         if (!foundTraining) {
@@ -101,7 +103,6 @@ export default function TrainingDetailPage() {
 
     loadTraining();
   }, [user, router, toast, trainingId]);
-  
 
   const handleParticipate = async () => {
     try {
@@ -124,16 +125,37 @@ export default function TrainingDetailPage() {
     return null;
   }
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Loading training details...</p>
+if (isLoading) {
+  return (
+    <div className="min-h-screen flex items-center justify-center px-6">
+      <div className="w-full max-w-md space-y-6 animate-pulse">
+        {/* Title Skeleton */}
+        <div className="h-6 bg-gray-200 rounded-md w-3/4 mx-auto"></div>
+
+        {/* Card Skeleton */}
+        <div className="p-6 border border-gray-200 rounded-2xl shadow-sm space-y-4">
+          
+          {/* Thumbnail */}
+          <div className="w-full h-40 bg-gray-200 rounded-xl"></div>
+
+          <div className="space-y-3">
+            <div className="h-4 bg-gray-200 rounded-md w-5/6"></div>
+            <div className="h-4 bg-gray-200 rounded-md w-4/6"></div>
+          </div>
+
+          <div className="space-y-3">
+            <div className="h-3 bg-gray-200 rounded-md w-full"></div>
+            <div className="h-3 bg-gray-200 rounded-md w-11/12"></div>
+          </div>
+
+          {/* Button Skeleton */}
+          <div className="h-10 bg-gray-200 rounded-xl w-full"></div>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+}
+
 
   if (!training) {
     return (
@@ -195,25 +217,28 @@ export default function TrainingDetailPage() {
 
                     {/* <p>Jumlah Modul : {training.modul.length} Modul Latihan</p> */}
 
-                     <div className="bg-gray-100 w-full  mb-4 mt-8  rounded-lg p-6 ">
-                      <h2 className="text-xl font-bold mb-3">Daftar Materi Training :</h2>
+                    <div className="bg-gray-100 w-full  mb-4 mt-8  rounded-lg p-6 ">
+                      <h2 className="text-xl font-bold mb-3">
+                        Daftar Materi Training :
+                      </h2>
                       {modul.map((m: any, index: number) => (
-                      <div key={m.id} className="gray-400">
-                        
-                        
-                        <p className="mb-2">
-  <span className="mr-3">{index + 1}.</span>
-  <span dangerouslySetInnerHTML={{ __html: m.title?.rendered ?? m.title }} />
-</p>
+                        <div key={m.id} className="gray-400">
+                          <p className="mb-2">
+                            <span className="mr-3">{index + 1}.</span>
+                            <span
+                              dangerouslySetInnerHTML={{
+                                __html: m.title?.rendered ?? m.title,
+                              }}
+                            />
+                          </p>
 
-
-                        {/* {m.acf?.materi_ppt && (
+                          {/* {m.acf?.materi_ppt && (
                           <a href={m.acf.materi_ppt} target="_blank" rel="noopener noreferrer">
                             Download PPT
                           </a>
                         )} */}
 
-                        {/* {m.acf?.evaluasi && (
+                          {/* {m.acf?.evaluasi && (
                           <div>
                             <h3>Evaluasi</h3>
                             {m.acf.evaluasi.map((q: any, idx: number) => (
@@ -221,10 +246,10 @@ export default function TrainingDetailPage() {
                             ))}
                           </div>
                         )} */}
-                      </div>
-                    ))}
-                     </div>
-{/* 
+                        </div>
+                      ))}
+                    </div>
+                    {/* 
                     {training.file && (
                       <div className="relative mt-6 mb-4">
                         <iframe
@@ -310,32 +335,37 @@ export default function TrainingDetailPage() {
                   <span className="font-medium">Lokasi:</span>
                   <span className="ml-2">{training.location}</span>
                 </div>
-                                
+
                 <div className="flex items-center text-sm">
                   <Book className="h-4 w-4 mr-2 text-gray-500" />
                   <span className="font-medium">Jumlah Modul:</span>
-                  <span className="ml-2">{training.modul.length} Modul Pelatihan</span>
+                  <span className="ml-2">
+                    {training.modul.length} Modul Pelatihan
+                  </span>
                 </div>
 
                 <div className="pt-4 border-t">
-                 {!(training.modul.length === 0) ? (
-                   <Button
-  className="w-full cursor-pointer bg-blue-900"
-  onClick={() => window.open(`/modul/${modul[0].id}?trainingId=${training.id}`, "_blank")}
->
-  Mulai Training
-</Button>
-                 ): (
-                   <Button
-                   disabled
-                    className="w-full cursor-pointer text-gray-800 bg-gray-300"
-                  >
-                    Training belum memiliki modul
-                  </Button>
-                 )}
-
+                  {!(training.modul.length === 0) ? (
+                    <Button
+                      className="w-full cursor-pointer bg-blue-900"
+                      onClick={() =>
+                        window.open(
+                          `/modul/${modul[0].id}?trainingId=${training.id}`,
+                          "_blank"
+                        )
+                      }
+                    >
+                      Mulai Training
+                    </Button>
+                  ) : (
+                    <Button
+                      disabled
+                      className="w-full cursor-pointer text-gray-800 bg-gray-300"
+                    >
+                      Training belum memiliki modul
+                    </Button>
+                  )}
                 </div>
-            
               </CardContent>
             </Card>
           </div>
