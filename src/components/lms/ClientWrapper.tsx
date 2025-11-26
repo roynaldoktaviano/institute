@@ -17,9 +17,6 @@ export default function ClientWrapper({
       <div className="flex min-h-screen bg-background text-foreground">
         {/* Sidebar */}
         <Sidebar
-          user={{ name: "Susi Programmer", avatar_urls: undefined }}
-         
-          handleLogout={() => console.log("Logout")}
           onCollapseChange={setIsCollapsed}
         />
 
