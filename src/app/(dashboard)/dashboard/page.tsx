@@ -214,20 +214,21 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#f7f8fa] dark:bg-gray-900">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-14 py-8">
          <h3 className="text-2xl font-bold text-black dark:text-white">
               Course Overview
           </h3>
           {/* Stats Cards */}
           <div className="grid mb-8 mt-4 grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="gap-1 shadow-none flex-row h-fit items-center border-[#008169] flex  border-r-1 bg-[#d8f3ee] rounded-xl">
-              <CardHeader className="flex flex-row w-[25%] items-center justify-between space-y-0 ">
+            {/* <Card className="gap-1 shadow-none flex-row h-fit items-center border-[#008169] flex  border-r-1 bg-[#d8f3ee] rounded-xl">
+              <div className="flex flex-row">
+                <CardHeader className="flex flex-row w-[25%] items-center justify-between space-y-0 ">
                 <Trophy className="h-12 w-12 text-[#008169] bg-white p-3 rounded" />
               </CardHeader>
               <CardContent className="p-0">
                 <div className="text-2xl font-bold">
                   {stats.quizzesSubmitted}
-                  <span className="text-sm text-gray-500">
+                  <span className="text-xs text-gray-700">
                     {" "}
                     / {stats.totalQuiz} Total Quiz
                   </span>
@@ -236,6 +237,41 @@ export default function DashboardPage() {
                   Jumlah Quiz Dikerjakan
                 </p>
               </CardContent>
+              </div>
+
+              <div className="px-6 mt-3">
+                <hr className="border-t border-[#ff7700] w-full" />
+                <p className="mt-3 text-black font-bold  text-sm">
+                  Lihat Detail
+                </p>
+              </div>
+            </Card> */}
+
+            <Card className="gap-1 shadow-none h-fit  border-[#008169] border-r-1 bg-[#d8f3ee] rounded-xl">
+              <div className="flex flex-row">
+                <CardHeader className="flex flex-row items-center w-[25%] justify-between space-y-0">
+                <Trophy className="h-12 w-12 text-[#008169] bg-white p-3 rounded" />
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="text-2xl font-bold">
+                  {stats.quizzesSubmitted}
+                  <span className="text-xs text-gray-700">
+                    {" "}
+                    / {stats.totalQuiz} Total Quiz
+                  </span>
+                </div>
+                <p className="text-xs mt-2 text-muted-foreground">
+                  Jumlah Quiz Dikerjakan
+                </p>
+                
+              </CardContent>
+              </div>
+              <div className="px-6 mt-3">
+                <hr className="border-t border-[#008169] w-full mb-3" />
+                <a href="/quizzes" className=" text-black font-bold  text-sm">
+                  Lihat Detail
+                </a>
+              </div>
             </Card>
 
             <Card className="gap-1 shadow-none h-fit  border-[#ff7700] border-r-1 bg-[#fee4cd] rounded-xl">
@@ -246,7 +282,7 @@ export default function DashboardPage() {
               <CardContent className="p-0">
                 <div className="text-2xl font-bold">
                   {recentParticipant?.completedTrainings}{" "}
-                  <span className="text-sm text-gray-500">
+                  <span className="text-xs text-gray-600">
                     / {recentParticipant?.totalTrainings} Total Training
                   </span>
                 </div>
@@ -257,14 +293,14 @@ export default function DashboardPage() {
               </CardContent>
               </div>
               <div className="px-6 mt-3">
-                <hr className="border-t border-[#ff7700] w-full" />
-                <p className="mt-3 text-[#ff7700] text-sm">
+                <hr className="border-t border-[#ff7700] mb-3 w-full" />
+                <a href="/trainings" className=" text-black font-bold  text-sm">
                   Lihat Detail
-                </p>
+                </a>
               </div>
             </Card>
 
-            <Card className="gap-1 shadow-none flex flex-row h-fit border-[#0097fb] bg-[#ccebff] rounded-xl">
+            {/* <Card className="gap-1 shadow-none flex flex-row h-fit border-[#0097fb] bg-[#ccebff] rounded-xl">
               <CardHeader className="flex flex-row items-center w-[25%] justify-between space-y-0 ">
                 <BookOpen className="h-12 w-12 text-[#0097fb] bg-white p-3 rounded" />
               </CardHeader>
@@ -283,31 +319,55 @@ export default function DashboardPage() {
                   Progress Belajar
                 </p>
               </CardContent>
+            </Card> */}
+
+            <Card className="gap-1 shadow-none h-fit  border-[#0097fb] border-r-1 bg-[#ccebff] rounded-xl">
+              <div className="flex flex-row">
+                <CardHeader className="flex flex-row items-center w-[25%] justify-between space-y-0">
+                <BookOpen className="h-12 w-12 text-[#0097fb] bg-white p-3 rounded" />
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="text-2xl font-bold">
+                  {recentParticipant?.completedTrainings}{" "}
+                  <span className="text-xs text-gray-600">
+                    Produk Drone
+                  </span>
+                </div>
+                <p className="text-xs mt-2 text-muted-foreground">
+                  Jumlah Product Drone
+                </p>
+                
+              </CardContent>
+              </div>
+              <div className="px-6 mt-3">
+                <hr className="border-t border-[#0097fb] mb-3 w-full" />
+                <a href="/products" className=" text-black font-bold  text-sm">
+                  Lihat Detail
+                </a>
+              </div>
             </Card>
           </div>
 
 
         {/* Recent Trainings */}
-        <div className="mb-8">
+        <div className="mb-8 bg-white px-10 py-8 rounded-2xl">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Pelatihan Terbaru
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+              PELATIHAN TERBARU
             </h3>
             <Link href="/trainings">
-              <Button variant="outline" className="cursor-pointer">
-                See All
+              <Button variant="outline" className="cursor-pointer bg-[#31569A] text-white">
+                View All Training
               </Button>
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
             {recentTrainings.map((training) => {
-              // Cari progress untuk training ini
               const matchedTraining = recentParticipant?.trainings.find(
                 (t) => t.training_id === training.id
               );
 
-              // Cek apakah semua modulnya sudah selesai
               const isCompleted =
                 matchedTraining &&
                 matchedTraining.total_modules > 0 &&
@@ -337,30 +397,30 @@ export default function DashboardPage() {
                         {training.topic}
                       </CardDescription>
                     </div>
-                    <Badge
+                    {/* <Badge
                       variant={
                         training.type === "online" ? "default" : "secondary"
                       }
                     >
                       {training.type}
-                    </Badge>
+                    </Badge> */}
                   </CardHeader>
 
                   <CardContent className="pt-0">
-                    <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+                    {/* <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
                       <div className="flex items-center">
                         <Calendar className="h-3 w-3 mr-1" />
                         {formatTrainingDate(training.date)}
                       </div>
-                    </div>
+                    </div> */}
 
                     <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
                       {training.short_description}
                     </p>
 
                     {isCompleted ? (
-                      <p className="w-full mt-5 text-sm p-2 bg-green-400 text-center text-white font-semibold rounded-2xl">
-                        Sudah Menyelesaikan Training Ini
+                      <p className="w-full mt-5 text-sm p-2 bg-gray-300 text-center text-black font-semibold rounded-lg">
+                        Training Selesai
                       </p>
                     ) : (
                       <Link href={`/trainings/${training.id}`}>
@@ -379,124 +439,128 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Recent Quizzes */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Quiz Terbaru
-            </h3>
-            <Link href="/quizzes">
-              <Button variant="outline" className="cursor-pointer">
-                See All
-              </Button>
-            </Link>
+        <div className="flex flex-row justify-between gap-8">
+          {/* Recent Quizzes */}
+          <div className="mb-8 bg-white px-10 py-8 w-[50%] rounded-2xl">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                QUIZ TERBARU
+              </h3>
+              <Link href="/quizzes">
+                <Button variant="outline" className="cursor-pointer bg-[#31569A] text-white">
+                  View All Quiz
+                </Button> 
+              </Link>
+            </div>
+
+            <div className="grid grid-rows gap-4">
+              {recentQuizzes.map((quiz, index) => (
+                <Card
+                  key={index}
+                  className="hover:shadow-md transition-shadow py-6 gap-[10px]"
+                >
+                  <CardHeader className="pb-2">
+                    <CardTitle
+                      className="text-sm"
+                      dangerouslySetInnerHTML={{ __html: quiz.title }}
+                    />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center text-xs text-gray-500 mb-2">
+                      <Clock className="h-3 w-3 mr-1" />
+                      {quiz.time_limit_minutes} menit
+                    </div>
+                    <div className="text-xs text-gray-600 dark:text-gray-400 mb-3">
+                      {quiz.questions.length} pertanyaan
+                    </div>
+
+                    {quiz.completed ? (
+                      <>
+                        <p
+                          className={`${
+                            quiz.status == "Tidak Lulus"
+                              ? "bg-red-600"
+                              : "bg-green-600"
+                          } p-1 font-bold  text-sm text-white rounded text-center`}
+                        >
+                          Score: {quiz.score} % ({quiz.status})
+                        </p>
+                        {/* <Button size="sm" className="w-full bg-white text-black" disabled>
+            Quiz Sudah Dikerjakan
+          </Button> */}
+                      </>
+                    ) : (
+                      <Link href={`/quizzes/${quiz.id}`}>
+                        <Button size="sm" className="w-full cursor-pointer">
+                          Mulai Quiz
+                        </Button>
+                      </Link>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {recentQuizzes.map((quiz, index) => (
-              <Card
-                key={index}
-                className="hover:shadow-md transition-shadow gap-[10px]"
-              >
-                <CardHeader className="pb-2">
-                  <CardTitle
-                    className="text-sm"
-                    dangerouslySetInnerHTML={{ __html: quiz.title }}
-                  />
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center text-xs text-gray-500 mb-2">
-                    <Clock className="h-3 w-3 mr-1" />
-                    {quiz.time_limit_minutes} menit
-                  </div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400 mb-3">
-                    {quiz.questions.length} pertanyaan
-                  </div>
+          {/* Recent Products */}
+          <div className="mb-8 bg-white px-10 py-8 w-[50%] rounded-2xl">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                PRODUCT KNOWLEDGE
+              </h3>
+              <Link href="/products">
+                <Button variant="outline" className="cursor-pointer bg-[#31569A] text-white">
+                  View All Product
+                </Button>
+              </Link>
+            </div>
 
-                  {quiz.completed ? (
-                    <>
-                      <p
-                        className={`${
-                          quiz.status == "Tidak Lulus"
-                            ? "bg-red-600"
-                            : "bg-green-600"
-                        } p-1 font-bold  text-sm text-white rounded text-center`}
-                      >
-                        Score: {quiz.score} % ({quiz.status})
-                      </p>
-                      {/* <Button size="sm" className="w-full bg-white text-black" disabled>
-          Quiz Sudah Dikerjakan
-        </Button> */}
-                    </>
-                  ) : (
-                    <Link href={`/quizzes/${quiz.id}`}>
-                      <Button size="sm" className="w-full cursor-pointer">
-                        Mulai Quiz
-                      </Button>
-                    </Link>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Recent Products */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Product Knowledge
-            </h3>
-            <Link href="/products">
-              <Button variant="outline" className="cursor-pointer">
-                See All
-              </Button>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {recentProducts.map((product) => (
-              <Card
-                key={product.id}
-                className="hover:shadow-md transition-shadow pt-0 pb-6 gap-[8px]"
-              >
-                <div className="aspect-square bg-gray-200 rounded-t-lg">
-                  <img
-                    src={product.image}
-                    alt={product.product_name}
-                    className="w-full h-full object-cover rounded-t-lg"
-                  />
-                </div>
-                <CardHeader className="pb-0 mt-3">
-                  <CardTitle
-                    className="text-sm"
-                    dangerouslySetInnerHTML={{ __html: product.product_name }}
-                  />
-                </CardHeader>
-                <CardContent>
-                  <p
-                    className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mb-3"
-                    dangerouslySetInnerHTML={{ __html: product.summary }}
-                  ></p>
-                  <div className="flex space-x-2 mt-3">
-                    <Link href={`/products/${product.id}`}>
-                      <Button size="sm" className="flex-1 cursor-pointer">
-                        Baca Detail
-                      </Button>
-                    </Link>
-                    <Button size="sm" variant="outline" asChild>
-                      <a
-                        href={product.pdf_download}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Download
-                      </a>
-                    </Button>
+            <div className="grid grid-row gap-4">
+              {recentProducts.map((product) => (
+                <Card
+                  key={product.id}
+                  className="hover:shadow-md transition-shadow pt-0 items-center gap-[8px] flex flex-row justify-around "
+                >
+                  <div className=" bg-gray-200 rounded-t-lg w-[30%]">
+                    <img
+                      src={product.image}
+                      alt={product.product_name}
+                      className="w-full h-full object-cover rounded-t-lg"
+                    />
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                  <div>
+                    <CardHeader className="pb-0">
+                      <CardTitle
+                        className=""
+                        dangerouslySetInnerHTML={{ __html: product.product_name }}
+                      />
+                    </CardHeader>
+                    <CardContent>
+                      {/* <p
+                        className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mb-3"
+                        dangerouslySetInnerHTML={{ __html: product.summary }}
+                      ></p> */}
+                      <div className="flex space-x-2 mt-3">
+                        <Link href={`/products/${product.id}`}>
+                          <Button size="sm" className="flex-1 cursor-pointer">
+                            Baca Detail
+                          </Button>
+                        </Link>
+                        <Button size="sm" variant="outline" asChild>
+                          <a
+                            href={product.pdf_download}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Download
+                          </a>
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </div>
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
       </main>
