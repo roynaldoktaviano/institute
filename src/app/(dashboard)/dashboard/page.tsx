@@ -86,6 +86,8 @@ export default function DashboardPage() {
     null
   );
 
+  const [totalProducts, setTotalProducts] = useState<any[]>([]);
+
   const [isLoading, setIsLoading] = useState(true);
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -97,6 +99,21 @@ export default function DashboardPage() {
     { name: "Products", href: "/products" },
     // { name: "Profile", href: "/profile" },
   ];
+
+  const [tanggal, setTanggal] = useState("");
+
+  useEffect(() => {
+    const today = new Date();
+
+    const formatted = today.toLocaleDateString("id-ID", {
+      weekday: "long",
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+
+    setTanggal(formatted);
+  }, []);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -110,10 +127,6 @@ export default function DashboardPage() {
     };
 
     loadUser();
-    // if (!user) {
-    //   router.push("/login");
-    //   return;
-    // }
 
     const loadDashboardData = async () => {
       try {
@@ -132,6 +145,7 @@ export default function DashboardPage() {
         setRecentTrainings(trainings.slice(0, 4));
         setRecentQuizzes(quizzes.quizzes.slice(0, 4));
         setRecentProducts(products.slice(0, 4));
+        setTotalProducts(products);
         setParticipant(participations);
 
         const savedUser = localStorage.getItem("lms_user");
@@ -213,16 +227,43 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f7f8fa] dark:bg-gray-900">
+    <div className="min-h-screen bg-[#f7f8fa] dark:bg-gray-900 mb-8">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-14 py-8">
-         <h3 className="text-2xl font-bold text-black dark:text-white">
-              Course Overview
-          </h3>
-          {/* Stats Cards */}
-          <div className="grid mb-8 mt-4 grid-cols-1 md:grid-cols-3 gap-6">
-            {/* <Card className="gap-1 shadow-none flex-row h-fit items-center border-[#008169] flex  border-r-1 bg-[#d8f3ee] rounded-xl">
-              <div className="flex flex-row">
-                <CardHeader className="flex flex-row w-[25%] items-center justify-between space-y-0 ">
+        <div className="pb-8 flex justify-between items-center mt-14 lg:mt-0">
+          <h1 className="font-bold text-2xl">Dashboard</h1>
+          <p className="text-sm text-[#0B1C3F] px-4 py-2 font-semibold bg-white rounded-lg">
+            {tanggal}
+          </p>
+        </div>
+        <div className="w-full rounded-2xl bg-gradient-to-r from-[#0B1C3F] to-[#112B6B] px-6 py-8 flex items-center justify-between overflow-hidden relative">
+          <div className="z-10">
+            <p className=" text-blue-200 mb-1">
+              Hi, <span className="font-semibold text-white">{user.name}</span>{" "}
+              👋
+            </p>
+
+            <h2 className="text-xl sm:text-2xl font-bold text-white max-w-md">
+              Stay on track with your drone training schedule.
+            </h2>
+          </div>
+
+          <div className="hidden lg:absolute right-4 md:right-8 bottom-0 h-[90%] w-[180px] md:w-[220px]">
+            <Image
+              src="/drone-illus.png"
+              alt="Dashboard Illustration"
+              fill
+              className="object-contain"
+            />
+          </div>
+
+          <div className="absolute overflow-visible right-20 top-20 w-[140%] h-[140%] bg-blue-500/10 rounded-full blur-3xl"></div>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid mb-8 mt-4 grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className="gap-1 shadow-none h-fit  border-[#008169] border-r-1 bg-[#d8f3ee] rounded-xl">
+            <div className="flex flex-row">
+              <CardHeader className="flex flex-row items-center w-[25%] justify-between space-y-0">
                 <Trophy className="h-12 w-12 text-[#008169] bg-white p-3 rounded" />
               </CardHeader>
               <CardContent className="p-0">
@@ -237,46 +278,18 @@ export default function DashboardPage() {
                   Jumlah Quiz Dikerjakan
                 </p>
               </CardContent>
-              </div>
+            </div>
+            <div className="px-6 mt-3">
+              <hr className="border-t border-[#008169] w-full mb-3" />
+              <a href="/quizzes" className=" text-black font-bold  text-sm">
+                Lihat Detail
+              </a>
+            </div>
+          </Card>
 
-              <div className="px-6 mt-3">
-                <hr className="border-t border-[#ff7700] w-full" />
-                <p className="mt-3 text-black font-bold  text-sm">
-                  Lihat Detail
-                </p>
-              </div>
-            </Card> */}
-
-            <Card className="gap-1 shadow-none h-fit  border-[#008169] border-r-1 bg-[#d8f3ee] rounded-xl">
-              <div className="flex flex-row">
-                <CardHeader className="flex flex-row items-center w-[25%] justify-between space-y-0">
-                <Trophy className="h-12 w-12 text-[#008169] bg-white p-3 rounded" />
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="text-2xl font-bold">
-                  {stats.quizzesSubmitted}
-                  <span className="text-xs text-gray-700">
-                    {" "}
-                    / {stats.totalQuiz} Total Quiz
-                  </span>
-                </div>
-                <p className="text-xs mt-2 text-muted-foreground">
-                  Jumlah Quiz Dikerjakan
-                </p>
-                
-              </CardContent>
-              </div>
-              <div className="px-6 mt-3">
-                <hr className="border-t border-[#008169] w-full mb-3" />
-                <a href="/quizzes" className=" text-black font-bold  text-sm">
-                  Lihat Detail
-                </a>
-              </div>
-            </Card>
-
-            <Card className="gap-1 shadow-none h-fit  border-[#ff7700] border-r-1 bg-[#fee4cd] rounded-xl">
-              <div className="flex flex-row">
-                <CardHeader className="flex flex-row items-center w-[25%] justify-between space-y-0">
+          <Card className="gap-1 shadow-none h-fit  border-[#ff7700] border-r-1 bg-[#fee4cd] rounded-xl">
+            <div className="flex flex-row">
+              <CardHeader className="flex flex-row items-center w-[25%] justify-between space-y-0">
                 <Calendar className="h-12 w-12 text-[#ff7700] bg-white p-3 rounded" />
               </CardHeader>
               <CardContent className="p-0">
@@ -289,18 +302,17 @@ export default function DashboardPage() {
                 <p className="text-xs mt-2 text-muted-foreground">
                   Jumlah Training Diikuti
                 </p>
-                
               </CardContent>
-              </div>
-              <div className="px-6 mt-3">
-                <hr className="border-t border-[#ff7700] mb-3 w-full" />
-                <a href="/trainings" className=" text-black font-bold  text-sm">
-                  Lihat Detail
-                </a>
-              </div>
-            </Card>
+            </div>
+            <div className="px-6 mt-3">
+              <hr className="border-t border-[#ff7700] mb-3 w-full" />
+              <a href="/trainings" className=" text-black font-bold  text-sm">
+                Lihat Detail
+              </a>
+            </div>
+          </Card>
 
-            {/* <Card className="gap-1 shadow-none flex flex-row h-fit border-[#0097fb] bg-[#ccebff] rounded-xl">
+          {/* <Card className="gap-1 shadow-none flex flex-row h-fit border-[#0097fb] bg-[#ccebff] rounded-xl">
               <CardHeader className="flex flex-row items-center w-[25%] justify-between space-y-0 ">
                 <BookOpen className="h-12 w-12 text-[#0097fb] bg-white p-3 rounded" />
               </CardHeader>
@@ -321,42 +333,41 @@ export default function DashboardPage() {
               </CardContent>
             </Card> */}
 
-            <Card className="gap-1 shadow-none h-fit  border-[#0097fb] border-r-1 bg-[#ccebff] rounded-xl">
-              <div className="flex flex-row">
-                <CardHeader className="flex flex-row items-center w-[25%] justify-between space-y-0">
+          <Card className="gap-1 shadow-none h-fit  border-[#0097fb] border-r-1 bg-[#ccebff] rounded-xl">
+            <div className="flex flex-row">
+              <CardHeader className="flex flex-row items-center w-[25%] justify-between space-y-0">
                 <BookOpen className="h-12 w-12 text-[#0097fb] bg-white p-3 rounded" />
               </CardHeader>
               <CardContent className="p-0">
                 <div className="text-2xl font-bold">
-                  {recentParticipant?.completedTrainings}{" "}
-                  <span className="text-xs text-gray-600">
-                    Produk Drone
-                  </span>
+                  {totalProducts.length}{" "}
+                  <span className="text-xs text-gray-600">Produk Drone</span>
                 </div>
                 <p className="text-xs mt-2 text-muted-foreground">
                   Jumlah Product Drone
                 </p>
-                
               </CardContent>
-              </div>
-              <div className="px-6 mt-3">
-                <hr className="border-t border-[#0097fb] mb-3 w-full" />
-                <a href="/products" className=" text-black font-bold  text-sm">
-                  Lihat Detail
-                </a>
-              </div>
-            </Card>
-          </div>
-
+            </div>
+            <div className="px-6 mt-3">
+              <hr className="border-t border-[#0097fb] mb-3 w-full" />
+              <a href="/products" className=" text-black font-bold  text-sm">
+                Lihat Detail
+              </a>
+            </div>
+          </Card>
+        </div>
 
         {/* Recent Trainings */}
-        <div className="mb-8 bg-white px-10 py-8 rounded-2xl">
-          <div className="flex justify-between items-center mb-4">
+        <div className="bg-white p-6 rounded-2xl  border mt-6">
+          <div className="flex-col lg:flex-row flex justify-between items-center mb-4">
             <h3 className="text-lg font-bold text-gray-900 dark:text-white">
               PELATIHAN TERBARU
             </h3>
             <Link href="/trainings">
-              <Button variant="outline" className="cursor-pointer bg-[#31569A] text-white">
+              <Button
+                variant="outline"
+                className="cursor-pointer bg-gradient-to-r from-[#0B1C3F] to-[#112B6B] mt-5 sm:mt-0 text-white"
+              >
                 View All Training
               </Button>
             </Link>
@@ -439,128 +450,138 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="flex flex-row justify-between gap-8">
-          {/* Recent Quizzes */}
-          <div className="mb-8 bg-white px-10 py-8 w-[50%] rounded-2xl">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                QUIZ TERBARU
-              </h3>
-              <Link href="/quizzes">
-                <Button variant="outline" className="cursor-pointer bg-[#31569A] text-white">
-                  View All Quiz
-                </Button> 
-              </Link>
-            </div>
-
-            <div className="grid grid-rows gap-4">
-              {recentQuizzes.map((quiz, index) => (
-                <Card
-                  key={index}
-                  className="hover:shadow-md transition-shadow py-6 gap-[10px]"
-                >
-                  <CardHeader className="pb-2">
-                    <CardTitle
-                      className="text-sm"
-                      dangerouslySetInnerHTML={{ __html: quiz.title }}
-                    />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center text-xs text-gray-500 mb-2">
-                      <Clock className="h-3 w-3 mr-1" />
-                      {quiz.time_limit_minutes} menit
-                    </div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400 mb-3">
-                      {quiz.questions.length} pertanyaan
-                    </div>
-
-                    {quiz.completed ? (
-                      <>
-                        <p
-                          className={`${
-                            quiz.status == "Tidak Lulus"
-                              ? "bg-red-600"
-                              : "bg-green-600"
-                          } p-1 font-bold  text-sm text-white rounded text-center`}
-                        >
-                          Score: {quiz.score} % ({quiz.status})
-                        </p>
-                        {/* <Button size="sm" className="w-full bg-white text-black" disabled>
-            Quiz Sudah Dikerjakan
-          </Button> */}
-                      </>
-                    ) : (
-                      <Link href={`/quizzes/${quiz.id}`}>
-                        <Button size="sm" className="w-full cursor-pointer">
-                          Mulai Quiz
-                        </Button>
-                      </Link>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+        {/* Quiz Section */}
+        <div className="bg-white p-6 rounded-2xl  border mt-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-gray-900">QUIZ TERBARU</h3>
+            <Link href="/quizzes">
+              <Button className="bg-gradient-to-r from-[#0B1C3F] to-[#112B6B] text-white hover:bg-[#27467d] cursor-pointer">
+                View All Quiz
+              </Button>
+            </Link>
           </div>
 
-          {/* Recent Products */}
-          <div className="mb-8 bg-white px-10 py-8 w-[50%] rounded-2xl">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                PRODUCT KNOWLEDGE
-              </h3>
-              <Link href="/products">
-                <Button variant="outline" className="cursor-pointer bg-[#31569A] text-white">
-                  View All Product
-                </Button>
-              </Link>
-            </div>
+          <div className="space-y-4">
+            {recentQuizzes.map((quiz, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between p-4 border rounded-xl hover:shadow-md transition"
+              >
+                {/* LEFT */}
+                <div className="flex flex-col gap-1 max-w-[65%]">
+                  <h4
+                    className="font-semibold text-sm text-gray-800"
+                    dangerouslySetInnerHTML={{ __html: quiz.title }}
+                  />
 
-            <div className="grid grid-row gap-4">
-              {recentProducts.map((product) => (
-                <Card
-                  key={product.id}
-                  className="hover:shadow-md transition-shadow pt-0 items-center gap-[8px] flex flex-row justify-around "
-                >
-                  <div className=" bg-gray-200 rounded-t-lg w-[30%]">
-                    <img
-                      src={product.image}
-                      alt={product.product_name}
-                      className="w-full h-full object-cover rounded-t-lg"
-                    />
+                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {quiz.time_limit_minutes} menit
+                    </div>
+                    <div>{quiz.questions.length} pertanyaan</div>
                   </div>
-                  <div>
-                    <CardHeader className="pb-0">
-                      <CardTitle
-                        className=""
-                        dangerouslySetInnerHTML={{ __html: product.product_name }}
-                      />
-                    </CardHeader>
-                    <CardContent>
-                      {/* <p
-                        className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mb-3"
-                        dangerouslySetInnerHTML={{ __html: product.summary }}
-                      ></p> */}
-                      <div className="flex space-x-2 mt-3">
-                        <Link href={`/products/${product.id}`}>
-                          <Button size="sm" className="flex-1 cursor-pointer">
-                            Baca Detail
-                          </Button>
-                        </Link>
-                        <Button size="sm" variant="outline" asChild>
-                          <a
-                            href={product.pdf_download}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            Download
-                          </a>
-                        </Button>
-                      </div>
-                    </CardContent>
+                </div>
+
+                {/* RIGHT */}
+                <div className="flex items-center gap-3">
+                  {quiz.completed ? (
+                    <div
+                      className={`px-3 py-1 rounded-lg text-xs font-semibold text-white
+              ${quiz.status === "Tidak Lulus" ? "bg-red-500" : "bg-green-500"}`}
+                    >
+                      Score {quiz.score}%
+                    </div>
+                  ) : (
+                    <Link
+                      href={`/quizzes/${quiz.id}`}
+                      className="cursor-pointer"
+                    >
+                      <Button size="sm" className="cursor-pointer">
+                        Mulai Quiz
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Product Knowledge */}
+        <div className="bg-white p-6 rounded-2xl  border mt-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-gray-900">
+              PRODUCT KNOWLEDGE
+            </h3>
+            <Link href="/products">
+              <Button className="bg-gradient-to-r from-[#0B1C3F] to-[#112B6B] text-white hover:bg-[#27467d] cursor-pointer">
+                View All Products
+              </Button>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+            {recentProducts.map((product) => (
+              <div
+                key={product.id}
+                className="group rounded-xl overflow-hidden border hover:shadow-lg transition flex flex-col"
+              >
+                {/* IMAGE */}
+                <div className="relative w-full h-44 bg-gray-100 overflow-hidden">
+                  <img
+                    src={product.image}
+                    alt={product.product_name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition"
+                  />
+
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-600 transition flex items-center justify-center gap-3">
+                    <Link href={`/products/${product.id}`}>
+                      <Button
+                        size="sm"
+                        className="bg-white text-black cursor-pointer hover:bg-gray-300"
+                      >
+                        Detail
+                      </Button>
+                    </Link>
+
+                    {product.pdf_download && (
+                      <Button size="sm" className="bg-white text-black" asChild>
+                        <a
+                          href={product.pdf_download}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          PDF
+                        </a>
+                      </Button>
+                    )}
                   </div>
-                </Card>
-              ))}
-            </div>
+                </div>
+
+                {/* CONTENT */}
+                <div className="p-4 flex flex-col flex-1">
+                  <h4
+                    className="font-semibold text-sm text-gray-900 line-clamp-2 mb-2"
+                    dangerouslySetInnerHTML={{ __html: product.product_name }}
+                  />
+
+                  {/* Optional Summary */}
+                  {/* 
+          <p
+            className="text-xs text-gray-500 line-clamp-2 mb-3"
+            dangerouslySetInnerHTML={{ __html: product.summary }}
+          ></p> 
+          */}
+
+                  <div className="mt-auto flex items-center justify-between text-xs text-gray-400">
+                    <span>ID: {product.id}</span>
+                    {product.pdf_download && <span>PDF Available</span>}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </main>

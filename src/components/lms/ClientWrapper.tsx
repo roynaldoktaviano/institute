@@ -25,7 +25,7 @@ export default function ClientWrapper({
         {/* Main content */}
         <div
           className={`flex-1 flex flex-col transition-all duration-300 m-0 ${
-            isCollapsed ? "ml-0" : "ml-[16rem]"
+            isCollapsed ? "ml-0" : "ml-0 lg:ml-[16rem]"
           }`}
         >
           <main className="flex-1 overflow-y-auto">

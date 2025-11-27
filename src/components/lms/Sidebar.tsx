@@ -70,7 +70,7 @@ export default function Sidebar({ user, onCollapseChange }: SidebarProps) {
     <>
       {/* Sidebar Desktop */}
       <aside
-        className={`hidden md:flex h-screen bg-[#31569A] text-white flex-col justify-between shadow-xl fixed top-0 left-0 z-50 transition-all duration-300 ${
+        className={`hidden md:flex h-screen bg-gradient-to-r from-[#0B1C3F] to-[#112B6B] text-white flex-col justify-between shadow-xl fixed top-0 left-0 z-50 transition-all duration-300 ${
           isCollapsed ? "w-16" : "w-64"
         }`}
       >
@@ -87,7 +87,7 @@ export default function Sidebar({ user, onCollapseChange }: SidebarProps) {
   onClick={() => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
-    onCollapseChange?.(newState); // ✅ kirim ke parent
+    onCollapseChange?.(newState); 
   }}
   className="absolute right-[-12px] top-1/2 -translate-y-1/2 bg-[#31569A] border border-white/20 p-1 rounded-full hover:bg-black top-[40vw] transition-all"
 >
@@ -170,14 +170,14 @@ export default function Sidebar({ user, onCollapseChange }: SidebarProps) {
       <div className="md:hidden fixed top-4 left-4 z-50">
         <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="bg-[#31569A] text-white">
+            <Button variant="ghost" size="icon" className="bg-gradient-to-r from-[#0B1C3F] to-[#112B6B] text-white">
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
           <SheetTitle className="hidden">Menu</SheetTitle>
           <SheetContent
             side="left"
-            className="w-64 bg-[#31569A] text-white border-none"
+            className="w-64 bg-gradient-to-r from-[#0B1C3F] to-[#112B6B] text-white border-none"
           >
             <nav className="flex flex-col space-y-2 mt-8">
               {menus.map((menu) => {
