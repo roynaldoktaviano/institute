@@ -90,15 +90,32 @@ export default function QuizzesPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Loading quizzes...</p>
+  return (
+    <div className="min-h-screen flex items-center justify-center px-6">
+      <div className="w-full max-w-md space-y-6 animate-pulse">
+
+        <div className="h-6 bg-gray-200 rounded-md w-3/4 mx-auto"></div>
+
+        <div className="p-6 border border-gray-200 rounded-2xl shadow-sm space-y-4">
+          
+          <div className="w-full h-40 bg-gray-200 rounded-xl"></div>
+
+          <div className="space-y-3">
+            <div className="h-4 bg-gray-200 rounded-md w-5/6"></div>
+            <div className="h-4 bg-gray-200 rounded-md w-4/6"></div>
+          </div>
+
+          <div className="space-y-3">
+            <div className="h-3 bg-gray-200 rounded-md w-full"></div>
+            <div className="h-3 bg-gray-200 rounded-md w-11/12"></div>
+          </div>
+
+          <div className="h-10 bg-gray-200 rounded-xl w-full"></div>
         </div>
       </div>
-    )
-  }
+    </div>
+  );
+}
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -114,78 +131,123 @@ export default function QuizzesPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {quizzes.map((quiz, index) => {
             const status = getQuizStatus(index)
             const quizId = index + 1
             
 
             return (
-              <Card key={index} className="hover:shadow-lg transition-shadow gap-[2px]">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle
-                      className="text-lg"
-                      dangerouslySetInnerHTML={{ __html: quiz.title }}
-                    />
-                      {/* <CardDescription className="text-sm">Week {quiz.week}</CardDescription> */}
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                      <Badge 
-                      variant={quiz.completed  ? 'default' : 'secondary'}
-                      className={quiz.completed ? 'bg-green-100 text-green-800 px-4' : 'px-4'}
-                    >
-                      {quiz.completed ? 'Selesai' : 'Belum Selesai'}
-                    </Badge>
-                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                      <Clock className="h-4 w-4 mr-2" />
-                      {quiz.time_limit_minutes} minutes
-                    </div>
-                    
-                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                      <BookOpen className="h-4 w-4 mr-2" />
-                      {quiz.questions.length} questions
-                    </div>
+              <Card
+  key={index}
+  className="
+    bg-white dark:bg-zinc-900 
+    border border-gray-100 dark:border-zinc-800
+    rounded-xl overflow-hidden
+    shadow-sm hover:shadow-lg transition-all duration-300
+  "
+>
+  {/* HEADER */}
+  <CardHeader className="">
+    <div className="space-y-2">
 
-                    {quiz.completed && (
-                      <div className={`${quiz.status === 'Lulus' ? 'bg-green-50 dark:bg-green-900/20': 'bg-red-50 dark:bg-red-900/20'} rounded-lg p-3`}>
-                        <div className="flex items-center justify-between mb-2">
-                          <span className={`${quiz.status === 'Lulus' ? 'text-green-800 dark:text-green-200' : 'text-red-800 dark:text-red-200'} text-sm font-medium `}>
-                            Quiz Score
-                          </span>
-                          <Trophy className={`${quiz.status === 'Lulus' ? 'text-green-600' : 'text-red-600'} h-4 w-4 `} />
-                        </div>
-                        <div className={`${quiz.status === 'Lulus' ? 'text-green-800 dark:text-green-200': 'text-red-800 dark:text-red-200'} text-2xl font-bold `}>
-                          {quiz.score} / 100
-                        </div>
-                        <Progress value={quiz.score} className="mt-2 h-2" />
-                        <div className={`${quiz.status === 'Lulus' ? 'bg-green-600 dark:bg-green-400' : 'bg-red-600 dark:bg-red-400'} w-fit mt-4 mb-2 px-2 py-1 text-sm text-white rounded`}>
-                          {quiz.status}
-                        </div>
-                      </div>
-                    )}
+      {/* BADGE STATUS */}
+      <Badge 
+        variant="secondary"
+        className={`w-fit text-xs px-3 py-1 rounded-full
+          ${quiz.completed 
+            ? 'bg-green-50 text-green-700 border border-green-200' 
+            : 'bg-gray-100 text-gray-600 dark:bg-zinc-800 dark:text-zinc-400'}
+        `}
+      >
+        {quiz.completed ? 'Selesai' : 'Belum Selesai'}
+      </Badge>
 
-                    <div className="pt-2">
-                      {quiz.completed ? (
-                        <Button variant="outline" className="w-full" disabled>
-                          <CheckCircle className="h-4 w-4 mr-2" />
-                          Quiz Sudah Dikerjakan
-                        </Button>
-                      ) : (
-                        <Link href={`/quizzes/${quiz.id}`}>
-                          <Button className="w-full cursor-pointer">
-                            Kerjakan Quiz
-                          </Button>
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+      {/* TITLE */}
+      <CardTitle
+        className="text-base font-semibold leading-snug line-clamp-2"
+        dangerouslySetInnerHTML={{ __html: quiz.title }}
+      />
+    </div>
+  </CardHeader>
+
+  {/* CONTENT */}
+  <CardContent className="space-y-4">
+
+    {/* INFO */}
+    <div className="flex justify-between text-xs text-muted-foreground">
+      <div className="flex items-center gap-1.5">
+        <Clock className="h-4 w-4" />
+        {quiz.time_limit_minutes} Menit
+      </div>
+      <div className="flex items-center gap-1.5">
+        <BookOpen className="h-4 w-4" />
+        {quiz.questions.length} Soal
+      </div>
+    </div>
+
+    {/* SCORE */}
+    {quiz.completed && (
+      <div className={`
+        mt-2 rounded-lg p-3 space-y-2
+        ${quiz.status === 'Lulus' 
+          ? 'bg-green-50 dark:bg-green-900/20 border border-green-100' 
+          : 'bg-red-50 dark:bg-red-900/20 border border-red-100'}
+      `}>
+        <div className="flex items-center justify-between text-sm font-medium">
+          <span className={quiz.status === 'Lulus'
+            ? 'text-green-700 dark:text-green-300'
+            : 'text-red-700 dark:text-red-300'}
+          >
+            Quiz Score
+          </span>
+          <Trophy className={`h-4 w-4 ${
+            quiz.status === 'Lulus' ? 'text-green-600' : 'text-red-600'
+          }`} />
+        </div>
+
+        <div className={`
+          text-xl font-bold
+          ${quiz.status === 'Lulus' 
+            ? 'text-green-700 dark:text-green-300' 
+            : 'text-red-700 dark:text-red-300'}
+        `}>
+          {quiz.score} / 100
+        </div>
+
+        <Progress value={quiz.score} className="h-2" />
+
+        <span className={`
+          inline-block text-xs px-3 py-1 rounded-full text-white mt-1
+          ${quiz.status === 'Lulus' ? 'bg-green-600' : 'bg-red-600'}
+        `}>
+          {quiz.status}
+        </span>
+      </div>
+    )}
+
+    {/* BUTTON */}
+    <div>
+      {quiz.completed ? (
+        <Button
+          variant="outline"
+          disabled
+          className="w-full cursor-not-allowed text-sm"
+        >
+          <CheckCircle className="h-4 w-4 mr-2" />
+          Quiz Sudah Dikerjakan
+        </Button>
+      ) : (
+        <Link href={`/quizzes/${quiz.id}`}>
+          <Button className="w-full text-sm font-medium">
+            Mulai Quiz
+          </Button>
+        </Link>
+      )}
+    </div>
+  </CardContent>
+</Card>
+
             )
           })}
         </div>

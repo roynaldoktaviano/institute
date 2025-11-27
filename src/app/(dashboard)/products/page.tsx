@@ -69,15 +69,32 @@ export default function ProductsPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Loading products...</p>
+  return (
+    <div className="min-h-screen flex items-center justify-center px-6">
+      <div className="w-full max-w-md space-y-6 animate-pulse">
+
+        <div className="h-6 bg-gray-200 rounded-md w-3/4 mx-auto"></div>
+
+        <div className="p-6 border border-gray-200 rounded-2xl shadow-sm space-y-4">
+          
+          <div className="w-full h-40 bg-gray-200 rounded-xl"></div>
+
+          <div className="space-y-3">
+            <div className="h-4 bg-gray-200 rounded-md w-5/6"></div>
+            <div className="h-4 bg-gray-200 rounded-md w-4/6"></div>
+          </div>
+
+          <div className="space-y-3">
+            <div className="h-3 bg-gray-200 rounded-md w-full"></div>
+            <div className="h-3 bg-gray-200 rounded-md w-11/12"></div>
+          </div>
+
+          <div className="h-10 bg-gray-200 rounded-xl w-full"></div>
         </div>
       </div>
-    )
-  }
+    </div>
+  );
+}
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -95,54 +112,62 @@ export default function ProductsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product) => (
-            <Card
-  key={product.id}
-  className="flex flex-col rounded-xl overflow-hidden border hover:shadow-xl transition-shadow bg-white"
->
-  {/* IMAGE */}
-  <div className="aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
-    <img
-      src={product.image}
-      alt={product.product_name}
-      className="w-4/5 h-auto object-contain transition-transform duration-300 hover:scale-105"
-    />
-  </div>
+  <div
+    key={product.id}
+    className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group"
+  >
 
-  {/* CONTENT */}
-  <div className="flex flex-col flex-1 p-4">
-    {/* TITLE */}
-    <h3
-      className="text-lg font-semibold line-clamp-2 min-h-[3.3em]"
-      dangerouslySetInnerHTML={{ __html: product.product_name }}
-    />
+    {/* IMAGE */}
+    <div className="bg-[#f7f8fc] p-4 flex justify-center items-center">
+      <img
+        src={product.image}
+        alt={product.product_name}
+        className="w-36 h-36 object-contain transition-transform duration-300 group-hover:scale-105"
+      />
+    </div>
 
-    {/* SPACER agar tombol tetap di bawah */}
-    <div className="flex-1" />
+    {/* CONTENT */}
+    <div className="p-5 space-y-2">
 
-    {/* BUTTON SECTION */}
-    <div className="mt-4 flex items-center gap-2">
-      <Link href={`/products/${product.id}`} className="flex-1">
-        <Button className="w-full hover:bg-blue-800">
-          <BookOpen className="h-4 w-4 mr-2" />
+      {/* TITLE */}
+      <h3
+        className="text-sm font-semibold text-gray-900 line-clamp-2 min-h-[40px]"
+        dangerouslySetInnerHTML={{ __html: product.product_name }}
+      />
+
+      {/* CATEGORY / TYPE */}
+      <p className="text-xs text-gray-500">
+        Product Knowledge
+      </p>
+
+      {/* Horizontal line */}
+      <div className="border-t border-gray-100 my-3"></div>
+
+      {/* ACTIONS */}
+      <div className="flex justify-between items-center gap-2">
+
+        <Link
+          href={`/products/${product.id}`}
+          className="text-xs font-medium px-3 py-1.5 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
+        >
           Lihat Detail
-        </Button>
-      </Link>
+        </Link>
 
-      <Button variant="outline" size="sm" asChild>
         <a
           href={product.pdf_download}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center"
+          className="text-xs flex items-center gap-1 px-3 py-1.5 border border-gray-200 rounded-md text-gray-600 hover:bg-gray-50 transition"
         >
           <Download className="h-4 w-4" />
+          PDF
         </a>
-      </Button>
+
+      </div>
     </div>
   </div>
-</Card>
+))}
 
-          ))}
         </div>
 
         {products.length === 0 && (
