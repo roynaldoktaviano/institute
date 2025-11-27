@@ -520,7 +520,7 @@ export default function DroneInstituteLMS() {
           {/* Success Story Highlight */}
           <section className="py-20 px-8 lg:px-20">
             <div className="container px-4">
-              <Card className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+              <Card className="bg-gradient-to-r from-[#0B1C3F] to-[#112B6B] text-white">
                 <CardContent className="p-12 lg:p-16">
                   <div className="grid lg:grid-cols-2 gap-12 items-center">
                     <div>
@@ -577,7 +577,7 @@ export default function DroneInstituteLMS() {
           </section>
 
           {/* Footer */}
-          <footer className="bg-[#31569A] text-white py-12 px-20">
+          <footer className="bg-gradient-to-r from-[#0B1C3F] to-[#112B6B] text-white py-12 px-20">
             <div className="container px-4">
               <div className="grid md:grid-cols-4 gap-8">
                 <div>
