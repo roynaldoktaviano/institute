@@ -154,7 +154,6 @@ export default function DashboardPage() {
         const user = JSON.parse(savedUser);
         const userId = user.id;
 
-        // 🔥 ambil data quiz & training paralel
         Promise.all([
           fetch(
             `https://roynaldkalele.com/wp-json/lms/v1/user/${userId}/quiz`
@@ -311,27 +310,6 @@ export default function DashboardPage() {
               </a>
             </div>
           </Card>
-
-          {/* <Card className="gap-1 shadow-none flex flex-row h-fit border-[#0097fb] bg-[#ccebff] rounded-xl">
-              <CardHeader className="flex flex-row items-center w-[25%] justify-between space-y-0 ">
-                <BookOpen className="h-12 w-12 text-[#0097fb] bg-white p-3 rounded" />
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="text-2xl font-bold">
-                  {Math.round(
-                    ((stats.quizzesSubmitted / stats.totalQuiz) * 0.5 +
-                      (recentParticipant?.completedTrainings! /
-                        recentParticipant?.totalTrainings!) *
-                        0.5) *
-                      100
-                  )}
-                  %
-                </div>
-                <p className="text-xs mt-2 text-muted-foreground">
-                  Progress Belajar
-                </p>
-              </CardContent>
-            </Card> */}
 
           <Card className="gap-1 shadow-none h-fit  border-[#0097fb] border-r-1 bg-[#ccebff] rounded-xl">
             <div className="flex flex-row">
