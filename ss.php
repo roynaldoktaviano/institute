@@ -336,18 +336,6 @@ add_action('init', function () {
         remove_action('woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_price', 10);
 });
 
-// add_action('woocommerce_before_shop_loop_item_title', function () {
-//     if ( is_page('promo-dji-mini-3-pro') ) {
-//         doran_custom_product_card_open();
-//     }
-// }, 5);
-
-// add_action('woocommerce_after_shop_loop_item', function () {
-//     if ( is_page('promo-dji-mini-3-pro') ) {
-//         doran_custom_product_card_close();
-//     }
-// }, 100);
-
 add_action('woocommerce_before_shop_loop_item_title', 'doran_custom_product_card_open', 5);
 add_action('woocommerce_after_shop_loop_item', 'doran_custom_product_card_close', 100);
 
