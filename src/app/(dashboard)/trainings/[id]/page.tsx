@@ -85,19 +85,16 @@ export default function TrainingDetailPage() {
 
     const participationsRaw = await lmsApi.getTrainingParticipation(usersId);
 
-// Normalisasi participations biar pasti array
 const participations = Array.isArray(participationsRaw)
   ? participationsRaw
   : participationsRaw
   ? [participationsRaw]
   : [];
 
-// Cari data training sesuai ID
 const currentTraining = participations.find(
   (p: any) => String(p.training_id) === String(trainingId)
 );
 
-// Kalau belum pernah ikut training ini sama sekali
 if (!currentTraining) {
   setLastModuleViewed(modulesData[0] || null);
   setCompletedCount(0);
@@ -265,7 +262,6 @@ if (matchedModule) {
                     ))}
                   </div>
 
-                  {/* BUTTON */}
                   <div className="pt-4 border-t space-y-2">
                     {isCompletedAll ? (
                       <Button disabled className="w-full bg-gray-300">
