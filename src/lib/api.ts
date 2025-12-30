@@ -96,6 +96,7 @@ export interface TrainingSummary {
   totalTrainings: number
   completedTrainings: number
   trainings: TrainingProgress[]
+  module: any
 }
 
 export async function getUserData() {
@@ -388,17 +389,22 @@ async submitQuiz(
       t => t.total_modules > 0 && t.completed_modules === t.total_modules
     )
 
+    // Ambil data modulenya saja 
+    const modules = trainings.flatMap(t => t.modules);
+
     return {
       totalTrainings: trainings.length,
       completedTrainings: completedTrainings.length,
-      trainings
+      trainings,
+      module:modules
     }
   } catch (err) {
     console.error(err)
     return {
       totalTrainings: 0,
       completedTrainings: 0,
-      trainings: []
+      trainings: [],
+      module:[]
     }
   }
 }

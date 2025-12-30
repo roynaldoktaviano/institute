@@ -116,76 +116,51 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const userData = await getUserData();
-        console.log("User:", userData);
-        setUsern(userData); // misal kamu punya state
-      } catch (err) {
-        console.error(err);
-      }
-    };
+  getUserData().then(setUsern).catch(console.error);
+}, []);
 
-    loadUser();
+useEffect(() => {
+  if (!user) return;
 
-    const loadDashboardData = async () => {
-      try {
-        const userLog = localStorage.getItem("lms_user");
-        const users = JSON.parse(userLog!);
-        const usersId = users.id;
-        const [trainings, quizzes, products, submissions, participations] =
-          await Promise.all([
-            lmsApi.getTrainings(),
-            lmsApi.getQuizzes(),
-            lmsApi.getProductKnowledge(),
-            lmsApi.getQuizSubmissions(),
-            lmsApi.getTrainingParticipation(usersId),
-          ]);
+  const loadDashboardData = async () => {
+    try {
+      const usersId = user.id;
 
-        setRecentTrainings(trainings.slice(0, 4));
-        setRecentQuizzes(quizzes.quizzes.slice(0, 4));
-        setRecentProducts(products.slice(0, 4));
-        setTotalProducts(products);
-        setParticipant(participations);
+      const [
+        trainings,
+        quizzes,
+        products,
+        quizSubmissions,
+        participations
+      ] = await Promise.all([
+        lmsApi.getTrainings(),
+        lmsApi.getQuizzes(),
+        lmsApi.getProductKnowledge(),
+        lmsApi.getQuizSubmissions(),
+        lmsApi.getTrainingParticipation(usersId),
+      ]);
 
-        const savedUser = localStorage.getItem("lms_user");
-        if (!savedUser) return;
+      setRecentTrainings(trainings.slice(0, 4));
+      setRecentQuizzes(quizzes.quizzes.slice(0, 4));
+      setRecentProducts(products.slice(0, 4));
+      setTotalProducts(products);
+      setParticipant(participations);
 
-        const user = JSON.parse(savedUser);
-        const userId = user.id;
+      setStats({
+        totalQuiz: quizzes.total,
+        quizzesSubmitted: quizSubmissions.length,
+        trainingsParticipated: participations.totalTrainings,
+      });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        Promise.all([
-          fetch(
-            `https://roynaldkalele.com/wp-json/lms/v1/user/${userId}/quiz`
-          ).then((res) => res.json()),
-          // fetch(`https://roynaldkalele.com/wp-json/lms/v1/user/${userId}/training`).then(res => res.json())
-        ])
-          .then(([quizData]) => {
-            const submissions = quizData?.quizzes || [];
-            // const participations = trainingData?.data || []
+  loadDashboardData();
+}, [user?.id]);
 
-            setStats({
-              totalQuiz: quizzes.total,
-              quizzesSubmitted: submissions.length, // jumlah quiz dikerjakan
-              trainingsParticipated: 2, // jumlah training diikuti
-            });
-          })
-          .catch((err) => {
-            console.error("Error fetching stats:", err);
-          });
-      } catch (error) {
-        toast({
-          title: "Error loading dashboard",
-          description: "Please try again later.",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadDashboardData();
-  }, [user, router, toast]);
 
   const handleLogout = () => {
     logout();

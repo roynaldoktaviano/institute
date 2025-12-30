@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { lmsApi, Training } from "@/lib/api";
+import { lmsApi, Training, TrainingSummary } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Book } from "lucide-react";
@@ -23,9 +23,10 @@ export default function TrainingDetailPage() {
   const [lastModuleViewed, setLastModuleViewed] = useState<any>(null);
   const [isCompletedAll, setIsCompletedAll] = useState(false);
   const [completedCount, setCompletedCount] = useState(0);
-
+  const [materi, setMateri] = useState<any>([]);
+  let modulFinished;
   const trainingId = parseInt(params.id as string);
-
+  
   function stripHtml(html: string) {
     return html.replace(/<[^>]*>?/gm, "");
   }
@@ -64,9 +65,7 @@ export default function TrainingDetailPage() {
 
         setTraining(foundTraining);
 
-        /* ==============================
-           AMBIL DATA MODULE DARI WORDPRESS
-        ============================== */
+  
         let modulesData: any[] = [];
 
         if (foundTraining.modul?.length) {
@@ -78,22 +77,30 @@ export default function TrainingDetailPage() {
               return res.json();
             })
           );
-
+          const summary = await lmsApi.getTrainingParticipation(usersId);
+          
           modulesData = modules;
           setModul(modules);
+          console.log(summary.module);
+          console.log(summary.trainings);
+
         }
 
-    const participationsRaw = await lmsApi.getTrainingParticipation(usersId);
+const summary = await lmsApi.getTrainingParticipation(usersId);
 
-const participations = Array.isArray(participationsRaw)
-  ? participationsRaw
-  : participationsRaw
-  ? [participationsRaw]
-  : [];
 
-const currentTraining = participations.find(
-  (p: any) => String(p.training_id) === String(trainingId)
+
+
+modulFinished = summary.totalTrainings;
+setCompletedCount(modulFinished);
+
+const currentTraining = summary.trainings.find(
+  t => String(t.training_id) === String(trainingId)
 );
+
+setMateri(currentTraining?.modules || []);
+console.log(materi);
+
 
 if (!currentTraining) {
   setLastModuleViewed(modulesData[0] || null);
@@ -208,15 +215,15 @@ if (matchedModule) {
               {training.modul?.length > 0 && (
                 <div className="mt-4">
                   <div className="flex justify-between text-sm mb-1">
-                    <span>Progress</span>
-                    <span>
+                    <span className="text-sm">Progress</span>
+                    <span className="text-sm">
                       {completedCount}/{training.modul.length} modul
                     </span>
                   </div>
 
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
                     <div
-                      className="bg-blue-900 h-full"
+                      className="bg-[#ffbf1d] h-full"
                       style={{
                         width: `${
                           (completedCount / training.modul.length) * 100
@@ -235,7 +242,7 @@ if (matchedModule) {
           <Card className="sticky top-8 shadow-sm rounded-xl">
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
-                <Book className="w-4 h-4" /> Materi Pelatihan
+                <Book className="w-4 h-4" /> Materi Pelatihan 
               </CardTitle>
             </CardHeader>
 
@@ -244,22 +251,42 @@ if (matchedModule) {
                 <>
                   {/* LIST MODUL */}
                   <div className="space-y-2">
-                    {modul.map((m: any, index: number) => (
-                      <div
-                        key={m.id}
-                        className="flex items-start gap-3 p-3 rounded-lg border"
-                      >
-                        <div className="w-7 h-7 rounded-full bg-blue-900 text-white text-xs flex items-center justify-center font-semibold">
-                          {index + 1}
-                        </div>
-                        <div
-                          className="text-sm"
-                          dangerouslySetInnerHTML={{
-                            __html: m.title?.rendered ?? m.title,
-                          }}
-                        />
-                      </div>
-                    ))}
+                    {modul.map((m: any, index: number) => {
+  const isCompleted = materi?.[index]?.completed;
+
+  return (
+    <div
+      key={m.id}
+      className={`flex items-start gap-3 p-3 rounded-lg border transition
+        ${isCompleted
+          ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+          : "bg-white text-gray-900 border-gray-300"
+        }`}
+    >
+      <div
+        className={`w-7 h-7 rounded-full text-xs flex items-center justify-center font-semibold
+          ${isCompleted ? "bg-gray-400 text-white" : "bg-blue-900 text-white"}
+        `}
+      >
+        {index + 1}
+      </div>
+
+      <div
+        className="text-sm"
+        dangerouslySetInnerHTML={{
+          __html: m.title?.rendered ?? m.title,
+        }}
+      />
+
+      {isCompleted && (
+        <div className="ml-auto text-xs font-medium text-gray-500">
+          Selesai
+        </div>
+      )}
+    </div>
+  );
+})}
+
                   </div>
 
                   <div className="pt-4 border-t space-y-2">
