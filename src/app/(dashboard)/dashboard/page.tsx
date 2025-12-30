@@ -148,7 +148,7 @@ useEffect(() => {
 
       setStats({
         totalQuiz: quizzes.total,
-        quizzesSubmitted: quizSubmissions.length,
+        quizzesSubmitted: participations.trainings.reduce((acc, curr) => acc + curr.completed_modules, 0),
         trainingsParticipated: participations.totalTrainings,
       });
     } catch (err) {
