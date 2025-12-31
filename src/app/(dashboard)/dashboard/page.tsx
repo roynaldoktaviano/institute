@@ -92,12 +92,19 @@ export default function DashboardPage() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const levelColorMap: Record<string, string> = {
+    Beginner: "bg-gray-100 text-gray-700",
+    Intermediate: "bg-blue-50 text-blue-600",
+    Experienced: "bg-indigo-50 text-indigo-600",
+    Expert: "bg-purple-50 text-purple-600",
+    Immortal: "bg-amber-50 text-amber-600",
+  };
+
   const menus = [
     { name: "Dashboard", href: "/dashboard" },
     { name: "Trainings", href: "/trainings" },
     { name: "Quizzes", href: "/quizzes" },
     { name: "Products", href: "/products" },
-    // { name: "Profile", href: "/profile" },
   ];
 
   const [tanggal, setTanggal] = useState("");
@@ -148,7 +155,7 @@ useEffect(() => {
 
       setStats({
         totalQuiz: quizzes.total,
-        quizzesSubmitted: participations.trainings.reduce((acc, curr) => acc + curr.completed_modules, 0),
+        quizzesSubmitted: quizzes.quizzes.filter((q: any) => q.completed).length,
         trainingsParticipated: participations.totalTrainings,
       });
     } catch (err) {
@@ -220,6 +227,39 @@ useEffect(() => {
               Stay on track with your drone training schedule.
             </h2>
           </div>
+
+            <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-sm border">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-medium text-gray-500">Level Progress</h3>
+              <span
+  className={`text-xs px-2 py-1 rounded-full font-semibold
+    ${levelColorMap[usern?.level_name ?? ""] || "bg-gray-100 text-gray-600"}
+  `}
+>
+  {usern?.level_name}
+</span>
+
+              </div>
+
+              <div className="mb-2">
+                <p className="text-3xl font-bold text-gray-900">
+                  {usern?.total_exp} <span className="text-sm font-medium text-gray-400">EXP</span>
+                </p>
+
+              </div>
+
+              <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-indigo-500 transition-all duration-500"
+                  style={{ width: `${usern?.progress_percent || 0}%` }}
+                />
+              </div>
+
+              <p className="mt-2 text-xs text-gray-400">
+                <span className="text-red-400 font-bold">{usern && usern.max_exp && usern.total_exp ? usern.max_exp - usern.total_exp : 0} </span> EXP menuju level berikutnya
+              </p>
+            </div>
+
 
           <div className="hidden lg:absolute right-4 md:right-8 bottom-0 h-[90%] w-[180px] md:w-[220px]">
             <Image

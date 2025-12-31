@@ -224,9 +224,7 @@ export default function QuizzesPage() {
                   </div>
                 </CardHeader>
 
-    
                 <CardContent className="space-y-4">
-        
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <div className="flex items-center gap-1.5">
                       <Clock className="h-4 w-4" />

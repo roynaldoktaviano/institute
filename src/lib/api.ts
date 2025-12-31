@@ -269,17 +269,15 @@ async submitQuiz(
   answers: number[]
 ): Promise<{ score: number; status: string }> {
   try {
-    // Ambil quiz dari API utama
+
     const res = await fetch(`https://roynaldkalele.com/wp-json/wp/v2/quiz/${quizId}`)
     const quizData = await res.json()
 
-    // Validasi quiz_data
     const quiz = quizData.quiz_data
     if (!quiz || !Array.isArray(quiz.questions) || quiz.questions.length === 0) {
       throw new Error("Quiz data invalid")
     }
 
-    // Hitung skor
     let score = 0
     const questions = quiz.questions
 
@@ -304,7 +302,6 @@ async submitQuiz(
       throw new Error("Token tidak ditemukan, silakan login dulu")
     }
 
-    // Simpan ke WordPress via REST API custom
     const wpRes = await fetch(
       `https://roynaldkalele.com/wp-json/lms/v1/submit-quiz`,
       {
@@ -332,7 +329,6 @@ async submitQuiz(
 
     const result = await wpRes.json()
 
-    // Opsional: update progress
     try {
       await fetch(
         `https://roynaldkalele.com/wp-json/lms/v1/user/${userId}/quiz`,
